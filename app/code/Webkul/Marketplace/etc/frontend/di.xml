@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Url\SecurityInfo">
+        <arguments>
+            <argument name="secureUrlList" xsi:type="array">
+                <item name="marketplace" xsi:type="string">/marketplace/mui</item>
+            </argument>
+        </arguments>
+    </type>
+	<type name="Magento\Cms\Model\Wysiwyg\CompositeConfigProvider">
+    <arguments>
+        <argument name="variablePluginConfigProvider" xsi:type="array">
+            <item name="default" xsi:type="string">Magento\Variable\Model\Variable\ConfigProvider</item>
+        </argument>
+        <argument name="widgetPluginConfigProvider" xsi:type="array">
+            <item name="default" xsi:type="string">Magento\Widget\Model\Widget\Config</item>
+        </argument>
+        <argument name="wysiwygConfigPostProcessor" xsi:type="array">
+            <item name="default" xsi:type="string">Magento\Cms\Model\Wysiwyg\DefaultConfigProvider</item>
+        </argument>
+        <argument name="galleryConfigProvider" xsi:type="array">
+            <item name="default" xsi:type="string">Magento\Cms\Model\Wysiwyg\Gallery\DefaultConfigProvider</item>
+        </argument>
+    </arguments>
+</type>
+</config>

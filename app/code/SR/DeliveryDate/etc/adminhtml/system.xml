@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="sr_deliverydate" translate="label" type="text" sortOrder="1300" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Order Delivery Date Settings</label>
+            <tab>sales</tab>
+            <resource>SR_DeliveryDate::deliverydate</resource>
+            <group id="general" type="text"  sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Extension Settings</label>
+                <field id="format" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Date Format:</label>
+                    <comment>yy-mm-dd</comment>
+                </field>
+                <field id="disableorder" translate="label" type="text" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Disabled After Order Limit</label>
+                </field>
+                <field id="disabled" translate="label" type="multiselect" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Disabled Delivery Date</label>
+                    <source_model>SR\DeliveryDate\Model\Config\Source\Disabled</source_model>
+                </field>
+                <field id="timeslots_sunday" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Available Slot Sunday:</label>
+                    <comment>Start Time - End Time, each slots in new line.
+					e.g. 
+					09:00-10:00
+					11:00-12:00
+					</comment>
+                </field>
+				<field id="timeslots_monday" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Available Slot Monday:</label>
+                    <comment>Start Time - End Time, each slots in new line.
+					e.g. 
+					09:00-10:00
+					11:00-12:00
+					</comment>
+                </field>
+				<field id="timeslots_tuesday" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Available Slot Tuesday:</label>
+                    <comment>Start Time - End Time, each slots in new line.
+					e.g. 
+					09:00-10:00
+					11:00-12:00
+					</comment>
+                </field>
+				<field id="timeslots_wednesday" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Available Slot Wednesday:</label>
+                    <comment>Start Time - End Time, each slots in new line.
+					e.g. 
+					09:00-10:00
+					11:00-12:00
+					</comment>
+                </field>
+				<field id="timeslots_thursday" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Available Slot Thursday:</label>
+                    <comment>Start Time - End Time, each slots in new line.
+					e.g. 
+					09:00-10:00
+					11:00-12:00
+					</comment>
+                </field>
+				<field id="timeslots_friday" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Available Slot Friday:</label>
+                    <comment>Start Time - End Time, each slots in new line.
+					e.g. 
+					09:00-10:00
+					11:00-12:00
+					</comment>
+                </field>
+				<field id="timeslots_saturday" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Available Slot Saturday:</label>
+                    <comment>Start Time - End Time, each slots in new line.
+					e.g. 
+					09:00-10:00
+					11:00-12:00
+					</comment>
+                </field>
+				<field id="timeslots_delay" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Close before (in Hours):</label>
+                    <comment>Add numbers in hours.
+					E.g : 1  (For 1 Hours before)
+					</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

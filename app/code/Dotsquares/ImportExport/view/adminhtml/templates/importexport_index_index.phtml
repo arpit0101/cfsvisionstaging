@@ -1,0 +1,124 @@
+<?php
+/**
+ * export template
+ *
+ * @see Dotsquares_Export_Block_Adminhtml_Export
+ */
+?>
+<?php 
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
+$FormKey = $objectManager->get('Magento\Framework\Data\Form\FormKey'); 
+?>
+<div class="content-header">
+<h3 class="icon-head head-upcoming"><?php echo 'Export Categories'; ?></h3>
+
+</div>
+<div class="entry-edit">
+	<form method="post" action="<?php echo $block->getPostUrl(); ?>" id="edit_form">
+		<div><input name="form_key" type="hidden" value="<?php echo $FormKey->getFormKey()  ?>" /></div>
+			<div class="entry-edit-head">
+			<h4 class="icon-head head-edit-form fieldset-legend"><?php echo 'Export Settings'; ?></h4>
+			<div class="form-buttons"></div>
+			</div>
+			<div id="base_fieldset" class="fieldset ">
+			<div class="hor-scroll">
+			
+			<div class="form-list">
+			<div class="form-group">
+				<label for="entity"><?php echo 'Entity Type'; ?></label>
+					<div class="form_right_fields">
+					<select class=" select" title="Entity Type" name="entity" id="category" >
+					<option value="catalog_category"><?php echo 'Category'; ?></option>
+					</select>
+					</div>
+			</div>
+			
+			<div id="cat_id" class="form-group">
+				<label for="entity"><?php echo 'Include Category IDs'; ?></label>
+					<div class="form_right_fields">
+					<input type="checkbox" name="cat_id"  value="1">
+					</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="file_format"><?php echo 'Export File Format'; ?></label>
+					<div class="form_right_fields">
+					<select class=" select" title="Export File Format" name="file_format" id="file_format">
+					<option value="csv">CSV</option>
+					</select>  
+					</div>
+			</div>
+
+		<div class="form-group">
+		<label for="import_file">&nbsp</label>
+		<div class="form_right_fields">
+		<button class="button" type="submit"><?php echo 'Submit'; ?></button> 
+		</div>
+		</div>
+			
+			</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+<div class="content-header">
+<h3 class="icon-head head-upcoming"><?php echo 'Import Categories'; ?></h3>
+
+</div>
+
+<div class="entry-edit">
+
+	<form enctype="multipart/form-data" method="post" action="<?php echo $block->getImportUrl('category', 'categories'); ?>" id="edit_form">
+	<div><input name="form_key" type="hidden" value="<?php echo $FormKey->getFormKey() ?>" /></div>
+	<div class="entry-edit-head">
+		<h4 class="icon-head head-edit-form fieldset-legend"><?php echo 'Import Settings'; ?></h4>
+		<div class="form-buttons"></div>
+	</div>
+	<div id="base_fieldset" class="fieldset ">
+		<div class="hor-scroll">
+		
+		
+		<div class="form-list">
+		
+		<div class="form-group">
+			<label for="entity"><?php echo 'Entity Type'; ?><span class="required">*</span></label>
+				<div class="form_right_fields">
+				<select class=" required-entry select" title="Entity Type" name="entity" id="entity">
+				<option value="catalog_category"><?php echo 'Category'; ?></option>
+				</select>  
+				</div>
+		</div>
+		
+		<div class="form-group">
+			<label for="entity"><?php echo 'Include Category IDs'; ?></label>
+				<div class="form_right_fields">
+				<input type="checkbox" value="1" name="cat_id">
+				</div>
+		</div>
+		
+		<div class="form-group">
+			<label for="import_file"><?php echo 'Select File to Import'; ?><span class="required">*</span></label>
+				<div class="form_right_fields">
+				
+				<div class="btn-file">
+				<input type="file" class="required-entry" title="Select File to Import" value="" name="import_filecat" id="import_file"> 
+				</div>
+				
+				</div>
+		</div>
+		
+		<div class="form-group">
+		<label for="import_file">&nbsp</label>
+		<div class="form_right_fields">
+		<button type="submit" class="button"><?php echo 'Submit'; ?></button> 
+		</div>
+		</div>
+		
+		
+		
+		</div>
+		</div>
+	</div>
+	</form>
+</div>

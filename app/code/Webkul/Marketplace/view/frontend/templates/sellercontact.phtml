@@ -1,0 +1,94 @@
+<?php
+$partner=array();
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$partner=$block->getProfileDetail();
+$seller=$block->getSellerDetail($partner["seller_id"]);
+//var_dump(expression);
+// print_r($partner->getData());
+// print_r($seller->getData());
+?>
+<div class="box block clear-block">
+ 
+ <div class="bd">
+ <table border="0" cellspacing="0" cellpadding="0" class="tablefixed">
+ <tbody>
+ <tr>
+ <th width="30%"><?php echo __("Contact Person"); ?>:</th>
+ <td>
+ <div class="c-info">
+     <div class="c-info-r">
+		 <span class="contactName">
+		  <?php echo $seller["firstname"]." ".$seller["lastname"]; ?>
+		 </span>
+		 <div class="pull-right">
+		 	<a rel="nofollow" alitalk="8pctgRBMALNZq9U/MC+MnkrtZMSEHYsr" data-id2="434075" data-id1="206133786" data-from="13" data-memberid="8pctgRBMALNZq9U/MC+MnkrtZMSEHYsr" href="javascript:void(0);" class="ui-atm atm16 btn btn-sm btn-primary" data-widget-cid="widget-13" title="Chat with me now.">Chat now!</a>
+			<a title="Click &quot;Contact Now&quot; to send an inquiry direct to the supplier's Message Center." href="javascript:void(0)" data-id2="434075" data-id1="twfmgK6PJsHXzrI9%2FHRN5g%3D%3D" data-membertype="0" data-from="13" data-action="feedback-message-ae" rel="nofollow" class="send-mail-btn btn btn-sm btn-warning">Contact Now </a>
+		   </div>
+		 </div>
+	 </div> 
+ </td>
+ </tr>
+ <tr class="divide-line">
+ <th></th>
+ <td></td>
+ </tr>
+           <tr>
+ <th>Country/Region: </th>
+ <td><?php echo $partner["company_locality"].", ".$partner["country_pic"]; ?></td>
+ </tr>
+         <tr>
+ <th>Website:</th>
+ <td style="word-wrap: break-word;"> 
+ <?php echo $helper->getRewriteUrl('marketplace/seller/profile/shop/'.$partner['shop_url']);?>
+ <br>
+ </td>
+ </tr>
+ </tbody>
+ </table>
+ </div> 
+ </div>
+ <script type="text/javascript">
+
+require([
+		    'jquery',
+		    'carouFredSel',
+		    'bootstrap'
+		], function(jQuery, carouFredSel, bootstrap){
+			jQuery("a.follow").on("click", function(){
+				if(jQuery(this).text()=="Follow"){
+					jQuery(this).text("Unfollow");
+					jQuery("#followers_count").text(parseInt(jQuery("#followers_count").text())+1);
+					jQuery(this).removeClass("btn-info");
+					jQuery(this).addClass("btn-primary");
+				}else{
+					jQuery(this).text("Follow");
+					jQuery("#followers_count").text(parseInt(jQuery("#followers_count").text())-1);
+					jQuery(this).removeClass("btn-primary");
+					jQuery(this).addClass("btn-info");
+				}
+				el = this;
+				jQuery.ajax( {
+					    url: jQuery(this).data("url"),
+					    //data: {form_key: window.FORM_KEY},
+					    type: 'GET'
+					}).done(function(a) { 
+						if(!a.success){
+							alert(a.message);
+							if(jQuery(el).text()=="Follow"){
+								jQuery(el).text("Unfollow");
+								jQuery("#followers_count").text(parseInt(jQuery("#followers_count").text())+1);
+								jQuery(el).removeClass("btn-info");
+								jQuery(el).addClass("btn-primary");
+							}else{
+								jQuery(el).text("Follow");
+								jQuery("#followers_count").text(parseInt(jQuery("#followers_count").text())-1);
+								jQuery(el).removeClass("btn-primary");
+								jQuery(el).addClass("btn-info");
+							}
+						}
+					    console.log(a); // log: {a: "b"}
+					});
+			});
+
+		});
+	</script>

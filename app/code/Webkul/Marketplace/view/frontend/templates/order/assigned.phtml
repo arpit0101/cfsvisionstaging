@@ -1,0 +1,395 @@
+<?php 
+$partner=array();
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$orderHelper = $this->helper('Webkul\Marketplace\Helper\Orders');
+$partner = $helper->getSeller();
+$isPartner = $helper->isSeller();
+$objectManager 	=	\Magento\Framework\App\ObjectManager::getInstance();
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+$groupId = $customerSession->getCustomer()->getGroupId();
+if($groupId == 4){
+	$filter_orderid = '';
+    $filter_orderstatus = '';
+    $filter_data_to = '';
+    $filter_data_frm = '';
+
+    if(isset($_GET['s'])){
+        $filter_orderid = $_GET['s'] != ""?$_GET['s']:"";
+    }
+    if(isset($_GET['orderstatus'])){
+        $filter_orderstatus = $_GET['orderstatus'] != ""?$_GET['orderstatus']:"";
+    }
+    if(isset($_GET['from_date'])){
+        $filter_data_frm = $_GET['from_date'] != ""?$_GET['from_date']:"";
+    }
+    if(isset($_GET['to_date'])){
+        $filter_data_to = $_GET['to_date'] != ""?$_GET['to_date']:"";
+    } ?>
+	<div class="wk-mp-design">
+		<fieldset class="fieldset info wk-mp-fieldset">
+			<legend class="legend">
+				<span><?php echo __('My Assigned Orders') ?></span>
+			</legend>			
+			<div class="grid product_list_table">
+				<div class="hor-scroll">
+					<form action="<?php echo $block->getCurrentUrl();?>" method="get">
+						 <div class="no-more-tables">
+							<table cellspacing="0" class="table border wk-mp-list-table">
+							    <thead>
+							        <tr id="wk-mp-tr-heading">
+							            <th><span><?php echo __('Order Id') ?></span></th>
+							            <th><span><?php echo __('Date') ?></span></th>
+							            <th><span><?php echo __('Order Status') ?></span></th>
+							            <th><span>&nbsp;</span></th>
+							        </tr>
+							    </thead>
+							    <tbody class="wk-mp-body">
+							    	<tr>
+							    		<td data-title="Order ID">
+							    			<input type="text" class="input-text" name="s" placeholder='<?php echo __('Search by Order Id') ?>' value="<?php echo $filter_orderid?>" style="width:99%;"/>
+							    		</td>
+							    		<td data-title="Date">
+							    			<span class="wk-mp-td-span">
+							    				<input name="from_date" id="special-from-date" class="input-text" value="<?php echo $filter_data_frm?>" type="text" placeholder='<?php echo __('Date From') ?>'/>
+							    			</span>				    			
+							    			<span class="wk-mp-td-span">
+							    				<input name="to_date" id="special-to-date" class="input-text" value="<?php echo $filter_data_to?>" type="text" placeholder='<?php echo __('Date To') ?>'/>
+							    			</span>
+							    		</td>
+							    		<td data-title="Status">
+						    				<select name="orderstatus" class="input-text">
+						    					<option value=""><?php echo __('All') ?></option>
+						    					<?php 
+						    					$orderstatus_coll = $orderHelper->getOrderStatusData();
+						    					foreach ($orderstatus_coll as $orderstatus) {
+													$sel_status = $orderstatus['status'];
+													if($sel_status == 'closed' || $sel_status == 'complete' || $sel_status == 'pending' || $sel_status == 'processing'):
+													
+						    						?>
+						    						<option value="<?php echo $orderstatus['status']?>" <?php if($filter_orderstatus == $orderstatus['status']) echo 'selected="selected"'?>>
+								    					<?php echo __($orderstatus['label']) ?>
+								    				</option>
+						    						<?php
+													endif;
+						    					} 
+						    					?>
+							    			</select>
+							    		</td>
+							    		<td  data-title=" " class="wk-mp-td-last">
+							    			<button class="button btn btn-lg btn-primary" title="Save" id="save-btn" type="submit">
+												<span><?php echo __('Submit') ?></span>
+											</button>
+							    		</td>
+							    	</tr>
+							    </tbody>
+							</table>
+						</div>
+					</form>
+					<?php 
+					if(count($block->getAllAssignedOrder())==0){ ?>		
+						<div class="fieldset wk-mp-fieldset">
+							<div class="wk-emptymsg">
+								<?php echo __('No Order Available') ?>
+							</div>
+						</div>
+						<?php 
+					} else{ ?>
+						<?php $i=0;
+						foreach($block->getAllAssignedOrder() as $res){
+							
+							$order	=	"";
+							$order = $block->Order->load($res['order_id']);
+							$state=$order->getState();
+							$status=$order->getStatus();
+							
+							
+							$name=$order->getCustomerName();
+							
+							$tracking=$orderHelper->getOrderinfo($res['order_id']);
+							
+							
+							if(!is_array($tracking) && $tracking->getIsCanceled()){
+								$state='canceled';
+								$status='Canceled';
+							}
+							$i++;
+							$invoice_data 	=	$block->getInvoiceDetails($order->getId());
+							$shipment_data 	=	$block->getShipmentsDetails($order->getId());
+							$shipmentid 		=	0;
+							$shipment_id 		=	0;
+							if($invoice_data){
+								foreach($invoice_data as $invoice){
+									$invoiceid 		=	$invoice['entity_id'];
+								}
+							}
+							if($shipment_data){
+								foreach($shipment_data as $shipment){
+									$shipment_id 	=	$shipment['entity_id'];
+								}
+							}
+							?>
+							<div class="wk-orderbox <?php if($i==1) echo "wk-first-order"?>">
+								<div style="padding:7px 7px 0px 7px;">
+									<div class="wk-orderbox-content1">
+										<div class="wk-orderbox-details">
+											<div class="color">
+												<span class="wk-ordertitle-label"><?php echo __('Order') ?></span> <strong>#<?php echo $res['magerealorder_id']; ?></strong>
+											</div>
+											<div class="name">
+												<?php echo $block->getpronamebyorder($res['order_id']); ?>
+											</div>
+											<a href="<?php echo $block->getUrl('marketplace/order/view', ['id'=>$res['order_id'], '_secure' => $this->getRequest()->isSecure()])?>">
+												<button class="button" title="<?php echo __('View Order') ?>" type="button">
+													<span><span><span><?php echo __('View Order') ?></span></span></span>
+												</button>
+											</a>
+											<?php 
+											if(!$invoice_data){
+												?>
+												<a href="<?php echo $block->getUrl('marketplace/order/createinvoice', ['order_id'=>$res['order_id'], '_secure' => $this->getRequest()->isSecure()])?>">												
+													<button class="button" title="<?php echo __('Create invoice'); ?>" type="button">
+														<span><span><span><?php echo __('Create invoice'); ?></span></span></span>
+													</button>
+												</a>
+												<?php 
+											}else{
+												?>
+												<a href="<?php echo $block->getUrl('marketplace/order/invoice_pdfprintmanager', ['order_id'=>$res['order_id'],'invoice_id'=>$invoiceid, '_secure' => $this->getRequest()->isSecure()])?>">	
+													<button class="button" title="<?php echo __('Print invoice'); ?>" type="button">
+														<span><span><span><?php echo __('Print invoice'); ?></span></span></span>
+													</button>
+												</a>
+												<?php 
+											}
+											?>
+											<?php 
+											if(!$shipment_data){
+												?>
+												<a href="<?php echo $block->getUrl('marketplace/order/createshipment', ['order_id'=>$res['order_id'], '_secure' => $this->getRequest()->isSecure()])?>">												
+													<button class="button" title="<?php echo __('Create Shipment'); ?>" type="button">
+														<span><span><span><?php echo __('Create Shipment'); ?></span></span></span>
+													</button>
+												</a>
+												<?php 
+											}else{
+												?>
+												<a href="<?php echo $block->getUrl('marketplace/order/shipment_pdfprintmanager', ['order_id'=>$res['order_id'],'shipment_id'=>$shipment_id, '_secure' => $this->getRequest()->isSecure()])?>">	
+													<button class="button" title="<?php echo __('Print Shipment'); ?>" type="button">
+														<span><span><span><?php echo __('Print Shipment'); ?></span></span></span>
+													</button>
+												</a>
+												<?php 
+											}
+											?>
+										</div>
+										<div class="wk-dash-orderstatus">
+											<label for="name" class="wk-dash-label">
+													<div class="status <?php echo __(strtolower($state)); ?>"><?php echo __(strtoupper($status)); ?></div>
+											</label> 
+										</div>
+									</div>
+									<div class="wk-orderbox-content2">
+										<div class="wk-orderbox-details">
+											<span class="wk-title-label"><?php echo __('Customer: ');?></span>
+											<span class="wk-label"><?php echo $name;?></span>&nbsp;&nbsp;
+											<span class="wk-title-label"><?php echo __('Date: ');?></span>
+											<span class="wk-label"><?php echo $block->formatDate($res['created_at'])?></span>
+											<span class="wk-title-label"><strong><?php echo __('Delivery Date') ?></strong></span>
+											<span class="wk-label"><?php echo $block->getOrderDeliveryDateHistory($res['order_id']); ?></span>
+										</div>
+										<div class="wk-orderbox-total">
+											<span class="wk-title-label"><?php echo __('Order Total- ');?></span>
+											<span class="wk-label"><strong><?php echo $order->formatPrice($block->getPricebyorder($res['order_id']));?></strong>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="wk-clear"></div>
+							<?php
+						} 	?>
+						<?php
+					}?>
+				</div>
+			</div>	
+			<?php if ($block->getPagerHtml()): ?>
+		        <div class="order-products-toolbar toolbar bottom"><?php echo $block->getPagerHtml(); ?></div>
+		    <?php endif ?>	
+		</fieldset>
+	</div>
+
+	<div id="wk-mp-invoice-print-data">
+		<div class="modals-wrapper">
+			<aside tabindex="0" data-type="popup" data-role="modal" class="modal-popup modal-slide _inner-scroll wk-mp-model-popup">
+			    <div tabindex="0" data-role="focusable-start"></div>
+			    <div data-role="focusable-scope" class="modal-inner-wrap">
+					<header class="modal-header">
+						<h4 class="modal-title"><?php echo __('Download Invoice Slip') ?></h4>
+						<button type="button" data-role="closeBtn" class="action-close wk-close">
+			                <span>Close</span>
+			            </button>
+						<span  class="wk-clear" ></span>
+					</header>
+					<form id="form-invoice-print" method="post" action="<?php echo $block->getUrl('marketplace/order_invoice/printall', ['_secure' => $this->getRequest()->isSecure()]);?>" class="fieldset">
+						<div class="modal-body form-list field required">
+							<label class="label"><?php echo __('Date From') ?></label>
+							<input type="text" name="special_from_date" class="required-entry wk-ship-rowinput editdeal_fromdate" id="invoice_editfromdatepicker" />
+
+							<label class="label"><?php echo __('Date Untill') ?></label>
+							<input type="text" id="invoice_edittodatepicker" name="special_to_date" class="required-entry wk-ship-rowinput" value=""/>
+						</div>
+						<div class="modal-footer">
+							<input type="reset" value="<?php echo __('Reset') ?>" class="wk-btn wk-btn_default"/>
+							<input type="submit" value="<?php echo __('Submit') ?>" class="wk-btn wk-btn-primary"/>
+							<span class="wk-clear"></span>
+						</div>
+					</form>        
+			    </div>
+			    <div tabindex="0" data-role="focusable-end"></div>
+			</aside>
+		</div>
+	</div>
+
+	<div id="wk-mp-shipping-print-data">
+		<div class="modals-wrapper">
+			<aside tabindex="0" data-type="popup" data-role="modal" class="modal-popup modal-slide _inner-scroll wk-mp-model-popup">
+			    <div tabindex="0" data-role="focusable-start"></div>
+			    <div data-role="focusable-scope" class="modal-inner-wrap">
+					<header class="modal-header">
+						<h4 class="modal-title"><?php echo __('Download Packaging Slip') ?></h4>
+						<button type="button" data-role="closeBtn" class="action-close wk-close">
+			                <span>Close</span>
+			            </button>
+						<span  class="wk-clear" ></span>
+					</header>
+					<form id="form-shipping-print" method="post" action="<?php echo $block->getUrl('marketplace/order_shipment/printall', ['_secure' => $this->getRequest()->isSecure()]);?>" class="fieldset">
+						<div class="modal-body form-list field required">
+							<label class="label"><?php echo __('Date From') ?></label>
+							<input type="text" name="special_from_date" class="required-entry wk-ship-rowinput editdeal_fromdate" id="editfromdatepicker"/>
+
+							<label class="label"><?php echo __('Date Untill') ?></label>
+							<input type="text" id="edittodatepicker" name="special_to_date" class="required-entry wk-ship-rowinput" value=""/>
+						</div>
+						<div class="modal-footer">
+							<input type="reset" value="<?php echo __('Reset') ?>" class="wk-btn wk-btn_default"/>
+							<input type="submit" value="<?php echo __('Submit') ?>" class="wk-btn wk-btn-primary"/>
+							<span class="wk-clear"></span>
+						</div>
+					</form>        
+			    </div>
+			    <div tabindex="0" data-role="focusable-end"></div>
+			</aside>
+		</div>
+	</div>
+
+	<div class="buttons-set">
+		<p class="back-link">
+			<a href="javascript:;" onclick="javascript: window.history.back();" class="left btn btn-sm btn-primary"><i class="fa fa-angle-double-left"></i> <?php echo __('Back') ?></a>
+		</p>
+	</div>
+
+	<script>
+	    require([
+	        "jquery",
+	        "mage/mage",
+        	'mage/calendar',
+	        'prototype',
+	        'domReady!'
+	    ], function($){
+	        var dataInvoiceForm = $('#form-invoice-print');
+	        dataInvoiceForm.mage('validation', {});	        
+			
+			$('.wk-shipslip').click(function(){
+				$('#wk-ship-light').hide();
+				$('#wk-ship-fade').hide();
+			});	
+
+	        $('body').append($('#wk-mp-invoice-print-data'));
+
+			$('#invoice-lightboxopen').click(function(){
+				$('#form-invoice-print input,#form-invoice-print textarea').removeClass('error_border');
+				$('.page-wrapper').css('opacity','0.4');
+				$('.wk-mp-model-popup').addClass('_show');
+				$('#wk-mp-invoice-print-data').show();
+			});
+			$('.wk-close').click(function(){
+				$('.page-wrapper').css('opacity','1');
+				$('#resetbtn').trigger('click');
+				$('#wk-mp-invoice-print-data').hide();
+				$('#form-invoice-print .validation-failed').each(function(){
+					$(this).removeClass('validation-failed');
+				});
+				$('#form-invoice-print .validation-advice').each(function(){
+					$(this).remove();
+				});
+			});
+
+			var dataShippingForm = $('#form-shipping-print');
+	        dataShippingForm.mage('validation', {});	        
+			
+			$('.wk-shipslip').click(function(){
+				$('#wk-ship-light').hide();
+				$('#wk-ship-fade').hide();
+			});	
+
+	        $('body').append($('#wk-mp-shipping-print-data'));
+
+			$('#shiplightboxopen').click(function(){
+				$('#form-shipping-print input,#form-shipping-print textarea').removeClass('error_border');
+				$('.page-wrapper').css('opacity','0.4');
+				$('.wk-mp-model-popup').addClass('_show');
+				$('#wk-mp-shipping-print-data').show();
+			});
+			$('.wk-close').click(function(){
+				$('.page-wrapper').css('opacity','1');
+				$('#resetbtn').trigger('click');
+				$('#wk-mp-shipping-print-data').hide();
+				$('#form-shipping-print .validation-failed').each(function(){
+					$(this).removeClass('validation-failed');
+				});
+				$('#form-shipping-print .validation-advice').each(function(){
+					$(this).remove();
+				});
+			});
+			$("#special-from-date").calendar({'dateFormat':'mm/dd/yy'});
+			$("#special-to-date" ).calendar({'dateFormat':'mm/dd/yy'});
+
+			$('#editfromdatepicker').calendar({
+				defaultDate: "+1w",
+				changeMonth: true,
+				onClose: function( selectedDate ) {
+					$( "#edittodatepicker" ).calendar( "option", "minDate", selectedDate );
+				}
+		    });	
+			
+			$('#edittodatepicker').calendar({
+				defaultDate: "+1w",
+				changeMonth: true,
+				onClose: function( selectedDate ) {
+					$( "#editfromdatepicker" ).calendar( "option", "maxDate", selectedDate );
+				}
+		    });	
+			$('#invoice_editfromdatepicker').calendar({
+				defaultDate: "+1w",
+				changeMonth: true,
+				onClose: function( selectedDate ) {
+					$( "#invoice_edittodatepicker" ).calendar( "option", "minDate", selectedDate );
+				}
+		    });	
+			
+			$('#invoice_edittodatepicker').calendar({
+				defaultDate: "+1w",
+				changeMonth: true,
+				onClose: function( selectedDate ) {
+					$( "#invoice_editfromdatepicker" ).calendar( "option", "maxDate", selectedDate );
+				}
+		    });	
+		});    
+	</script>
+	<?php 
+}else{ ?>
+	<h2 class="wk-mp-error-msg">
+		<?php echo __("To Become a Manager Please Contact to Admin."); ?>
+	</h2>
+	<?php
+} ?>

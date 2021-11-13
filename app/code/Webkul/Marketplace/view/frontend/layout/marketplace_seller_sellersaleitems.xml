@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+	<head>
+        <css src="Webkul_Marketplace::css/wk_block.css"/>
+        <css src="Webkul_Marketplace::css/style.css"/>
+    </head>
+    <body>
+        
+        <referenceBlock name="div.header.wrapper.main">
+            <block class="PurgeSoft\HomeCategoriesAndBanner\Block\HomeCategoriesAndBanner" name="profile_tooglemenu" template="default/profile_toogle_categories.phtml" cacheable="false" before="top.links" after="top.search" />
+            
+        </referenceBlock>
+
+        <referenceBlock name="page.top">
+            <referenceBlock name="catalog.topnav" remove="true" />
+            <block class="Webkul\Marketplace\Block\Sellersaleitems" name="marketplace_sellersaleitems" template="sellersaleitems.phtml" cacheable="false" >
+                <!-- <block class="Magento\Catalog\Block\Product\ProductList\Toolbar" name="product_list_toolbar" template="Magento_Catalog::product/list/toolbar.phtml">
+                    <block class="Magento\Theme\Block\Html\Pager" name="product_list_toolbar_pager"/>
+                </block>
+                <action method="setToolbarBlockName">
+                    <argument name="name" xsi:type="string">product_list_toolbar</argument>
+                </action> -->
+            </block>
+
+
+            <!-- <block class="Webkul\Marketplace\Block\Profile" name="marketplace_sellerprofile" template="profile.phtml" cacheable="false"/> -->
+            <!-- <block class="Webkul\Marketplace\Block\Profile" name="marketplace_sellerprofileleft" template="profile_left_sidebar.phtml" cacheable="false"/> -->
+            <!-- <block class="Magento\Catalog\Block\Product\ListProduct" name="category.products.list" as="product_list" template="Webkul_Marketplace::product/list.phtml" /> -->
+           <!--  <block class="Webkul\Marketplace\Block\Profile" name="marketplace_sellerprofileright" template="profile_right_sidebar.phtml" cacheable="false" before="-"/> -->
+        </referenceBlock>
+        <referenceContainer name="content" >
+
+            <block class="Webkul\Marketplace\Block\Sellersaleitems" name="marketplace_sellersalescollection" template="sellersaleitemscollection.phtml" cacheable="false" before="-">
+                <block class="Magento\Catalog\Block\Product\ProductList\Toolbar" name="product_list_toolbar" template="Magento_Catalog::product/list/toolbar.phtml">
+                    <block class="Magento\Theme\Block\Html\Pager" name="product_list_toolbar_pager"/>
+                </block>
+                <action method="setToolbarBlockName">
+                    <argument name="name" xsi:type="string">product_list_toolbar</argument>
+                </action>
+            </block>
+
+
+            <referenceBlock name="catalog.compare.sidebar" remove="true" />
+            <referenceBlock name="page.main.title" remove="true" />
+            <referenceContainer name="wishlist_sidebar" remove="true" />
+        </referenceContainer>
+
+
+        <!-- <referenceContainer name="content">
+            <block class="Webkul\Marketplace\Block\Sellerproducts" name="marketplace_sellerproducts" template="sellerproducts.phtml" cacheable="false" before="-">
+                <block class="Magento\Catalog\Block\Product\ProductList\Toolbar" name="product_list_toolbar" template="Magento_Catalog::product/list/toolbar.phtml">
+                    <block class="Magento\Theme\Block\Html\Pager" name="product_list_toolbar_pager"/>
+                </block>
+                <action method="setToolbarBlockName">
+                    <argument name="name" xsi:type="string">product_list_toolbar</argument>
+                </action>
+            </block>
+        </referenceContainer> -->
+       <!--  <referenceContainer name="sidebar.additional">
+            <remove name="catalog.compare.sidebar" />
+            <block class="Webkul\Marketplace\Block\Sellercategory" name="marketplace_sellercollectionleft" template="collectionleft.phtml" cacheable="false" before="-"/>
+            <block class="Webkul\Marketplace\Block\Sellercategory" name="marketplace_sellercategory" template="sellercategory.phtml" cacheable="false" before="-"/>
+        </referenceContainer> -->
+
+        <referenceContainer name="sidebar.additional">
+            <remove name="catalog.compare.sidebar" />
+            <block class="Webkul\Marketplace\Block\Sellercategory" name="marketplace_sellercategory" template="sellerproductscategory.phtml" cacheable="false" before="-"/>
+        </referenceContainer>
+
+    </body>
+</page>

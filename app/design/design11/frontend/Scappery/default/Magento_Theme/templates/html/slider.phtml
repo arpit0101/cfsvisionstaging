@@ -1,0 +1,39 @@
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+$sliders = $objectManager->create('SY\Slider\Model\Item')->getCollection();
+$sliders->addFieldToFilter('active', true);
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+$store = $storeManager->getStore();
+$mediaUrl = $store->getBaseUrl().'media';
+$count = count($sliders);
+?>
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+        <?php $j=0; foreach($sliders as $slider){ ?>
+            <li data-target="#myCarousel" data-slide-to="<?php echo $j; ?>" class="test <?php if($j == 0){echo 'active';}?>"></li>
+		<?php $j++; } ?>
+    </ol>
+    <div class="carousel-inner">
+        <?php $i = 0; 
+		foreach($sliders as $slider){ ?>
+	        <div class="item <?php if($i == 0){echo 'active'; }?>">
+                <div class="sider-image" style="background: url(<?php echo $mediaUrl.$slider->getImage(); ?>);">
+                    <div class="item-text">
+                      <p><?php echo $slider->getCaption(); ?></p>
+                    </div>
+                </div>
+            </div>
+		<?php $i++;
+		}; ?>
+    </div>
+    <a class="left carousel-control" href="#myCarousel" data-slide="prev" style="display: none;">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" data-slide="next" style="display: none;">
+      <span class="glyphicon glyphicon-chevron-right"></span>
+      <span class="sr-only">Next</span>
+    </a>
+</div>

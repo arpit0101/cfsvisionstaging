@@ -1,0 +1,94 @@
+<?php
+// @codingStandardsIgnoreFile
+
+/** @var $block \Magento\Catalog\Block\Product\View */
+?>
+<?php $_product = $block->getProduct(); ?>
+<?php $buttonTitle = __('Add to Cart'); ?>
+<?php //if (true): ?>
+<?php if ($_product->isAvailable()): ?>
+    <div class="box-tocart custom_quantity">
+        <div class="fieldset">
+            <?php if ($block->shouldRenderQuantity()): ?>
+                <div class="field qty">
+                    <label class="label" for="qty"><span><?php /* @escapeNotVerified */ echo __('Qty') ?></span></label>
+                    <div class="control">
+                        <input type="number"
+                               name="qty"
+                               id="qty"
+                               maxlength="12"
+                               value= "1"
+                               title="<?php /* @escapeNotVerified */ echo __('Qty') ?>" class="input-text qty"
+                              
+                        />
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+	<?php 
+	$objectManager 		= 	\Magento\Framework\App\ObjectManager::getInstance();
+	$customerSession 	= 	$objectManager->get('Magento\Customer\Model\Session');
+	$groupId = $customerSession->getCustomer()->getGroupId();
+	?>
+	<?php if($groupId==1 || $groupId=="" ){ ?>
+    <div class="actions">
+                <button type="submit"
+                        title="<?php /* @escapeNotVerified */ echo $buttonTitle ?>"
+                        class="action primary tocart"
+                        id="product-addtocart-button">
+                    <span><?php /* @escapeNotVerified */ echo $buttonTitle ?></span>
+                </button>
+                <?php echo $block->getChildHtml('', true) ?>
+	</div>
+	<?php 
+	} 
+	?>
+	<div class="barcode">
+		<?php 
+		$barcode = $_product->getData('barcode');
+		if(!empty($barcode)){
+			?>
+			<span><?php echo __("Bar Code");?> : <?php echo $barcode;?></span>
+			<?php 
+			$generator = new Picqer\Barcode\BarcodeGeneratorHTML();
+			echo $generator->getBarcode($barcode, $generator::TYPE_CODE_128);
+		}
+		?>
+	</div>
+<?php endif; ?>
+<?php if ($block->isRedirectToCartEnabled()) : ?>
+    <script type="text/x-magento-init">
+    {
+        "#product_addtocart_form": {
+            "Magento_Catalog/product/view/validation": {
+                "radioCheckboxClosest": ".nested"
+            } 
+        }
+    }
+</script>
+<?php else : ?>
+    <script>
+        require([
+            'jquery',
+            'mage/mage',
+            'Magento_Catalog/product/view/validation',
+            'Magento_Catalog/js/catalog-add-to-cart'
+        ], function ($) {
+            'use strict';
+
+            $('#product_addtocart_form').mage('validation', {
+                radioCheckboxClosest: '.nested',
+                submitHandler: function (form) {
+                    var widget = $(form).catalogAddToCart({
+                        bindSubmit: false
+                    });
+
+                    widget.catalogAddToCart('submitForm', $(form));
+
+                    return false;
+                }
+            });
+        });
+    </script>
+<?php endif; ?>

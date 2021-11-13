@@ -1,0 +1,44 @@
+Array
+(
+    [TEMP] => /home/webapp_web/tmp
+    [TMPDIR] => /home/webapp_web/tmp
+    [TMP] => /home/webapp_web/tmp
+    [PATH] => /usr/local/bin:/usr/bin:/bin
+    [HOSTNAME] => 
+    [USER] => webapp_web
+    [HOME] => /home/webapp_web
+    [HTTP_COOKIE] => PHPSESSID=2rp0j8ob3inomoebo33l2q69j5
+    [HTTP_AUTHORIZATION] => Bearer s6cf977ort0ckng194ld4gk8ih55jq07
+    [HTTP_ACCEPT_LANGUAGE] => en;q=1.0
+    [HTTP_USER_AGENT] => scappery/1.3 (com.abc.scappery.scappery; build:3; iOS 12.4.0) Alamofire/4.7.2
+    [HTTP_QUOTE_ID] => 10241
+    [HTTP_ACCEPT_ENCODING] => gzip;q=1.0, compress;q=0.5
+    [HTTP_CONTENT_TYPE] => multipart/form-data; boundary=alamofire.boundary.957d432007c95b9e
+    [HTTP_ACCEPT] => */*
+    [HTTP_HOST] => www.scappery.com
+    [REDIRECT_STATUS] => 200
+    [SERVER_NAME] => scappery.com
+    [SERVER_PORT] => 443
+    [SERVER_ADDR] => 207.180.213.96
+    [REMOTE_PORT] => 47298
+    [REMOTE_ADDR] => 103.210.112.242
+    [SERVER_SOFTWARE] => nginx/1.16.1
+    [GATEWAY_INTERFACE] => CGI/1.1
+    [REQUEST_SCHEME] => https
+    [SERVER_PROTOCOL] => HTTP/2.0
+    [DOCUMENT_ROOT] => /home/webapp_web/web/scappery.com/public_html/pub
+    [DOCUMENT_URI] => /index.php
+    [REQUEST_URI] => /rest/V1/scappery/getProducts/49/43
+    [SCRIPT_NAME] => /index.php
+    [CONTENT_LENGTH] => 
+    [CONTENT_TYPE] => multipart/form-data; boundary=alamofire.boundary.957d432007c95b9e
+    [REQUEST_METHOD] => GET
+    [QUERY_STRING] => 
+    [HTTP_X_FORWARDED_PROTO] => https
+    [HTTPS] => on
+    [SCRIPT_FILENAME] => /home/webapp_web/web/scappery.com/public_html/pub/index.php
+    [FCGI_ROLE] => RESPONDER
+    [PHP_SELF] => /index.php
+    [REQUEST_TIME_FLOAT] => 1573733812.0417
+    [REQUEST_TIME] => 1573733812
+)

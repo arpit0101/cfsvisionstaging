@@ -1,0 +1,108 @@
+<?php 
+   $helper = $this->helper('Webkul\Marketplace\Helper\Data');
+   $banner_display 	= 	$helper->getDisplayBanner();
+   $banner_image 		= 	$helper->getBannerImage();
+   $banner_content 	= 	$helper->getBannerContent();
+   $marketplacebutton 	= 	$helper->getMarketplacebutton();
+   $sellerlist_top_label 		= 	$helper->getSellerlisttopLabel();
+   $sellerlist_bottom_label 	= 	$helper->getSellerlistbottomLabel();
+   
+   if (!isset($_GET['shop'])) {
+   	$_GET['shop'] = '';
+   }
+   ?>
+<div class="wk-mp-design wk-mp-landingpage">
+   <?php
+      if($banner_display){?>
+   <div class="wk-mp-banner-container">
+      <div class="wk-mp-banner">
+         <figure><img class="img-responsive" src="http://daraways.com/app/design/frontend/Skipwalk/default/web/images/marketplace_banner.jpg"></figure>
+         <div class="wk-mp-header">
+            <h1><?php echo $marketplacebutton; ?></h1>
+            <h2>
+               <?php echo $block->getCmsFilterContent($banner_content)?>
+            </h2>
+            <a class="button btn btn-primary btn-lg wk-mp-landing-button" href="<?php echo $block->getUrl('customer/account/create/', ['_secure' => $this->getRequest()->isSecure()]); ?>">
+            <?php echo $marketplacebutton; ?>
+            </a>
+         </div>
+      </div>
+   </div>
+   <?php
+      } ?>
+   <div class="container">
+      <div clas="wk-srach-wrapper">
+         <h3 class="wk-marketplace-label"><?php echo $sellerlist_top_label ?></h3>
+         <form method="get" action="<?php echo $block->getUrl('marketplace/seller/sellerlist', ['_secure' => $this->getRequest()->isSecure()])?>" id="search_mini_form" class="wk-search pull-right">
+            <div class="control input-group">
+               <input id="sellersearch" type="search" name="shop" value="<?php echo $_GET['shop']?>" class="input-text required-entry" maxlength="128" placeholder="<?php echo __('Search sellers by shop name from here')?>..." autocomplete="off">
+               <span class="input-group-btn">
+               <button type="submit" title="Search" class="button btn btn-warning"><?php echo __('Search') ?></button>
+               </span>
+            </div>
+         </form>
+      </div>
+      <div class="wk-mp-sellerlist-container" style="display:inline-block;padding: 0;padding-top: 20px;width: 100%;">
+         <?php 
+            if(count($block->getSellerCollection())==0){ ?>
+         <div class="wk-emptymsg">
+            <?php echo __('No Seller Available') ?>
+         </div>
+         <?php 
+            } else{?>
+         <ul>
+            <?php
+               foreach($block->getSellerCollection() as $seller_coll){
+               	$seller_id = $seller_coll->getSellerId();
+               	$seller_product_count = 0;
+               	$profileurl = $seller_coll->getShopUrl();
+               	$shoptitle = '';
+               	$logo="noimage.png";
+               	$seller_product_count = $helper->getSellerProCount($seller_id);
+               	$shoptitle = $seller_coll->getShoptitle();
+               	$logo=$seller_coll->getLogoPic()==''?"noimage.png":$seller_coll->getLogoPic();
+               	if(!$shoptitle){
+               		$shoptitle = $profileurl;
+               	}
+               	$logo=$helper->getMediaUrl().'avatar/'.$logo;
+               	?>
+            <li>
+               <div class="wk-mp-sellerlist-wrap">
+                  <div class="sellerlist-logo">
+                     <a href="<?php echo $helper->getRewriteUrl('marketplace/seller/collection/shop/'.$profileurl);?>" title="<?php echo __("View Seller's Shop") ?>"><img src="<?php echo $logo ?>"></a>
+                  </div>
+                  <div class="sellerlist-det-sh">
+                     <a href="<?php echo $helper->getRewriteUrl('marketplace/seller/collection/shop/'.$profileurl);?>" title="<?php echo __("View Seller's Shop") ?>">
+                     <strong><?php echo $shoptitle ?></strong>
+                     </a>
+                     <p><?php echo __('%1 Total Products',$seller_product_count) ?></p>
+                     <a href="<?php echo $helper->getRewriteUrl('marketplace/seller/collection/shop/'.$profileurl);?>" class="button btn btn-primary" title="<?php echo __("View Seller's Collection") ?>">
+                     <?php echo __('View All'); ?>
+                     </a>
+                  </div>
+               </div>
+            </li>
+            <?php
+               }?>
+         </ul>
+         <?php
+            }?>		
+      </div>
+      <?php if ($block->getPagerHtml()): ?>
+      <div class="order-products-toolbar toolbar bottom"><?php echo $block->getPagerHtml(); ?></div>
+      <?php endif ?>
+      <h3 class="wk-marketplace-label"><?php echo $sellerlist_bottom_label ?></h3>
+      <a class="button btn btn-success pull-right wk-mp-landing-button" href="<?php echo $block->getUrl('customer/account/create/', ['_secure' => $this->getRequest()->isSecure()]); ?>">
+      <?php echo $marketplacebutton; ?>
+      </a>
+   </div>
+</div>
+<script>
+   require([
+       "jquery",
+       "mage/mage",
+   ], function($){
+   $('.page-title-wrapper').hide();
+   $('.wk-mp-banner').css('background-image','url("<?php echo $banner_image ?>")');
+   });
+</script>

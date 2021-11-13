@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="8px" height="12px" viewBox="0 0 8 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.2 (15857) - http://www.bohemiancoding.com/sketch -->
+    <title>arrowRight</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Assets" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="assets-web" sketch:type="MSArtboardGroup" transform="translate(-484.000000, -189.000000)" fill="#8F8D8B">
+            <path d="M484,190.384615 L485.5,189 L492,195 L485.5,201 L484,199.615385 L489,195 L484,190.384615 Z" id="arrowRight" sketch:type="MSShapeGroup"></path>
+        </g>
+    </g>
+</svg>

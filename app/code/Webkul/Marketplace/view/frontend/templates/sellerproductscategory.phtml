@@ -1,0 +1,89 @@
+<?php 
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$partner = $block->getProfileDetail();
+$get_cat = '';
+$arr_have_child_cat = array();
+if(isset($_GET["c"])){
+	$get_cat = $_GET["c"];
+}
+$cat_class = 'filter-options';
+$subcats='';
+if($get_cat!=''){
+	$cat = $block->Category->load($get_cat);
+	$subcats = $cat->getChildren();
+	if ($subcats=='') {
+		$cat_class = 'filter-current';
+	}
+}
+?>
+	<div class="block filter">	
+		<div class="block-title filter-title">	
+			<strong><span><?php echo __("Browse BY") ?></span></strong>
+		</div>
+		<div class="block-content filter-content">
+        <dl id="narrow-by-list" class="<?php echo $cat_class?>" data-role="content" data-mage-init='{"accordion":{"openedState": "active", "collapsible": true, "active": false, "multipleCollapsible": false}}' >
+        	<div data-role="collapsible" class="filter-options-item">
+            <div class="filter-options-title" data-role="title" role="tab" aria-selected="true" aria-expanded="true" tabindex="0"><?php echo __("SELLER'S CATEGORY") ?></div>
+
+            <div class="filter-options-content" data-role="content" role="tabpanel" aria-hidden="false" style="display: block;">
+				<ol class="items">
+					<?php 
+					foreach($block->getCategoryList() as $key => $value){						
+						array_push($arr_have_child_cat, $value['category_id']);
+						if($value['category_id']!=1){ ?>
+							<li class="item">
+		                        <a href="<?php echo $helper->getRewriteUrl('marketplace/seller/sellerproducts/shop/'.$partner['shop_url'])."/?c=".$value['category_id'];?>" <?php if($get_cat == $value['category_id']){ ?> class="current" <?php }?>>
+						            <?php echo $value['catname'] ?>           		
+						            <span class="count">
+						            	<?php echo sprintf('%02d',$value['countCategory'])?>
+						            	<span class="filter-count-label">
+						                	item
+						                </span>
+						            </span>
+						        </a>
+					        </li>
+							<?php
+						}
+					} 					
+					if($get_cat!=''){
+						if($subcats!=''){
+							foreach(explode(',',$subcats) as $subCatid)
+							{
+								$_category = $block->Category->load($subCatid);
+								if($_category->getIsActive()) {
+									if(!in_array($_category->getId(), $arr_have_child_cat)){
+										 ?>
+										<li class="item">
+					                        <a href="<?php echo $helper->getRewriteUrl('marketplace/seller/sellerproducts/shop/'.$partner['shop_url'])."/?c=".$_category->getId();?>" <?php if($get_cat == $_category->getId()){ ?> class="current" <?php }?>>
+									            <?php echo $_category->getName() ?>           		
+									            <span class="count">
+									            	0
+									            	<span class="filter-count-label">
+									                	item
+									                </span>
+									            </span>
+									        </a>
+								        </li>
+										<?php
+									}			
+								}
+							}
+						}else{
+							?>
+		                    <li class="item">
+				                <span class="filter-label"><?php echo __('Category')?></span>
+				                <span class="filter-value"><?php echo $cat->getName();?></span>
+	                            <a title="<?php echo __('Remove Category %1',$cat->getName());?>" href="<?php echo $helper->getRewriteUrl('marketplace/seller/sellerproducts/shop/'.$partner['shop_url']);?>" class="action remove">
+			                        <span><?php echo __('Remove This Item')?></span>
+			                    </a>
+	                        </li>
+							<?php
+						}
+					}
+					?>	            	
+			    </ol>
+			</div>
+			</div>
+		</dl>
+	</div>
+	</div>

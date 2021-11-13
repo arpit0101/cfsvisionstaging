@@ -1,0 +1,110 @@
+<?php
+	$objectManager 		= 	\Magento\Framework\App\ObjectManager::getInstance();
+	$resource 			= 	$objectManager->get('Magento\Framework\App\ResourceConnection');
+	$connection 		= 	$resource->getConnection();
+	$partner			=	$block->getProfileDetail();
+	$shoptitle 			= 	$partner->getShopTitle();
+	$block				=	$objectManager->get('Inchoo\HelloWorld\Block\HelloWorld');
+	$tableName 			= 	$resource->getTableName('directory_country_region ');
+	$customerSession 	= 	$objectManager->get('Magento\Customer\Model\Session');
+	if(isset($customerSession->getdata()['city_id'])){
+	$city_id			= $customerSession->getdata()['city_id'];
+	}else{
+		$city_id 		= "";
+	}
+	if(isset($customerSession->getdata()['area_id'])){
+		$area_id		= $customerSession->getdata()['area_id'];
+	}else{
+		$area_id = "";
+	}
+	
+		$areas 				=	$block->getAreas($city_id);
+	
+	$sql = "Select * FROM " . $tableName . " where `country_id`='AE'";
+	$result = $connection->fetchAll($sql);
+?>
+<div class="show_in_mobile" style="display: none;">
+		<?php if ($this->getRequest()->getFullActionName() == 'marketplace_seller_collection') { ?>
+			<div id="location">
+				<form action="<?php echo $this->getUrl('region/');?>" method="post" id="body_location_form" name="form1">
+					<div class="box-form big-box">
+						<div class="col-md-6 form-group select_rl head_rl">
+							<label>Select City</label>
+							<input type="hidden" value="<?php echo $area_id ?>" id="area_id_hidden" >
+							<select class="form-control city_dropdown autocomplete city_head custom-search-form" name="city_id" id="header_city_id" >
+								<option value="">--Select City--</option>
+								<?php foreach($result as $res) {          ?>
+								<option <?php if($city_id){ if($city_id==$res['region_id']){ echo "selected"; }}?> value="<?php echo $res['region_id'] ?>"><?php echo $res['default_name']; ?></option>
+								<?php	             }?> 
+							</select>
+						</div>
+						<div class="col-md-6 form-group head_kl">
+						   <label>Select Zone</label>
+						   <select class="form-control area_dropdown autocomplete city_head custom-search-form" name="area_id" id="body_area_id">
+							  <option value=" ">--Select Zone--</option>
+						   </select>
+						</div>
+					</div>
+				</form>
+			</div>
+                  
+		<?php } ?>
+</div>
+
+
+
+<div class="bck_btn"><a href="<?php echo $this->getUrl('region/');?>"><button>Back</button></a></div>
+<script>
+         jQuery(document).ready(function($) {
+         	jQuery('#select_area_again1').change(function(){
+         		
+				
+				$.confirm({
+					title: 'Change Location',
+					content: 'Change Location May Affect Your Cart!',
+					buttons: {
+						confirm: function () {
+							jQuery("#area_form").submit();
+						},
+						cancel: function () {
+							
+						},
+						
+					}
+				});
+         		
+         	});
+			jQuery('#select_region_again1').change(function(){
+         			var url="";
+					var html="";
+					var city_id = jQuery(this).val();
+					
+					try {
+						
+							jQuery.ajax({
+							url : "/location/ajax/index",
+							dataType : 'json',
+							type : 'POST',
+							data: { city_id: city_id},
+							success : function(data){
+								if(data.length>0){
+									html+="<option value=''>--No zone selected--</option>";
+									jQuery.each(data, function(idx, obj) {
+										html+="<option value="+ obj.area_id +">"+obj.default_name+"</option>";
+									});
+									
+								}else{
+									html+="<option value=''>--No zone found--</option>";
+								}
+								
+								jQuery('#select_area_again1').html(html);
+								//jQuery('.progress_image_inner').hide();
+							}
+						});
+					}
+					catch(e) {}
+					
+			});
+         });
+            
+		</script>

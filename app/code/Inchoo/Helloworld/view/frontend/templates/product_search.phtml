@@ -1,0 +1,32 @@
+<?php 
+$helper 		= 	$this->helper('Webkul\Marketplace\Helper\Data');
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$priceHelper 	= 	$objectManager->create('Magento\Framework\Pricing\Helper\Data');
+$search_data 	=	$block->getSearchData();
+//print_r($search_data->getData());
+?>
+<div class="ember-view search-shop-group search-results">
+	<?php
+	foreach($search_data as $product){
+		
+		//print_r($product->getData());die;
+		$_product	=	$product;
+		$imageUrl 	= 	$this->imageHelperFactory->create()->init($_product, 'product_thumbnail_image')->getUrl();
+		?>
+		<div class="ember-view search-result">
+			<a href="javascript: void(0);" onclick="openquickview(this);" data-quickview-url='<?php echo $this->getBaseUrl();?>weltpixel_quickview/catalog_product/view/id/<?php echo $_product->getId();?>' class="body weltpixel-quickview">
+				<div class="image"> 
+				<span class="ember-view image-container">
+				<img src="<?php echo $imageUrl; ?>" />
+				</span> </div>
+				  <div class="heading"> <span class="title"><?php echo $product['name'];?></span> 
+				  </div>
+				<div class="price"><?php 
+					$formattedPrice 	= 	$priceHelper->currency($product['price'], true, false);
+				echo $formattedPrice;?></div>
+			</a> 
+		</div>
+		<?php 
+	}
+	?>
+</div>

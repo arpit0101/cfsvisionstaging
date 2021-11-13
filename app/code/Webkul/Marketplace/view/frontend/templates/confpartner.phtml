@@ -1,0 +1,113 @@
+<?php 
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$profile_hint_status = $helper->getProfileHintStatus();
+?>
+<style type="text/css">
+    .yes_no_span{ float: left; padding-left: 5px; padding-right: 10px; padding-top: 14px; }
+    .yes_no_input{ float: left; padding-right: 4px; }
+    .clear {clear: both;}
+</style>
+<div class="field required" id="wantptr">
+    <label for="wantpartner" class="label"><?php echo __('Do You Want To Become Seller / Vendor?') ?> </label>
+    <?php
+    if($profile_hint_status && $helper->getProfileHintBecomeSeller()){?>
+        <img src="<?php echo $this->getViewFileUrl('Webkul_Marketplace::images/quest.png'); ?>" class='questimg' title="<?php echo $helper->getProfileHintBecomeSeller() ?>"/>
+    <?php
+    }?>
+    <div class="clear"></div>
+    <div class="control">
+        <input type="radio" id="wantpartner" class="wantpartner yes_no_input" name="is_seller" value='1' title="<?php echo __('Agree as Seller') ?>"  /> <span class="yes_no_span"><?php echo __("Yes"); ?></span>&nbsp;&nbsp;
+        <input type="radio" id="wantpartner" class="wantpartner yes_no_input" name="is_seller" value='0' title="<?php echo __('Disagree as Seller') ?>" checked /> <span class="yes_no_span"><?php echo __("No"); ?></span>
+        <div class="clear"></div>
+    </div>
+    <span class="control_span"><?php /* @escapeNotVerified */ echo __('Please choose option to become seller or not.') ; ?></span>
+</div>
+<div id="seller-shop-field-wrapper"> 
+    <script id="wantptr-template" type="text/x-magento-template">
+        <div id="<%- data.id %>" class="profileurl field required">
+            <label class="label">
+                <%- data.label %>
+                <div id="wk-load-conf">
+                    <img height="20px" width="20px" src="<%- data.src %>">
+                </div>
+            </label>
+            <div class="control">
+                <input type="text" class="input-text required-entry" title="<%- data.title %>" name="profileurl">
+                <span class="required-entry" type="text" name="profileurl"> 
+                    <%- data.text %>
+                </span>
+            </div>
+        </div>
+    </script>
+</div>
+<?php
+$shopurl_hint = '';
+if($profile_hint_status && $helper->getProfileHintShopurl()){
+    $shopurl_hint = '<img src="'.$this->getViewFileUrl('Webkul_Marketplace::images/quest.png').'" class="questimg" title="'.$helper->getProfileHintShopurl().'"/>';
+
+}else{
+    $shopurl_hint = '';
+} ?>
+
+
+<script>
+    require([
+        "jquery",
+        'mage/template',
+        "mage/mage"
+    ], function ($, mageTemplate, alert){
+        $('#email_address').parents('div.field').after($('#wantptr'));
+        $('#wantptr').show();        
+        $('.wantpartner').change(function(){
+            
+            if($(this).val()==1){
+                $('#wk-load-conf').parents('#form-validate').find('button.submit').addClass('disabled');
+                var progressTmpl = mageTemplate('#wantptr-template'),
+                          tmpl;
+                tmpl = progressTmpl({
+                    data: {
+                        label: '<?php echo __("Store UserName"); ?>',
+                        src: "<?php echo $this->getViewFileUrl('Webkul_Marketplace::images/ajax-loader-tr.gif') ?>",
+                        title: '<?php echo __(" Shop Username for URL For Your Marketplace Shop ")?>',
+                        text: '<?php echo __(" (This will be used to display your public profile) ")?>',
+                    }
+                });
+
+                $('#wantptr').after(tmpl);
+            }else{
+                $('#wk-load-conf').parents('#form-validate').find('button.submit').removeClass('disabled');
+                $('.profileurl').remove();
+            }
+        });
+
+        $('div').delegate('.profileurl input','keyup',function(){
+            $(this).val($(this).val().replace(/[^a-z^A-Z^0-9\.\-]/g,''));
+        });
+        
+        $('#form-validate').delegate('.profileurl input','change', function(){
+            $('.unavailable,.available').remove();
+            var profileurl=$('.profileurl input').val();
+            $('#wk-load-conf').parents('#form-validate').find('button.submit').addClass('disabled');
+            if(profileurl!=''){
+                $('#wk-load-conf').show();
+                $('#wk-load-conf').css('display','inline-block');
+                $.ajax({
+                    url:'<?php echo $block->getUrl("marketplace/seller/usernameverify", ["_secure" => $this->getRequest()->isSecure()])?>',
+                    type:'POST',
+                    data:{profileurl:profileurl},
+                    dataType:'JSON',
+                    success:function(data){
+                        $('#wk-load-conf').hide();
+                        if(data==0){
+                            $('#wk-load-conf').parents('#form-validate').find('button.submit').removeClass('disabled');
+                            $('.profileurl').append($('<span/>').addClass('available success-msg').text('<?php echo __("available")?>'));
+                        }else{
+                            $('.profileurl input').val('');
+                            $('.profileurl').append($('<span/>').addClass('unavailable error-msg').text('<?php echo __("unavailable")?>'));
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>

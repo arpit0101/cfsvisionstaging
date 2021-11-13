@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Framework\Webapi\ServiceOutputProcessor" type="IWD\CheckoutConnector\Model\ServiceOutputProcessor" />
+    <preference for="IWD\CheckoutConnector\Api\AddressStepInterface" type="IWD\CheckoutConnector\Model\AddressStep" />
+    <preference for="IWD\CheckoutConnector\Api\DeliveryStepInterface" type="IWD\CheckoutConnector\Model\DeliveryStep"/>
+    <preference for="IWD\CheckoutConnector\Api\PaymentStepInterface" type="IWD\CheckoutConnector\Model\PaymentStep"/>
+    <preference for="IWD\CheckoutConnector\Api\ApplyCouponInterface" type="IWD\CheckoutConnector\Model\ApplyCoupon"/>
+    <preference for="IWD\CheckoutConnector\Api\OrderInterface" type="IWD\CheckoutConnector\Model\Order" />
+
+    <!-- IWD Checkout PayPal Payment Method -->
+    <virtualType name="IWDCheckoutPayPalFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">IWD\CheckoutConnector\Model\Ui\PayPalConfigProvider::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\ConfigurableInfo</argument>
+            <argument name="valueHandlerPool" xsi:type="object">IWDCheckoutPayPalValueHandlerPool</argument>
+            <argument name="validatorPool" xsi:type="object">IWDCheckoutPayPalValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="IWDCheckoutPayPalConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">IWD\CheckoutConnector\Model\Ui\PayPalConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="IWD\CheckoutConnector\Model\Ui\PayPalConfigProvider">
+        <arguments>
+            <argument name="config" xsi:type="object">IWDCheckoutPayPalConfig</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="IWDCheckoutPayPalValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">IWDCheckoutPayPalConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="IWDCheckoutPayPalConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">IWDCheckoutPayPalConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="IWDCheckoutPayPalValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">IWDCheckoutPayPalCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="IWDCheckoutPayPalCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">IWDCheckoutPayPalConfig</argument>
+        </arguments>
+    </virtualType>
+</config>

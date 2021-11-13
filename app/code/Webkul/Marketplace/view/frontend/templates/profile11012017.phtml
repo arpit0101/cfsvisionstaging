@@ -1,0 +1,1709 @@
+<!-- <script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script> -->
+<?php
+$partner	=	array();
+$helper 	=	$this->helper('Webkul\Marketplace\Helper\Data');
+$partner	=	$block->getProfileDetail();
+$seller_id	=	$partner['seller_id'];
+$shoptitle 	= 	$partner->getShopTitle();
+
+//print_r($block->getFollowCollection());
+
+$logo=$partner->getLogoPic()!=''?$partner->getLogoPic():"noimage.png";
+$logo=$helper->getMediaUrl().'avatar/'.$logo;
+
+$seller_product_count = $helper->getSellerProCount($seller_id);
+
+$feeds=$helper->getFeedTotal($seller_id);
+$review_percentage = (($helper->getSelleRating($seller_id)*100)/5);
+//print_r($partner->getData());
+if(!$shoptitle){
+	$shoptitle = $partner->getShopUrl();
+}
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$customerSession = $objectManager->get('Magento\Customer\Model\Session');
+$customer_id = $customerSession->getCustomerId();
+
+$loged_in = 0;
+
+if($customer_id && $customer_id == $seller_id){
+	$loged_in = 1;	
+}
+
+
+
+function time_elapsed_string($ptime)
+{
+    $etime = time() - $ptime;
+
+    if ($etime < 1)
+    {
+        return '0 seconds';
+    }
+
+    $a = array( 365 * 24 * 60 * 60  =>  'year',
+                 30 * 24 * 60 * 60  =>  'month',
+                      24 * 60 * 60  =>  'day',
+                           60 * 60  =>  'hour',
+                                60  =>  'minute',
+                                 1  =>  'second'
+                );
+    $a_plural = array( 'year'   => 'years',
+                       'month'  => 'months',
+                       'day'    => 'days',
+                       'hour'   => 'hours',
+                       'minute' => 'minutes',
+                       'second' => 'seconds'
+                );
+
+    foreach ($a as $secs => $str)
+    {
+        $d = $etime / $secs;
+        if ($d >= 1)
+        {
+            $r = round($d);
+            return $r . ' ' . ($r > 1 ? $a_plural[$str] : $str) . ' ago';
+        }
+    }
+}
+
+
+
+if($helper->getActiveColorPicker()){?> 
+    <style>
+    .page-main{background-image:none;background-color:<?php echo $partner['background_width'];?>;}
+    </style>
+<?php
+} ?>
+
+
+<div class="store_name">
+	<div class="top-container">
+		<div class="storetitle">
+			<?php echo __("<span>Store :</span> %1",$shoptitle) ?>
+		</div>
+		<div class="sns pull-right">
+			<?php 
+			if($partner->getFbActive()){ ?>
+				<a class="fa fa-facebook" title="<?php echo __('Check in Facebook')?>" href="//facebook.com/<?php echo $partner->getFacebookId();?>" target="blank">
+				</a>
+			<?php 
+			} ?>
+			<?php 
+			if($partner->getTwActive()){ ?>
+				<a class="fa fa-twitter" title="<?php echo __('Check in Twitter')?>" href="//twitter.com/<?php echo $partner->getTwitterId();?>" target="blank">
+				</a>
+			<?php 
+			} ?>
+			<?php 
+			if($partner->getGplusActive()){ ?>
+				<a class="fa fa-google-plus" title="<?php echo __('Check in Google+')?>" href="//plus.google.com/<?php echo $partner->getGplusId();?>" target="blank">
+				</a>
+			<?php 
+			} ?>
+			<?php 
+			if($partner->getPinterestActive()){ ?>
+				<a class="fa fa-pinterest" title="<?php echo __('Check in Pinterest')?>" href="//www.pinterest.com/jokestuffs/<?php echo $partner->getPinterestId();?>" target="blank">
+				</a>
+			<?php 
+			} ?>
+			<?php 
+			if($partner->getYoutubeActive()){ ?>
+				<a class="fa fa-youtube" title="<?php echo __('Check in Youtube')?>" href="//www.youtube.com/user/<?php echo $partner->getYoutubeId();?>" target="blank">
+				</a>
+			<?php 
+			} ?>
+			<?php 
+			if($partner->getInstagramActive()){ ?>			
+				<a class="fa fa-instagram" title="<?php echo __('Check in Instagram')?>" href="//instagram.com/<?php echo $partner->getInstagramId();?>" target="blank">
+				</a>
+			<?php 
+			} ?>
+			<?php 
+			if($partner->getVimeoActive()){ ?>
+				<a class="fa fa-vimeo" title="<?php echo __('Check in Vimeo')?>" href="//vimeo.com/<?php echo $partner->getVimeoId();?>" target="blank">
+				</a>
+			<?php 
+			} ?>
+			<?php //
+			if($partner->getMoleskineActive()){ ?>
+			<!-- <a href="//moleskine.com/<?php echo $partner->getMoleskineId();?>" target="blank">
+				<span class="wk-social-icon wk-icon wk-social-icon-moleskin" title="<?php echo __('Check in Moleskine')?>"></span>
+			</a> -->
+			<?php 
+			} ?>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+<div class="store_logo">
+	<div class="top-container">
+		<div class="store_logo_block">
+			<div class="wk-logo-block">
+				<a href="<?php echo $helper->getRewriteUrl('marketplace/seller/profile/shop/'.$partner['shop_url']);?>" >
+					<img class="bannerpicrs" src="<?php echo $logo;?>" />
+				</a>
+			</div>
+			<?php if($loged_in){ ?>
+				<!-- <a href="<?php echo $this->getUrl("marketplace/account/editprofile"); ?>" class="store_logoedit"><i class="fa fa-pencil"></i></a> -->
+				<a href="javascript:void(0);" id="edit-profile-picture" class="store_logoedit"><i class="fa fa-pencil"></i></a>
+			<?php } ?>
+		</div>
+		<div class="store_feedbacks">
+
+		<div class="rating-summary fdback_icons">
+				<!-- <span><?php echo number_format($feeds['feedcount']) ?></span> --> 
+	         	<div title="<?php echo $review_percentage ?>%" class="rating-result">
+	             	<span style="width:<?php echo $review_percentage ?>%"><span><span itemprop="ratingValue"><?php echo $review_percentage ?></span>% of <span itemprop="bestRating">100</span></span></span>
+	         	</div>
+	        </div>
+<!-- 
+			<div class="fdback_icons">
+				<i class="fa fa-heart"></i>
+				<i class="fa fa-heart"></i>
+				<i class="fa fa-heart"></i>
+				<i class="fa fa-heart-o"></i>
+				<i class="fa fa-heart-o"></i>
+			</div> -->
+			<p>Open <span><?php echo time_elapsed_string(strtotime($partner['created_at'])); ?></span> / <span><?php echo $seller_product_count ?></span> <?php echo __("Products"); ?> / <span class="fa fa-comment"></span>
+				<a href="<?php echo $this->getUrl().'marketplace/seller/feedback/shop/'.$partner['shop_url'];?>" >
+					<?php echo __("Feedback"); ?>
+            	</a>
+            	</p>
+			<p><span id="followers_count" ><?php echo $block->getFollowCounts(); ?></span> followers 
+			<?php if(!count($block->getFollowCollection())){ ?>
+			
+				<a class="btn btn-info btn-sm follow" href="javascript:void(0);" data-url="<?php echo $helper->getRewriteUrl('marketplace/seller/follow/shop/'.$partner['shop_url']);?>" <?php if($loged_in){ echo "disabled='disabled'"; } ?> >Follow</a>
+			
+			<?php }else{ ?>
+				<a class="btn btn-primary btn-sm follow" href="javascript:void(0);" data-url="<?php echo $helper->getRewriteUrl('marketplace/seller/follow/shop/'.$partner['shop_url']);?>" >Unfollow</a>
+
+			<?php } ?> 
+			<?php if(!$loged_in){ ?>
+				<a target="_blank" href="<?php echo $this->getUrl("marketplace/account/startchat/")."seller/".$partner['seller_id']; ?>" class="btn btn-warning btn-sm"><i class="fa fa-comment"></i> Chat</a></p>
+			<?php }else{ ?>
+				<a href="javascript:void(0);" disabled="disabled" class="disabled btn btn-warning btn-sm"><i class="fa fa-comment"></i> Chat</a></p>
+			<?php } ?>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+<div class="store_profile_list">
+	<span data-action="toggle-nav" class="action nav-toggle"><span>Toggle Nav</span></span>
+    <nav class="navigation">
+    	 <?php if($loged_in){ ?>
+        	<a id="update-banner-slides" href="javascript:void(0);" class="btn btn-primary btn-sm">Upload Banner (Slides)</a>
+        <?php } ?>
+        <ul class="top-level-ul" >
+            <li class ="level0 has-active" >
+            	<a class="level-top" href="<?php echo $helper->getRewriteUrl('marketplace/seller/profile/shop/'.$partner['shop_url']);?>">
+            		<?php echo __("Store Home"); ?>
+            	</a>
+            </li>
+            <li class ="level0" >
+            	<a class="level-top" href="<?php echo $helper->getRewriteUrl('marketplace/seller/sellerproducts/shop/'.$partner['shop_url']);?>">
+            		<?php echo __("Products"); ?>
+            	</a>
+            </li>
+            <li class ="level0" >
+            	<a class="level-top" href="<?php echo $helper->getRewriteUrl('marketplace/seller/sellersaleitems/shop/'.$partner['shop_url']);?>">
+            		<?php echo __("Sale Items"); ?>
+            	</a>
+            </li>
+            <li class ="level0" >
+            	<a class="level-top" href="<?php echo $helper->getRewriteUrl('marketplace/seller/sellertopselling/shop/'.$partner['shop_url']);?>">
+            		<?php echo __("Top Selling"); ?>
+            	</a>
+            </li>
+            <li class ="level0" >
+            	<a class="level-top" href="<?php echo $helper->getRewriteUrl('marketplace/seller/sellernewarrivals/shop/'.$partner['shop_url']);?>">
+            		<?php echo __("New Arrivals"); ?>
+            	</a>
+            </li>
+            <li class ="level0" >
+            	<a class="level-top" href="<?php echo $this->getUrl().'marketplace/seller/feedback/shop/'.$partner['shop_url'];?>" >
+            		<?php echo __("Feedback"); ?>
+            	</a>
+            </li>
+            <li class ="level0" >
+            	<a class="level-top" href="<?php echo $helper->getRewriteUrl('marketplace/seller/sellercontact/shop/'.$partner['shop_url']);?>">
+            		<?php echo __("Contact Details"); ?>
+            	</a>
+            </li>
+        </ul>
+       
+    </nav>
+</div>
+<!-- slider -->
+<?php if(!empty($partner['slider_pic1']) || !empty($partner['slider_pic2']) || !empty($partner['slider_pic3'])){ $count = 0; ?>
+
+<div class="recomend_sec">
+	<div class="container">
+		<div class="main_recomend">
+			<div id="seller-slider" class="carousel slide" data-ride="carousel">
+			  <!-- Indicators -->
+			  <ol class="carousel-indicators">
+			  	
+			  	<?php //echo $helper->getMediaUrl().'avatar/'.$partner['slider_pic1']; 
+			  	//echo file_exists($helper->getMediaUrl().'avatar/'.$partner['slider_pic1']);
+
+			  	//print_r(@getimagesize($helper->getMediaUrl().'avatar/'.$partner['slider_pic1'])[0]);
+			  	$slider_pic1 = $helper->getMediaUrl().'avatar/'.$partner['slider_pic1'];
+			  	$slider_pic2 = $helper->getMediaUrl().'avatar/'.$partner['slider_pic2'];
+			  	$slider_pic3 = $helper->getMediaUrl().'avatar/'.$partner['slider_pic3'];
+
+			  	$slider_pic_size1 = @getimagesize($slider_pic1);
+			  	$slider_pic_size2 = @getimagesize($slider_pic2);
+			  	$slider_pic_size3 = @getimagesize($slider_pic3);
+			  	
+
+			  	if(!empty($partner['slider_pic1']) &&  isset($slider_pic_size1[0]) &&  $slider_pic_size1[0]){  ?>
+
+			    <li data-target="#seller-slider" data-slide-to="0" class="active" ></li>
+			    
+			    <?php } if(!empty($partner['slider_pic2']) &&  isset($slider_pic_size2[0]) &&  $slider_pic_size2[0]){  ?>
+
+			    <li data-target="#seller-slider" data-slide-to="1"></li>
+			    
+			    <?php } if(!empty($partner['slider_pic3']) &&  isset($slider_pic_size3[0]) &&  $slider_pic_size3[0]){  ?>
+
+			    <li data-target="#seller-slider" data-slide-to="2"></li>
+			    
+			    <?php }	?>
+
+			  </ol>
+
+			  <!-- Wrapper for slides -->
+			  <div class="carousel-inner" role="listbox">
+
+			  <?php if(!empty($partner['slider_pic1']) &&  isset($slider_pic_size1[0]) &&  $slider_pic_size1[0]){ $count++;
+			  	?>
+			  		<div class="item active">
+			  			<?php $slider_url1 = (preg_match("@^http?://@", $partner['slider_url1']) || preg_match("@^https?://@", $partner['slider_url1']))?$partner['slider_url1']:$this->getBaseUrl().$partner['slider_url1']; ?>
+				      	<a href="<?php echo ($slider_url1!="")?$slider_url1:'#'; ?>" ><img src="<?php echo $helper->getMediaUrl().'avatar/'.$partner['slider_pic1']; ?>" alt="image alt text" /></a>
+				    </div>
+			  	<?php
+			  	} ?>
+
+			  	<?php if(!empty($partner['slider_pic2']) &&  isset($slider_pic_size2[0]) &&  $slider_pic_size2[0]){ $count++;
+			  	?>
+			  		<?php $slider_url2 = (preg_match("@^http?://@", $partner['slider_url2']) || preg_match("@^https?://@", $partner['slider_url2']))?$partner['slider_url2']:$this->getBaseUrl().$partner['slider_url2']; ?>
+
+			  		<div class="item">
+				      	<a href="<?php echo ($slider_url2!="")?$slider_url2:'#'; ?>"><img src="<?php echo $helper->getMediaUrl().'avatar/'.$partner['slider_pic2']; ?>" alt="image alt text" /></a>
+				    </div>
+			  	<?php
+			  	} ?>
+
+			  	<?php if(!empty($partner['slider_pic3']) &&  isset($slider_pic_size3[0]) &&  $slider_pic_size3[0]){ $count++;
+			  	?>
+			  		<?php $slider_url3 = (preg_match("@^http?://@", $partner['slider_url3']) || preg_match("@^https?://@", $partner['slider_url3']))?$partner['slider_url3']:$this->getBaseUrl().$partner['slider_url3']; ?>
+
+			  		<div class="item">
+				      	<a href="<?php echo ($slider_url3!="")?$slider_url3:'#'; ?>"><img src="<?php echo $helper->getMediaUrl().'avatar/'.$partner['slider_pic3']; ?>" alt="image alt text" /></a>
+				    </div>
+			  	<?php
+			  	} ?>
+			   
+			   <!--  <div class="item">
+			      <img src="<?php echo $block->getViewFileUrl('images/slider1.jpg'); ?>" alt="image alt text" />
+			      <div class="carousel-caption">
+			        <h1>Womens Clothing</h1>
+			        <p>Flat 40% off</p>
+			        <a href="#">Shop Now</a>
+			      </div>
+			    </div>
+			    -->
+			  </div>
+			<?php if($count>1){ ?>
+				<!-- Controls -->
+			  <a class="left carousel-control" href="#seller-slider" role="button" data-slide="prev">
+			    <i aria-hidden="true" class="fa fa-angle-double-left"></i>
+			  </a>
+			  <a class="right carousel-control" href="#seller-slider" role="button" data-slide="next">
+			    <i aria-hidden="true" class="fa fa-angle-double-right"></i>
+			  </a>
+			<?php } ?>
+			</div>
+		</div>
+	</div>
+</div>
+<?php } ?>
+
+<!-- <div class="spacial_offers">
+	<div class="top-container">
+		<div class="row">
+			<div class="col-md-3 col-sm-3">
+				<div class="offer_box">
+					<div class="offer_box_inner">
+						<div class="offer_main_inner">
+							<h3>US $2 off US $28</h3>
+							<a href="#">get it now</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3 col-sm-3">
+				<div class="offer_box">
+					<div class="offer_box_inner">
+						<div class="offer_main_inner">
+							<h3>US $2 off US $28</h3>
+							<a href="#">get it now</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3 col-sm-3">
+				<div class="offer_box">
+					<div class="offer_box_inner">
+						<div class="offer_main_inner">
+							<h3>US $2 off US $28</h3>
+							<a href="#">get it now</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3 col-sm-3">
+				<div class="offer_box">
+					<div class="offer_box_inner">
+						<div class="offer_main_inner">
+							<h3>US $2 off US $28</h3>
+							<a href="#">get it now</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div> -->
+
+
+
+<!-- Latest Products -->
+<?php $latest_prodcollection = $this->getLatestProducts();
+	$productcount = 6;
+	$imagewidth = 150;
+	$imageheight = 150;
+ 	$mode = 'grid';
+  	$title = __('Latest Products');
+ 	$type = 'widget-bestseller-grid';
+ 	$image = 'bestseller_products_content_widget_grid';
+ ?>
+<section class="recomend_sec">
+	<div class="container">
+        <div class="main_recomend you_sec reco">
+            <h3><?php /* @escapeNotVerified */ echo $title; ?>
+            <?php if($loged_in){ ?>
+        		<a href="<?php echo $this->getUrl("marketplace/product/create/"); ?>" class="btn btn-success pull-right btn-sm">Add New Product</a>
+        	<?php } ?>
+            </h3>
+                <div id="products_carousal0">
+                <?php $iterator = 1; ?>
+                <?php 
+                $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                $Bestsellerwidget = $objectManager->get('Emizentech\Bestsellerwidget\Block\Widget\Bestsellerdproduct');
+                foreach ($latest_prodcollection as $item):     
+                //print_r(get_class_methods(get_class($item)));
+                //print_r($item->getData());
+            	$itemData = $item->getData();
+                $_product = $objectManager->get('Magento\Catalog\Model\Product')->load($itemData["entity_id"]);
+                //var_dump($_product->getData()); die;
+               ?>
+                <?php 
+                $image_url = $block->imageHelperObj()->init($_product, 'product_page_image_small')
+                                        ->setImageFile($_product->getFile())
+                                        ->resize($imagewidth,$imageheight)
+                                        ->getUrl();
+                                        
+                ?>
+                <div class="recomend_slider col-lg-2">
+                    <div class="main_product">
+                        <a href="<?php /* @escapeNotVerified */ echo $item->getProductUrl() ?>">
+                            <h4> <?php echo $block->escapeHtml($_product->getName()) ?></h4>
+                            <img src="<?php echo  $image_url;?>" alt="<?php echo $this->escapeHtml($_product->getName()) ?>" class="img-responsive">
+                            <div class="price">
+
+                               <span class="pull-left">$ <?php echo $_product->getFinalPrice(); ?></span>
+
+                            <?php if(!empty($_product->getFinalPrice()) && $_product->getData()["price"] && $_product->getFinalPrice() < $_product->getData()["price"]): ?>
+                                <span class="strike_price pull-right">$ <?php echo round($_product->getData()["price"],2); ?></span>
+                            <?php endif; ?>
+                            <?php 
+
+                            // echo "1_".$_product->getFinalPrice();
+                            // echo "2_".$_product->getData()["price"];
+                            // echo "3_".$block->getProductPrice($_product);
+                            //print_r($_product->getData()); die;
+                           /* $_formattedActualPrice = (isset($_product->getData()["price"])?$_product->getData()["price"]:$block->getProductPrice($_product));
+
+	                        $_formattedSpecialPrice = $_product->getFinalPrice();
+
+                            if($_formattedActualPrice>$_formattedSpecialPrice){ ?>
+                            	<span class="strike_price pull-right" ><?php echo round($_formattedSpecialPrice, 2);  ?></span>
+                            <?php } ?>
+                            <?php  echo $block->getProductPrice($_product) */?>
+
+                            </div>
+                        </a>
+                            <div class="action_btn">
+                            <?php if ($this->helper('Magento\Wishlist\Helper\Data')->isAllow()): ?>
+                                
+                                        <?php
+                                            $postDataHelper = $this->helper('Magento\Framework\Data\Helper\PostHelper');
+                                            $postData = $postDataHelper->getPostData($this->getBaseUrl()."wishlist/index/add/", ['product' => $_product->getId()]);
+                                        ?>
+                                        
+                                        <a class="fa fa-heart"
+                                                data-post='<?php /* @escapeNotVerified */ echo $postData; ?>'
+                                                type="button" title="<?php /* @escapeNotVerified */ echo __('Add to Wishlist') ?>">
+                                        </a>
+                                   
+
+                            <?php endif; ?>
+                                            <!-- Add to cart action -->
+                            <?php if ($_product->isSaleable()): ?>
+                                   
+                                        <?php
+                                            $postDataHelper = $this->helper('Magento\Framework\Data\Helper\PostHelper');
+                                            $postData = $postDataHelper->getPostData($block->getAddToCartUrl($_product), ['product' => $_product->getId()]);
+                                        ?>
+                                        <a class="fa fa-shopping-cart"
+                                                data-post='<?php /* @escapeNotVerified */ echo $postData; ?>'
+                                                type="button" title="<?php /* @escapeNotVerified */ echo __('Add to Cart') ?>">
+                                        </a>
+                                <?php else: ?>
+                                    <?php if ($_product->getIsSalable()): ?>
+                                        <div class="stock available"><span><?php /* @escapeNotVerified */ echo __('In stock') ?></span></div>
+                                    <?php else: ?>
+                                        <div class="stock unavailable"><span><?php /* @escapeNotVerified */ echo __('Out of stock') ?></span></div>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                                <a href="<?php /* @escapeNotVerified */ echo $item->getProductUrl() ?>" class="fa fa-search"></a>
+                            </div>
+                    </div> <!-- main_product -->
+                </div> 
+                <?php endforeach ?>
+            </div> <!-- row -->
+            <?php if(count($latest_prodcollection) > 2 ){ ?>
+            <div class="carousal_control">
+                <a id="carousal_pre0" class="prev" href="#"><i class="fa fa-angle-left" aria-hidden="true"></i></a>
+                <a id="carousal_next0" class="next" href="#"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+            </div>
+            <?php } ?>
+            <div class="clearfix"></div>
+        </div> <!-- main_recomend -->
+    </div>
+</section>
+
+
+<!-- Sale Products -->
+<?php
+$_productCollection = $block->getLatestProducts();
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+?>
+<?php if (!$_productCollection->count()): ?>
+    <div class="container">
+    	<div class="message info empty"><div><?php /* @escapeNotVerified */ echo __('We can\'t find products matching the selection.') ?></div></div>
+    </div>
+<?php else: ?>
+    <?php
+    
+        $viewMode = 'grid';
+        $image = 'category_page_grid';
+        $showDescription = false;
+        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+    
+    ?>
+    <div class="container">
+        <div class="products wrapper products_wrapper <?php /* @escapeNotVerified */ echo $viewMode; ?> products-<?php /* @escapeNotVerified */ echo $viewMode; ?>">
+            <h3>Latest Products
+           
+            </h3>
+            <?php $iterator = 1; ?>
+            <ol class="products list items product-items" id="products_carousal1">
+                <?php /** @var $_product \Magento\Catalog\Model\Product */ ?>
+                <?php foreach ($_productCollection as $_product): 
+
+                ?>
+                    <?php /* @escapeNotVerified */ echo($iterator++ == 1) ? '<li class="item product">' : '</li><li class="item product">' ?>
+                    <div class="product-item-info" data-container="product-grid">
+                        <?php
+                        $productImage = $block->getImage($_product, $image);
+                       /* if ($pos != null) {
+                            $position = ' style="left:' . $productImage->getWidth() . 'px;'
+                                . 'top:' . $productImage->getHeight() . 'px;"';
+                        }*/
+                        ?>
+                        <?php // Product Image ?>
+                        <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+                            <?php echo $productImage->toHtml(); ?>
+                        </a>
+                        <div class="product details product-item-details">
+                            <?php
+                                $_productNameStripped = $block->stripTags($_product->getName(), null, true);
+                            ?>
+                            <strong class="product name product-item-name">
+                                <a class="product-item-link"
+                                   href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>">
+                                    <?php /* @escapeNotVerified */ echo $_helper->productAttribute($_product, $_product->getName(), 'name'); ?>
+                                </a>
+                            </strong>
+                            <?php 
+
+                            $_formattedActualPrice = (isset($_product->getData()["price"])?$_product->getData()["price"]:$block->getProductPrice($_product));
+
+	                        $_formattedSpecialPrice = $_product->getFinalPrice();
+
+                            if($_formattedActualPrice>$_formattedSpecialPrice){ ?>
+                            	<span><?php echo round((($_formattedActualPrice-$_formattedSpecialPrice)/$_formattedActualPrice)*100, 2);  ?>% Off</span>
+                            <?php } ?>
+                            <?php /* @escapeNotVerified */ echo $block->getProductPrice($_product) ?>
+                            <?php echo $block->getReviewsSummaryHtml($_product, $templateType); ?>
+
+                            <?php echo $block->getProductDetailsHtml($_product); ?>
+
+                            <div class="product-item-inner">
+                                <div class="product actions product-item-actions"<?php //echo strpos($pos, $viewMode . '-actions') ? $position : ''; ?>>
+                                    <div class="actions-primary"<?php //echo strpos($pos, $viewMode . '-primary') ? $position : ''; ?>>
+                                    
+                                         <?php if ($this->helper('Magento\Wishlist\Helper\Data')->isAllow()): ?>
+                                            <a href="#"
+                                               class="action towishlist fa fa-heart-o"
+                                               title="<?php echo $block->escapeHtml(__('Add to Wish List')); ?>"
+                                               aria-label="<?php echo $block->escapeHtml(__('Add to Wish List')); ?>"
+                                               data-post='<?php /* @escapeNotVerified */ echo $block->getAddToWishlistParams($_product); ?>'
+                                               data-action="add-to-wishlist"
+                                               role="button">
+                                            </a>
+                                        <?php endif; ?>
+
+                                        <?php if ($_product->isSaleable()): ?>
+                                            <?php /*$postParams = $block->getAddToCartPostParams($_product);*/ ?>
+                                            <!-- <form data-role="tocart-form" action="<?php /* @escapeNotVerified */ //echo $postParams['action']; ?>" method="post">
+                                                <input type="hidden" name="product" value="<?php /* @escapeNotVerified */ //echo $postParams['data']['product']; ?>">
+                                                <input type="hidden" name="<?php /* @escapeNotVerified */ //echo Action::PARAM_NAME_URL_ENCODED; ?>" value="<?php /* @escapeNotVerified */ //echo $postParams['data'][Action::PARAM_NAME_URL_ENCODED]; ?>">
+                                                <?php //echo $block->getBlockHtml('formkey')?>
+                                                <button type="submit"
+                                                        title="<?php //echo $block->escapeHtml(__('Add to Cart')); ?>"
+                                                        class="action tocart fa fa-shopping-cart">
+                                                </button>
+                                            </form> -->
+
+                                        <a href="<?php /* @escapeNotVerified */ echo $this->getAddToCartUrl($_product); ?>"
+                                           class="fa fa-shopping-cart"
+                                           title="<?php echo $block->escapeHtml(__('View Item')); ?>"
+                                           aria-label="<?php echo $block->escapeHtml(__('View Item')); ?>"
+                                           role="button">
+                                        </a>
+
+                                        <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>"
+                                           class="fa fa-search"
+                                           title="<?php echo $block->escapeHtml(__('View Item')); ?>"
+                                           aria-label="<?php echo $block->escapeHtml(__('View Item')); ?>"
+                                           role="button">
+                                        </a>
+
+                                       
+                                        <?php
+
+                                       // $compareHelper = $this->helper('Magento\Catalog\Helper\Product\Compare');
+                                        ?>
+                                        <!-- <a href="#"
+                                           class="action tocompare"
+                                           title="<?php //echo $block->escapeHtml(__('Add to Compare')); ?>"
+                                           aria-label="<?php //echo $block->escapeHtml(__('Add to Compare')); ?>"
+                                           data-post='<?php /* @escapeNotVerified */ //echo $compareHelper->getPostDataParams($_product); ?>'
+                                           role="button">
+                                        </a> -->
+
+
+                                        <?php else: ?>
+                                            <?php if ($_product->getIsSalable()): ?>
+                                                <div class="stock available"><span><?php /* @escapeNotVerified */ echo __('In stock') ?></span></div>
+                                            <?php else: ?>
+                                                <div class="stock unavailable"><span><?php /* @escapeNotVerified */ echo __('Out of stock') ?></span></div>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php echo($iterator == count($_productCollection)+1) ? '</li>' : '' ?>
+                <?php endforeach; ?>
+            </ol>
+            <?php if(count($_productCollection) > 2 ){ ?>
+            <div class="carousal_control">
+                <a id="carousal_pre1" class="prev" href="#"><i class="fa fa-angle-left" aria-hidden="true"></i></a>
+                <a id="carousal_next1" class="next" href="#"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+            </div>
+            <?php } ?>
+        </div>
+    </div>
+
+   
+<?php endif; ?>
+
+<!-- Latest Products -->
+<?php $latest_prodcollection = $this->getLatestProducts();
+	$productcount = 6;
+	$imagewidth = 150;
+	$imageheight = 150;
+ 	$mode = 'grid';
+  	$title = __('Latest Products');
+ 	$type = 'widget-bestseller-grid';
+ 	$image = 'bestseller_products_content_widget_grid';
+ ?>
+
+<section class="recomend_sec">
+	<div class="container">
+
+ <div class="main_recomend you_sec reco">
+            <h3><?php /* @escapeNotVerified */ echo $title; ?>
+            <?php if($loged_in){ ?>
+        		<a href="<?php echo $this->getUrl("marketplace/product/create/"); ?>" class="btn btn-success pull-right btn-sm">Add New Product</a>
+        	<?php } ?>
+            </h3>
+
+	<div class="products_wrapper wrapper grid"> 
+	<ol class="list items"> 
+
+
+
+
+		<?php $iterator = 1; ?>
+        <?php 
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $Bestsellerwidget = $objectManager->get('Emizentech\Bestsellerwidget\Block\Widget\Bestsellerdproduct');
+        foreach ($latest_prodcollection as $item):     
+        //print_r(get_class_methods(get_class($item)));
+        //print_r($item->getData());
+    	$itemData = $item->getData();
+        $_product = $objectManager->get('Magento\Catalog\Model\Product')->load($itemData["entity_id"]);
+        //var_dump($_product->getData()); die;
+       ?>
+       
+        <?php 
+        $image_url = $block->imageHelperObj()->init($_product, 'product_page_image_small')
+                                ->setImageFile($_product->getFile())
+                                ->resize($imagewidth,$imageheight)
+                                ->getUrl();
+                                
+        ?>
+
+		<li class="item product"> 
+			<div class="product-item-info" data-container="product-grid"> 
+				<a href="<?php /* @escapeNotVerified */ echo $item->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+					<img class="product-image-photo" src="<?php echo  $image_url;?>" alt="<?php echo $this->escapeHtml($_product->getName()) ?>"/>
+				</a> 
+				<div class="product-item-details"> 
+
+					<strong class="product-item-name"> 
+						<a class="product-item-link" href="<?php /* @escapeNotVerified */ echo $item->getProductUrl() ?>"> <?php echo $block->escapeHtml($_product->getName()) ?> </a> 
+					</strong> 
+
+					<?php if(!empty($_product->getFinalPrice()) && $_product->getData()["price"] && $_product->getFinalPrice() < $_product->getData()["price"]): ?>
+                        <span><?php echo (($_product->getData()["price"]-$_product->getFinalPrice())/$_product->getData()["price"])*100; ?>% Off</span> 
+                    <?php endif; ?>
+					
+
+					<div class="price-box price-final_price" data-role="priceBox" data-product-id="<?php /* @escapeNotVerified */ echo $item->getId() ?>"> 
+						<span class="price-final_price tax weee">
+							<span class="price">$ <?php echo $_product->getFinalPrice(); ?></span>
+						</span>
+					</div> 
+
+					<div class="product-reviews-summary short"> 
+						<div class="rating-summary"> 
+							<span class="label">
+								<span>Rating:</span>
+							</span> 
+							<div class="rating-result" title="80%"> 
+								<span style="width:80%"><span>80%</span></span> 
+							</div> 
+						</div> 
+						<div class="reviews-actions"> 
+							<a class="action view" href="#">2 <span>Reviews</span></a> 
+						</div> 
+					</div> 
+					<div class="product-item-inner"> 
+						<div class="actions-primary"> 
+
+							<?php if ($this->helper('Magento\Wishlist\Helper\Data')->isAllow()): ?>
+                                
+                                        <?php
+                                            $postDataHelper = $this->helper('Magento\Framework\Data\Helper\PostHelper');
+                                            $postData = $postDataHelper->getPostData($this->getBaseUrl()."wishlist/index/add/", ['product' => $_product->getId()]);
+                                        ?>
+                                        <a href="#" class="action towishlist fa fa-heart-o" title="<?php /* @escapeNotVerified */ echo __('Add to Wishlist') ?>" aria-label="<?php /* @escapeNotVerified */ echo __('Add to Wishlist') ?>" data-post='<?php /* @escapeNotVerified */ echo $postData; ?>' data-action="add-to-wishlist" role="button"></a> 
+                                        
+
+                            <?php endif; ?>
+							
+							 <?php if ($_product->isSaleable()): ?>
+                                        <?php $postDataHelper = $this->helper('Magento\Framework\Data\Helper\PostHelper');
+                                            $postData = $postDataHelper->getPostData($block->getAddToCartUrl($_product), ['product' => $_product->getId()]); 
+                                            // print_r($postData);
+                                            $postData = json_decode($postData); 
+                                            // print_r($postData);
+                                             ?>
+                                        <form data-role="tocart-form" action="<?php /* @escapeNotVerified */ echo $block->getAddToCartUrl($_product); ?>" method="post">
+
+                                            <input type="hidden" name="product" value="<?php /* @escapeNotVerified */ echo $_product->getId(); ?>">
+                                             <input type="hidden" name="<?php /* @escapeNotVerified */ echo "uenc"; ?>" value="<?php /* @escapeNotVerified */ echo $postData->data->uenc; ?>">
+
+                                            <?php echo $block->getBlockHtml('formkey')?>
+                                            <button type="submit"
+                                                    title="<?php echo $block->escapeHtml(__('Add to Cart')); ?>"
+                                                    class="action tocart fa fa-shopping-cart">
+                                            </button>
+                                        </form>
+
+                                    <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>"
+                                       class="fa fa-search"
+                                       title="<?php echo $block->escapeHtml(__('View Item')); ?>"
+                                       aria-label="<?php echo $block->escapeHtml(__('View Item')); ?>"
+                                       role="button">
+                                    </a>
+
+                                   
+                                    <?php
+                                   // $compareHelper = $this->helper('Magento\Catalog\Helper\Product\Compare');
+                                    ?>
+                                    <!-- <a href="#"
+                                       class="action tocompare"
+                                       title="<?php //echo $block->escapeHtml(__('Add to Compare')); ?>"
+                                       aria-label="<?php //echo $block->escapeHtml(__('Add to Compare')); ?>"
+                                       data-post='<?php /* @escapeNotVerified */ //echo $compareHelper->getPostDataParams($_product); ?>'
+                                       role="button">
+                                    </a> -->
+
+
+                                    <?php else: ?>
+                                        <?php if ($_product->getIsSalable()): ?>
+                                            <div class="stock available"><span><?php /* @escapeNotVerified */ echo __('In stock') ?></span></div>
+                                        <?php else: ?>
+                                            <div class="stock unavailable"><span><?php /* @escapeNotVerified */ echo __('Out of stock') ?></span></div>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+
+
+						</div> 
+					</div> 
+				</div> 
+			</div> 
+		</li> 
+		 <?php endforeach ?>
+            </ol> <!-- row -->
+            <?php if(count($latest_prodcollection) > 2 ){ ?>
+            <div class="carousal_control">
+                <a id="carousal_pre0" class="prev" href="#"><i class="fa fa-angle-left" aria-hidden="true"></i></a>
+                <a id="carousal_next0" class="next" href="#"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+            </div>
+            <?php } ?>
+            <div class="clearfix"></div>
+</div>
+</div>
+
+</div>
+</section>
+
+<section class="recomend_sec">
+	<div class="container">
+        <div class="main_recomend you_sec reco">
+            <h3><?php /* @escapeNotVerified */ echo $title; ?>
+            <?php if($loged_in){ ?>
+        		<a href="<?php echo $this->getUrl("marketplace/product/create/"); ?>" class="btn btn-success pull-right btn-sm">Add New Product</a>
+        	<?php } ?>
+            </h3>
+                <div id="products_carousal0">
+                <?php $iterator = 1; ?>
+                <?php 
+                $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                $Bestsellerwidget = $objectManager->get('Emizentech\Bestsellerwidget\Block\Widget\Bestsellerdproduct');
+                foreach ($latest_prodcollection as $item):     
+                //print_r(get_class_methods(get_class($item)));
+                //print_r($item->getData());
+            	$itemData = $item->getData();
+                $_product = $objectManager->get('Magento\Catalog\Model\Product')->load($itemData["entity_id"]);
+                //var_dump($_product->getData()); die;
+               ?>
+                <?php 
+                $image_url = $block->imageHelperObj()->init($_product, 'product_page_image_small')
+                                        ->setImageFile($_product->getFile())
+                                        ->resize($imagewidth,$imageheight)
+                                        ->getUrl();
+                                        
+                ?>
+                <div class="recomend_slider col-lg-2">
+                    <div class="main_product">
+                        <a href="<?php /* @escapeNotVerified */ echo $item->getProductUrl() ?>">
+                            <h4> <?php echo $block->escapeHtml($_product->getName()) ?></h4>
+                            <img src="<?php echo  $image_url;?>" alt="<?php echo $this->escapeHtml($_product->getName()) ?>" class="img-responsive">
+                            <div class="price">
+
+                               <span class="pull-left">$ <?php echo $_product->getFinalPrice(); ?></span>
+
+                            <?php if(!empty($_product->getFinalPrice()) && $_product->getData()["price"] && $_product->getFinalPrice() < $_product->getData()["price"]): ?>
+                                <span class="strike_price pull-right">$ <?php echo round($_product->getData()["price"],2); ?></span>
+                            <?php endif; ?>	
+                            <?php 
+
+                            // echo "1_".$_product->getFinalPrice();
+                            // echo "2_".$_product->getData()["price"];
+                            // echo "3_".$block->getProductPrice($_product);
+                            //print_r($_product->getData()); die;
+                           /* $_formattedActualPrice = (isset($_product->getData()["price"])?$_product->getData()["price"]:$block->getProductPrice($_product));
+
+	                        $_formattedSpecialPrice = $_product->getFinalPrice();
+
+                            if($_formattedActualPrice>$_formattedSpecialPrice){ ?>
+                            	<span class="strike_price pull-right" ><?php echo round($_formattedSpecialPrice, 2);  ?></span>
+                            <?php } ?>
+                            <?php  echo $block->getProductPrice($_product) */?>
+
+                            </div>
+                        </a>
+                            <div class="action_btn">
+                            <?php if ($this->helper('Magento\Wishlist\Helper\Data')->isAllow()): ?>
+                                
+                                        <?php
+                                            $postDataHelper = $this->helper('Magento\Framework\Data\Helper\PostHelper');
+                                            $postData = $postDataHelper->getPostData($this->getBaseUrl()."wishlist/index/add/", ['product' => $_product->getId()]);
+                                        ?>
+                                        
+                                        <a class="fa fa-heart"
+                                                data-post='<?php /* @escapeNotVerified */ echo $postData; ?>'
+                                                type="button" title="<?php /* @escapeNotVerified */ echo __('Add to Wishlist') ?>">
+                                        </a>
+                                   
+
+                            <?php endif; ?>
+                                            <!-- Add to cart action -->
+                            <?php if ($_product->isSaleable()): ?>
+                                   
+                                        <?php
+                                            $postDataHelper = $this->helper('Magento\Framework\Data\Helper\PostHelper');
+                                            $postData = $postDataHelper->getPostData($block->getAddToCartUrl($_product), ['product' => $_product->getId()]);
+                                        ?>
+                                        <a class="fa fa-shopping-cart"
+                                                data-post='<?php /* @escapeNotVerified */ echo $postData; ?>'
+                                                type="button" title="<?php /* @escapeNotVerified */ echo __('Add to Cart') ?>">
+                                        </a>
+                                <?php else: ?>
+                                    <?php if ($_product->getIsSalable()): ?>
+                                        <div class="stock available"><span><?php /* @escapeNotVerified */ echo __('In stock') ?></span></div>
+                                    <?php else: ?>
+                                        <div class="stock unavailable"><span><?php /* @escapeNotVerified */ echo __('Out of stock') ?></span></div>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                                <a href="<?php /* @escapeNotVerified */ echo $item->getProductUrl() ?>" class="fa fa-search"></a>
+                            </div>
+                    </div> <!-- main_product -->
+                </div> 
+                <?php endforeach ?>
+            </div> <!-- row -->
+            <?php if(count($latest_prodcollection) > 2 ){ ?>
+            <div class="carousal_control">
+                <a id="carousal_pre0" class="prev" href="#"><i class="fa fa-angle-left" aria-hidden="true"></i></a>
+                <a id="carousal_next0" class="next" href="#"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+            </div>
+            <?php } ?>
+            <div class="clearfix"></div>
+        </div> <!-- main_recomend -->
+    </div>
+</section>
+
+
+
+<!-- Sale Products -->
+<?php
+$_productCollection = $block->getSalesProducts();
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+?>
+<?php if (!$_productCollection->count()): ?>
+    <div class="container">
+    	<div class="message info empty"><div><?php /* @escapeNotVerified */ echo __('We can\'t find products matching the selection.') ?></div></div>
+    </div>
+<?php else: ?>
+    <?php
+    
+        $viewMode = 'grid';
+        $image = 'category_page_grid';
+        $showDescription = false;
+        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+    
+    ?>
+    <div class="container">
+        <div class="products wrapper products_wrapper <?php /* @escapeNotVerified */ echo $viewMode; ?> products-<?php /* @escapeNotVerified */ echo $viewMode; ?>">
+            <h3>Sale Products
+            <?php if($loged_in){ ?>
+            	<a href="<?php echo $this->getUrl("marketplace/product/productlist/"); ?>" class="btn btn-success pull-right btn-sm">Add New Sale on Product</a>
+            <?php } ?>
+            </h3>
+            <?php $iterator = 1; ?>
+            <ol class="products list items product-items" id="products_carousal1">
+                <?php /** @var $_product \Magento\Catalog\Model\Product */ ?>
+                <?php foreach ($_productCollection as $_product): 
+
+                ?>
+                    <?php /* @escapeNotVerified */ echo($iterator++ == 1) ? '<li class="item product">' : '</li><li class="item product">' ?>
+                    <div class="product-item-info" data-container="product-grid">
+                        <?php
+                        $productImage = $block->getImage($_product, $image);
+                       /* if ($pos != null) {
+                            $position = ' style="left:' . $productImage->getWidth() . 'px;'
+                                . 'top:' . $productImage->getHeight() . 'px;"';
+                        }*/
+                        ?>
+                        <?php // Product Image ?>
+                        <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+                            <?php echo $productImage->toHtml(); ?>
+                        </a>
+                        <div class="product details product-item-details">
+                            <?php
+                                $_productNameStripped = $block->stripTags($_product->getName(), null, true);
+                            ?>
+                            <strong class="product name product-item-name">
+                                <a class="product-item-link"
+                                   href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>">
+                                    <?php /* @escapeNotVerified */ echo $_helper->productAttribute($_product, $_product->getName(), 'name'); ?>
+                                </a>
+                            </strong>
+                            <?php 
+
+                            $_formattedActualPrice = (isset($_product->getData()["price"])?$_product->getData()["price"]:$block->getProductPrice($_product));
+
+	                        $_formattedSpecialPrice = $_product->getFinalPrice();
+
+                            if($_formattedActualPrice>$_formattedSpecialPrice){ ?>
+                            	<span><?php echo round((($_formattedActualPrice-$_formattedSpecialPrice)/$_formattedActualPrice)*100, 2);  ?>% Off</span>
+                            <?php } ?>
+                            <?php /* @escapeNotVerified */ echo $block->getProductPrice($_product) ?>
+                            <?php echo $block->getReviewsSummaryHtml($_product, $templateType); ?>
+
+                            <?php echo $block->getProductDetailsHtml($_product); ?>
+
+                            <div class="product-item-inner">
+                                <div class="product actions product-item-actions"<?php //echo strpos($pos, $viewMode . '-actions') ? $position : ''; ?>>
+                                    <div class="actions-primary"<?php //echo strpos($pos, $viewMode . '-primary') ? $position : ''; ?>>
+                                    
+                                         <?php if ($this->helper('Magento\Wishlist\Helper\Data')->isAllow()): ?>
+                                            <a href="#"
+                                               class="action towishlist fa fa-heart-o"
+                                               title="<?php echo $block->escapeHtml(__('Add to Wish List')); ?>"
+                                               aria-label="<?php echo $block->escapeHtml(__('Add to Wish List')); ?>"
+                                               data-post='<?php /* @escapeNotVerified */ echo $block->getAddToWishlistParams($_product); ?>'
+                                               data-action="add-to-wishlist"
+                                               role="button">
+                                            </a>
+                                        <?php endif; ?>
+
+                                        <?php if ($_product->isSaleable()): ?>
+                                            <?php /*$postParams = $block->getAddToCartPostParams($_product);*/ ?>
+                                            <!-- <form data-role="tocart-form" action="<?php /* @escapeNotVerified */ //echo $postParams['action']; ?>" method="post">
+                                                <input type="hidden" name="product" value="<?php /* @escapeNotVerified */ //echo $postParams['data']['product']; ?>">
+                                                <input type="hidden" name="<?php /* @escapeNotVerified */ //echo Action::PARAM_NAME_URL_ENCODED; ?>" value="<?php /* @escapeNotVerified */ //echo $postParams['data'][Action::PARAM_NAME_URL_ENCODED]; ?>">
+                                                <?php //echo $block->getBlockHtml('formkey')?>
+                                                <button type="submit"
+                                                        title="<?php //echo $block->escapeHtml(__('Add to Cart')); ?>"
+                                                        class="action tocart fa fa-shopping-cart">
+                                                </button>
+                                            </form> -->
+
+                                        <a href="<?php /* @escapeNotVerified */ echo $this->getAddToCartUrl($_product); ?>"
+                                           class="fa fa-shopping-cart"
+                                           title="<?php echo $block->escapeHtml(__('View Item')); ?>"
+                                           aria-label="<?php echo $block->escapeHtml(__('View Item')); ?>"
+                                           role="button">
+                                        </a>
+
+                                        <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>"
+                                           class="fa fa-search"
+                                           title="<?php echo $block->escapeHtml(__('View Item')); ?>"
+                                           aria-label="<?php echo $block->escapeHtml(__('View Item')); ?>"
+                                           role="button">
+                                        </a>
+
+                                       
+                                        <?php
+
+                                       // $compareHelper = $this->helper('Magento\Catalog\Helper\Product\Compare');
+                                        ?>
+                                        <!-- <a href="#"
+                                           class="action tocompare"
+                                           title="<?php //echo $block->escapeHtml(__('Add to Compare')); ?>"
+                                           aria-label="<?php //echo $block->escapeHtml(__('Add to Compare')); ?>"
+                                           data-post='<?php /* @escapeNotVerified */ //echo $compareHelper->getPostDataParams($_product); ?>'
+                                           role="button">
+                                        </a> -->
+
+
+                                        <?php else: ?>
+                                            <?php if ($_product->getIsSalable()): ?>
+                                                <div class="stock available"><span><?php /* @escapeNotVerified */ echo __('In stock') ?></span></div>
+                                            <?php else: ?>
+                                                <div class="stock unavailable"><span><?php /* @escapeNotVerified */ echo __('Out of stock') ?></span></div>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php echo($iterator == count($_productCollection)+1) ? '</li>' : '' ?>
+                <?php endforeach; ?>
+            </ol>
+            <?php if(count($_productCollection) > 2 ){ ?>
+            <div class="carousal_control">
+                <a id="carousal_pre1" class="prev" href="#"><i class="fa fa-angle-left" aria-hidden="true"></i></a>
+                <a id="carousal_next1" class="next" href="#"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+            </div>
+            <?php } ?>
+        </div>
+    </div>
+
+   
+<?php endif; ?>
+
+
+
+<!--  Products of the store -->
+<?php
+$_productCollection = $block->getAllProducts();
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+?>
+<?php if (!$_productCollection->count()): ?>
+	<div class="container">
+        <div class="message info empty"><div><?php /* @escapeNotVerified */ echo __('We can\'t find products matching the selection.') ?></div></div>
+    </div>
+<?php else: ?>
+    <?php
+    
+        $viewMode = 'grid';
+        $image = 'category_page_grid';
+        $showDescription = false;
+        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+    
+    ?>
+    <div class="container">
+        <div class="products wrapper products_wrapper <?php /* @escapeNotVerified */ echo $viewMode; ?> products-<?php /* @escapeNotVerified */ echo $viewMode; ?>">
+            <h3>Products of the store</h3>
+            <?php $iterator = 1; ?>
+            <ol class="products list items product-items" id="products_carousal2">
+                <?php /** @var $_product \Magento\Catalog\Model\Product */ ?>
+                <?php foreach ($_productCollection as $_product): 
+
+                ?>
+                    <?php /* @escapeNotVerified */ echo($iterator++ == 1) ? '<li class="item product">' : '</li><li class="item product">' ?>
+                    <div class="product-item-info" data-container="product-grid">
+                        <?php
+                        $productImage = $block->getImage($_product, $image);
+                       /* if ($pos != null) {
+                            $position = ' style="left:' . $productImage->getWidth() . 'px;'
+                                . 'top:' . $productImage->getHeight() . 'px;"';
+                        }*/
+                        ?>
+                        <?php // Product Image ?>
+                        <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+                            <?php echo $productImage->toHtml(); ?>
+                        </a>
+                        <div class="product details product-item-details">
+                            <?php
+                                $_productNameStripped = $block->stripTags($_product->getName(), null, true);
+                            ?>
+                            <strong class="product name product-item-name">
+                                <a class="product-item-link"
+                                   href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>">
+                                    <?php /* @escapeNotVerified */ echo $_helper->productAttribute($_product, $_product->getName(), 'name'); ?>
+                                </a>
+                            </strong>
+
+                            <?php 
+                            $_formattedActualPrice = (isset($_product->getData()["price"])?$_product->getData()["price"]:$block->getProductPrice($_product));
+
+	                        $_formattedSpecialPrice = $_product->getFinalPrice();
+
+                            if($_formattedActualPrice>$_formattedSpecialPrice){ ?>
+                            	<span><?php echo round((($_formattedActualPrice-$_formattedSpecialPrice)/$_formattedActualPrice)*100, 2);  ?>% Off</span>
+                            <?php } ?>
+                            <?php /* @escapeNotVerified */ echo $block->getProductPrice($_product) ?>
+                            <?php echo $block->getReviewsSummaryHtml($_product, $templateType); ?>
+
+                            <?php echo $block->getProductDetailsHtml($_product); ?>
+
+                            <div class="product-item-inner">
+                                <div class="product actions product-item-actions"<?php //echo strpos($pos, $viewMode . '-actions') ? $position : ''; ?>>
+                                    <div class="actions-primary"<?php //echo strpos($pos, $viewMode . '-primary') ? $position : ''; ?>>
+                                    
+                                         <?php if ($this->helper('Magento\Wishlist\Helper\Data')->isAllow()): ?>
+                                            <a href="#"
+                                               class="action towishlist fa fa-heart-o"
+                                               title="<?php echo $block->escapeHtml(__('Add to Wish List')); ?>"
+                                               aria-label="<?php echo $block->escapeHtml(__('Add to Wish List')); ?>"
+                                               data-post='<?php /* @escapeNotVerified */ echo $block->getAddToWishlistParams($_product); ?>'
+                                               data-action="add-to-wishlist"
+                                               role="button">
+                                            </a>
+                                        <?php endif; ?>
+
+                                        <?php if ($_product->isSaleable()): ?>
+                                            <?php /*$postParams = $block->getAddToCartPostParams($_product);*/ ?>
+                                            <!-- <form data-role="tocart-form" action="<?php /* @escapeNotVerified */ //echo $postParams['action']; ?>" method="post">
+                                                <input type="hidden" name="product" value="<?php /* @escapeNotVerified */ //echo $postParams['data']['product']; ?>">
+                                                <input type="hidden" name="<?php /* @escapeNotVerified */ //echo Action::PARAM_NAME_URL_ENCODED; ?>" value="<?php /* @escapeNotVerified */ //echo $postParams['data'][Action::PARAM_NAME_URL_ENCODED]; ?>">
+                                                <?php //echo $block->getBlockHtml('formkey')?>
+                                                <button type="submit"
+                                                        title="<?php //echo $block->escapeHtml(__('Add to Cart')); ?>"
+                                                        class="action tocart fa fa-shopping-cart">
+                                                </button>
+                                            </form> -->
+
+                                        <a href="<?php /* @escapeNotVerified */ echo $this->getAddToCartUrl($_product); ?>"
+                                           class="fa fa-shopping-cart"
+                                           title="<?php echo $block->escapeHtml(__('View Item')); ?>"
+                                           aria-label="<?php echo $block->escapeHtml(__('View Item')); ?>"
+                                           role="button">
+                                        </a>
+
+                                        <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>"
+                                           class="fa fa-search"
+                                           title="<?php echo $block->escapeHtml(__('View Item')); ?>"
+                                           aria-label="<?php echo $block->escapeHtml(__('View Item')); ?>"
+                                           role="button">
+                                        </a>
+
+                                       
+                                        <?php
+
+                                       // $compareHelper = $this->helper('Magento\Catalog\Helper\Product\Compare');
+                                        ?>
+                                        <!-- <a href="#"
+                                           class="action tocompare"
+                                           title="<?php //echo $block->escapeHtml(__('Add to Compare')); ?>"
+                                           aria-label="<?php //echo $block->escapeHtml(__('Add to Compare')); ?>"
+                                           data-post='<?php /* @escapeNotVerified */ //echo $compareHelper->getPostDataParams($_product); ?>'
+                                           role="button">
+                                        </a> -->
+
+
+                                        <?php else: ?>
+                                            <?php if ($_product->getIsSalable()): ?>
+                                                <div class="stock available"><span><?php /* @escapeNotVerified */ echo __('In stock') ?></span></div>
+                                            <?php else: ?>
+                                                <div class="stock unavailable"><span><?php /* @escapeNotVerified */ echo __('Out of stock') ?></span></div>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php echo($iterator == count($_productCollection)+1) ? '</li>' : '' ?>
+                <?php endforeach; ?>
+            </ol>
+            <?php if(count($_productCollection) > 2 ){ ?>
+            <div class="carousal_control">
+                <a id="carousal_pre2" class="prev" href="#"><i class="fa fa-angle-left" aria-hidden="true"></i></a>
+                <a id="carousal_next2" class="next" href="#"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+            </div>
+            <?php } ?>
+        </div>
+    </div>
+
+   
+<?php endif; ?>
+
+
+
+
+<?php //echo $this->getLayout()->createBlock("Emizentech\Bestsellerwidget\Block\Widget\Bestsellerdproduct")->setTemplate("Emizentech_Bestsellerwidget::widget/sellerbestproduct.phtml")->toHtml();?>
+
+<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+ -->
+<script type="text/javascript">
+
+require([
+		    'jquery',
+		    'carouFredSel',
+		    'bootstrap'
+		], function(jQuery, carouFredSel, bootstrap){
+
+			<?php if(!$loged_in){ ?>
+			jQuery("a.follow").on("click", function(){
+				if(jQuery(this).text()=="Follow"){
+					jQuery(this).text("Unfollow");
+					jQuery("#followers_count").text(parseInt(jQuery("#followers_count").text())+1);
+					jQuery(this).removeClass("btn-info");
+					jQuery(this).addClass("btn-primary");
+				}else{
+					jQuery(this).text("Follow");
+					jQuery("#followers_count").text(parseInt(jQuery("#followers_count").text())-1);
+					jQuery(this).removeClass("btn-primary");
+					jQuery(this).addClass("btn-info");
+				}
+				el = this;
+				jQuery.ajax( {
+					    url: jQuery(this).data("url"),
+					    //data: {form_key: window.FORM_KEY},
+					    type: 'GET'
+					}).done(function(a) { 
+						if(!a.success){
+							alert(a.message);
+							if(jQuery(el).text()=="Follow"){
+								jQuery(el).text("Unfollow");
+								jQuery("#followers_count").text(parseInt(jQuery("#followers_count").text())+1);
+								jQuery(el).removeClass("btn-info");
+								jQuery(el).addClass("btn-primary");
+							}else{
+								jQuery(el).text("Follow");
+								jQuery("#followers_count").text(parseInt(jQuery("#followers_count").text())-1);
+								jQuery(el).removeClass("btn-primary");
+								jQuery(el).addClass("btn-info");
+							}
+						}
+					    console.log(a); // log: {a: "b"}
+					});
+			});
+			<?php } ?>
+
+		});
+	</script>
+
+	<script type="text/javascript">
+        require(['jquery', 'bootstrap', 'carouFredSel'],function($, bootstrap, carouFredSel){
+           $(document).ready(function() {
+           		
+           		setTimeout(function(){
+
+
+	                $('#products_carousal0').carouFredSel({
+	                	responsive: true,
+	                    width: '100%',
+	                    scroll: 1,
+	                    prev: '#carousal_pre0',
+	                    next: '#carousal_next0',
+	                    items: {
+	                        height: 'auto',
+	                        visible: {
+	                            min: 1,
+	                            max: 6,
+	                        }
+	                    }
+	                });
+	                $('#products_carousal1').carouFredSel({
+	                    responsive: true,
+	                    width: '100%',
+	                    scroll: 1,
+	                    prev: '#carousal_pre1',
+	                    next: '#carousal_next1',
+	                    items: {
+	                        height: 'auto',
+	                        visible: {
+	                            min: 1,
+	                            max: 4
+	                        }
+	                    }
+	                });
+	                $('#products_carousal2').carouFredSel({
+	                    responsive: true,
+	                    width: '100%',
+	                    scroll: 1,
+	                    prev: '#carousal_pre2',
+	                    next: '#carousal_next2',
+	                    items: {
+	                        height: 'auto',
+	                        visible: {
+	                            min: 1,
+	                            max: 4
+	                        }
+	                    }
+	                });
+
+                }, 5000);
+
+			$("div.store_logo").prepend($("#maincontent").html());
+			$("#maincontent").html("");
+
+		    jQuery(".store_profile_list .nav-toggle").on("click", function(){
+           			$(this).parent().toggleClass('active');
+           			$('nav.navigation ul.top-level-ul').slideToggle('slow');
+           		});
+            });
+
+        });
+    </script>
+
+<?php if($loged_in){ 
+
+	$partner=$helper->getSeller();
+$isPartner= $helper->isSeller();
+if($isPartner==1){
+	$profile_hint_status = $helper->getProfileHintStatus();
+	$logopic = $partner['logo_pic']; 
+	?>
+
+
+<div class="report-item">
+        <div id="wk-rp-report-item">
+            <div class="modals-wrapper">
+                <aside tabindex="0" data-type="popup" data-role="modal" class="modal-popup modal-slide _inner-scroll wk-rp-model-popup">
+                    <div tabindex="0" data-role="focusable-start"></div>
+                    <div data-role="focusable-scope" class="modal-inner-wrap">
+                        <header class="modal-header">
+                            <h4 class="modal-title"><?php echo __('Update Your Logo') ?></h4>
+                            <!-- <span  class="wk-close" >x</span> -->
+                            <button type="button" data-role="closeBtn" class="action-close wk-close">
+                                <span>Close</span>
+                            </button>
+                            <span  class="wk-clear" ></span>
+                        </header>
+                        <form action="<?php echo $block->getUrl('marketplace/account/editProfileLogoPost', ["_secure" => $this->getRequest()->isSecure()]) ?>" enctype="multipart/form-data" method="post" id="form-profile-logo" data-role="marketplace_account_editprofile">
+
+                            <div class="modal-body form-list field required">
+                                <p>
+                                    <span id="report-messages"></span>
+                                </p>
+
+                                <div class="field profile">
+									<label for="logopic"> <?php echo __('Logo') ?> </label>
+									<?php
+									if($profile_hint_status && $helper->getProfileHintLogo()){?>
+										<img src="<?php echo $this->getViewFileUrl('Webkul_Marketplace::images/quest.png'); ?>" class='questimg' title="<?php echo $helper->getProfileHintLogo() ?>"/>
+										<p><?php echo $helper->getProfileHintLogo() ?></p>
+									<?php
+									} ?>
+									<div class="control">
+										<input type="file" id="logo-pic" alt="no image" name="logo_pic"  title="logopic" class="input-text banner" onchange="ValidateSingleInput(this);" />
+										
+									</div>
+									<div class="logoimage-set" style="margin-top:20px;">
+										  	<div class="setimage">
+												<img class="prev-img" width="150" src="<?php echo $helper->getMediaUrl().'avatar/'.$partner['logo_pic']; ?>"/>
+												<?php
+												/*if($logopic){
+												?>
+												<span class="wk-logoimagedelete" title="Delete">
+												  	<img src="<?php echo $this->getViewFileUrl('Webkul_Marketplace::images/deleteIcon.png'); ?>" alt="<?php echo __('Delete Image')?>" title="<?php echo __('Delete Image')?>"/>
+												</span>
+												<?php
+												}*/?>
+											</div>
+										</div>
+								</div>
+
+                                
+                                <input type="hidden" name="seller_id" value="<?php echo $seller_id;?>"/>
+                                
+                                <?php 
+                               /* if($captchenable){?>
+                                    <div>
+                                        <span>
+                                            <label for="wk-mp-captcha"><span id="wk-mp-captchalable1"><?php echo rand(1,20)?></span> + <span id="wk-mp-captchalable2"><?php echo rand(1,20)?></span> =</label>
+                                        </span>
+                                        <input type="text" class="required-entry wk-contact_input_fields" name="wk-mp-captcha" id="wk-mp-captcha" />
+                                    </div>
+                                <?php
+                                } */?>
+                            </div>
+                            <div class="modal-footer"  style="margin-top:50px;">
+                                <span class="error"></span>
+                                <span class="errormail"></span>
+                              <!--   <input type="reset" value="<?php echo __('Reset') ?>" id="resetbtn" class="wk-btn wk-btn_default"/> -->
+                                <input type="submit" value="<?php echo __('Submit') ?>" id="reportbtn" class="wk-btn wk-btn-primary clickask"/>
+                                <span class="wk-clear"></span>
+                            </div>
+                        </form>        
+                    </div>
+                    <div tabindex="0" data-role="focusable-end"></div>
+                </aside>
+            </div>
+        </div>
+    </div>
+<script>
+        require([
+            "jquery",
+            "mage/mage"
+        ], function($){
+
+            var reportDataForm = $('#report-form');
+
+            reportDataForm.mage('validation', {});
+
+            $('#mp-wk-block').show();
+
+            $('body').append($('#wk-rp-report-item'));
+
+
+            $('#edit-profile-picture').click(function(){
+                $('#ask-form input,#ask-form textarea').removeClass('mage-error');
+                $('.page-wrapper').css('opacity','0.4');
+                $('.wk-rp-model-popup').addClass('_show');
+                $('#wk-rp-report-item').show();
+            });
+            $('.wk-close').click(function(){
+                $('.page-wrapper').css('opacity','1');
+                $('#resetbtn').trigger('click');
+                $('#wk-rp-report-item').hide();
+                $('#report-form .validation-failed').each(function(){
+                    $(this).removeClass('validation-failed');
+                });
+                $('#report-form .validation-advice').each(function(){
+                    $(this).remove();
+                });
+            });
+            $('#reportbtn').click(function(){
+                if(reportDataForm.valid()!=false){
+                    var thisthis = $(this);
+                    if(thisthis.hasClass("clickask")){  
+                       
+                            thisthis.removeClass('clickask');
+                                $('#wk-rp-report-item').addClass('mail-procss');
+                                $.ajax({
+                                    url:'<?php echo $block->getUrl("marketplace/product/report", ["_secure" => $this->getRequest()->isSecure()]) ?>',
+                                    data:$('#report-form').serialize(),
+                                    type:'post',
+                                    dataType:'json',
+                                    success:function(d){
+                                        if(d.success){
+                                            $("#report-messages").addClass("success-msg");
+                                            $("#report-messages").text(d.mesage);
+                                        }else{
+                                            $("#report-messages").addClass("error-msg");
+                                            $("#report-messages").text(d.mesage);
+                                        }
+                                        thisthis.addClass('clickask');
+                                        $('#wk-rp-report-item').removeClass('mail-procss')
+                                        //alert("<?php echo __(' Mail Send ') ?>..");
+                                        //$('.wk-close,#resetbtn').trigger('click');
+                                    }
+                                });
+                            <?php 
+                       // }?>
+                    }
+                    return false;
+                }
+            }); 
+        });    
+    </script>
+
+
+
+    <div class="report-item">
+        <div id="wk-rp-slider-item" style="max-height:none; height:auto;">
+            <div class="modals-wrapper">
+                <aside tabindex="0" data-type="popup" data-role="modal" class="modal-popup modal-slide _inner-scroll wk-rp-model-banner-popup">
+                    <div tabindex="0" data-role="focusable-start"></div>
+                    <div data-role="focusable-scope" class="modal-inner-wrap" style="" >
+                    <!-- <div data-role="focusable-scope" class="modal-inner-wrap" style="max-height:none; height:auto;" > -->
+                        <header class="modal-header">
+                            <h4 class="modal-title"><?php echo __('Update Your Banner Slides') ?></h4>
+                            <!-- <span  class="wk-close" >x</span> -->
+                            <button type="button" data-role="closeBtn" class="action-close wk-close">
+                                <span>Close</span>
+                            </button>
+                            <span  class="wk-clear" ></span>
+                        </header>
+                        <form action="<?php echo $block->getUrl('marketplace/account/editProfileSlidesPost', ["_secure" => $this->getRequest()->isSecure()]) ?>" enctype="multipart/form-data" method="post" id="form-profile-banner" data-role="marketplace_account_editprofile">
+
+                            <div class="modal-body form-list field required" style="overflow-y: scroll; max-height:400px">
+                                <p>
+                                    <span id="report-messages"></span>
+                                </p>
+
+                                <div class="field profile">
+						<label for="sliderpic1"> <?php echo __('First Slide Image') ?> </label>
+						<?php
+						if($profile_hint_status && $helper->getProfileHintBanner()){?>
+							<img src="<?php echo $this->getViewFileUrl('Webkul_Marketplace::images/quest.png'); ?>" class='questimg' title="<?php echo $helper->getProfileHintBanner() ?>"/>
+						<?php
+						} ?>
+						<label class="control-notification control-notification1">(<?php echo __("Upload 1150px X 480px for better look"); ?>)</label>
+						<div class="control">
+							<input type="file" id="slider_pic1" name="slider_pic1"  title="Slider Pic 1" class="input-text banner" size="26" onchange="ValidateSingleInput(this);" />
+							<div class="profileimage-set">
+							  	<div class="setimage">
+									
+									<?php
+									$bannerpic = $partner['slider_pic1']; 
+									if($bannerpic && !empty($partner['slider_pic1']) &&  isset($slider_pic_size1[0]) &&  $slider_pic_size1[0]){ 
+									?>
+									<img class="wk-banner" alt=" <?php echo __('no image') ?>" src="<?php echo $helper->getMediaUrl().'avatar/'.$partner['slider_pic1']; ?>"/>
+									
+									<?php
+									}?>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="field profile">
+						<label for="slider_url1"><?php echo __('First Slide Target Url Path') ?></label>
+						<div class="input-group control">
+					      <div class="input-group-addon"><?php echo $this->getBaseUrl(); ?></div>
+					       <input type="text" id="slider_url1" name="slider_url1" value="<?php echo $partner['slider_url1']; ?>" title="<?php echo __('First Slide Target Url Path')?>" class="input-text" />
+					    </div>
+
+					</div>
+
+
+					<div class="field profile">
+						<label for="sliderpic2"> <?php echo __('Second Slide Image') ?> </label>
+						<?php
+						if($profile_hint_status && $helper->getProfileHintBanner()){?>
+							<img src="<?php echo $this->getViewFileUrl('Webkul_Marketplace::images/quest.png'); ?>" class='questimg' title="<?php echo $helper->getProfileHintBanner() ?>"/>
+						<?php
+						} ?>
+						<label class="control-notification control-notification1">(<?php echo __("Upload 1150px X 480px for better look"); ?>)</label>
+						<div class="control">
+							<input type="file" id="slider_pic2" name="slider_pic2"  title="Slider Pic" class="input-text banner" size="26"   onchange="ValidateSingleInput(this);" />
+							<div class="profileimage-set">
+							  	<div class="setimage">
+									
+									<?php
+									$bannerpic = $partner['slider_pic2']; 
+									if($bannerpic && !empty($partner['slider_pic2']) &&  isset($slider_pic_size2[0]) &&  $slider_pic_size2[0]){
+									?>
+									<img class="wk-banner" alt=" <?php echo __('no image') ?>" src="<?php echo $helper->getMediaUrl().'avatar/'.$partner['slider_pic2']; ?>"/>
+									
+									<?php
+									}?>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="field profile">
+						<label for="slider_url2"><?php echo __('Second Slide Target Url Path') ?></label>
+						<div class="input-group control">
+					      <div class="input-group-addon"><?php echo $this->getBaseUrl(); ?></div>
+					       <input type="text" id="slider_url2" name="slider_url2" value="<?php echo $partner['slider_url2']; ?>" title="<?php echo __('Second Slide Target Url Path')?>" class="input-text" />
+					    </div>
+					</div>
+
+
+					<div class="field profile">
+						<label for="slider_pic3"> <?php echo __('Third Slide Image') ?> </label>
+						<?php
+						if($profile_hint_status && $helper->getProfileHintBanner()){?>
+							<img src="<?php echo $this->getViewFileUrl('Webkul_Marketplace::images/quest.png'); ?>" class='questimg' title="<?php echo $helper->getProfileHintBanner() ?>"/>
+						<?php
+						} ?>
+						<label class="control-notification control-notification1">(<?php echo __("Upload 1150px X 480px for better look"); ?>)</label>
+						<div class="control">
+							<input type="file" id="slider_pic3" name="slider_pic3"  title="Slider Pic 3" class="input-text banner" size="26"  onchange="ValidateSingleInput(this);" />
+							<div class="profileimage-set">
+							  	<div class="setimage">
+									
+									<?php
+									$bannerpic = $partner['slider_pic3']; 
+									
+									if($bannerpic && !empty($partner['slider_pic3']) &&  isset($slider_pic_size3[0]) &&  $slider_pic_size3[0]){
+									?>
+									<img class="wk-banner" alt=" <?php echo __('no image') ?>" src="<?php echo $helper->getMediaUrl().'avatar/'.$partner['slider_pic3']; ?>"/>
+									
+									<?php
+									}?>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="field profile">
+						<label for="slider_url3"><?php echo __('Third Slide Target Url Path') ?></label>
+						<div class="input-group control">
+					      <div class="input-group-addon"><?php echo $this->getBaseUrl(); ?></div>
+					       <input type="text" id="slider_url3" name="slider_url3" value="<?php echo $partner['slider_url3']; ?>" title="<?php echo __('Third Slide Target Url Path')?>" class="input-text" />
+					    </div>
+						
+					</div>
+
+                                
+                                <input type="hidden" name="seller_id" value="<?php echo $seller_id;?>"/>
+                                
+                                <?php 
+                               /* if($captchenable){?>
+                                    <div>
+                                        <span>
+                                            <label for="wk-mp-captcha"><span id="wk-mp-captchalable1"><?php echo rand(1,20)?></span> + <span id="wk-mp-captchalable2"><?php echo rand(1,20)?></span> =</label>
+                                        </span>
+                                        <input type="text" class="required-entry wk-contact_input_fields" name="wk-mp-captcha" id="wk-mp-captcha" />
+                                    </div>
+                                <?php
+                                } */?>
+                            </div>
+                            <div class="modal-footer"  style="margin-top:50px;">
+                                <span class="error"></span>
+                                <span class="errormail"></span>
+                              <!--   <input type="reset" value="<?php echo __('Reset') ?>" id="resetbtn" class="wk-btn wk-btn_default"/> -->
+                                <input type="submit" value="<?php echo __('Submit') ?>" id="reportbtn" class="wk-btn wk-btn-primary clickask"/>
+                                <span class="wk-clear"></span>
+                            </div>
+                        </form>        
+                    </div>
+                    <div tabindex="0" data-role="focusable-end"></div>
+                </aside>
+            </div>
+        </div>
+    </div>
+	<script>
+	 	var _validFileExtensions = [".jpg", ".jpeg", ".bmp", ".gif", ".png"];    
+			function ValidateSingleInput(oInput) {
+			    if (oInput.type == "file") {
+			        var sFileName = oInput.value;
+			         if (sFileName.length > 0) {
+			            var blnValid = false;
+			            for (var j = 0; j < _validFileExtensions.length; j++) {
+			                var sCurExtension = _validFileExtensions[j];
+			                if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() == sCurExtension.toLowerCase()) {
+			                    blnValid = true;
+			                    break;
+			                }
+			            }
+			             
+			            if (!blnValid) {
+			                alert("Sorry, " + sFileName + " is invalid, allowed extensions are: " + _validFileExtensions.join(", "));
+			                oInput.value = "";
+			                return false;
+			            }
+			        }
+			    }
+			    return true;
+			}
+
+			
+        require([
+            "jquery",
+            "mage/mage"
+        ], function($){
+
+
+
+            $('body').append($('#wk-rp-slider-item'));
+
+
+            $('#update-banner-slides').click(function(){
+                $('.page-wrapper').css('opacity','0.4');
+                $('.wk-rp-model-banner-popup').addClass('_show');
+                $('#wk-rp-slider-item').show();
+            });
+            $('.wk-close').click(function(){
+                $('.page-wrapper').css('opacity','1');
+                $('#resetbtn').trigger('click');
+                $('#wk-rp-slider-item').hide();
+                $('#form-profile-banner .validation-failed').each(function(){
+                    $(this).removeClass('validation-failed');
+                });
+                $('#form-profile-banner .validation-advice').each(function(){
+                    $(this).remove();
+                });
+            });
+
+        });    
+        
+    </script>
+
+    <?php } } ?>

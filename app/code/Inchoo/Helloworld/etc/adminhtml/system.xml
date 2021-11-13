@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="customernoti" translate="label" sortOrder="10">
+            <label>Customer Notifications</label>
+        </tab>
+        <section id="customerno" translate="label" type="text" sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Customer Notification</label>
+            <tab>customernoti</tab>
+            <resource>Inchoo_Helloworld::config_inchoo</resource>
+            <group id="general_settings" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>General Settings</label>
+                <field id="customerlist" translate="label" type="multiselect" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Customers List</label>
+                    <source_model>Inchoo\Helloworld\Model\Customers\Options</source_model>
+                </field>
+				<field id="customer_notifi" translate="label comment" sortOrder="2" type="textarea" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Customer Massage</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

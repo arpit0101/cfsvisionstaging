@@ -1,0 +1,162 @@
+<?php 
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$isPartner = $helper->isSeller();
+$type = 'configurable';
+$allowedtypes=explode(',',$this->helper('Webkul\Marketplace\Helper\Data')->getAllowedProductType());
+if($isPartner==1 && in_array($type,$allowedtypes)){
+	?>
+	<form action="<?php echo $block->getUrl('marketplace/product_attribute/save', ['_secure' => $this->getRequest()->isSecure()]) ?>" method="POST"  id="form-customer-attr-new">
+		<div class="wk-mp-design">
+			<fieldset class="info wk-mp-fieldset fieldset" id="associate-product">
+				<legend class="legend">
+					<span><?php echo __('Create Attribute for Configurable Products') ?></span>
+					<button type="reset" class="button wk-mp-btn btn btn-sm btn-primary">
+						<span><span><?php echo __('Reset') ?></span></span>
+					</button>
+					<button class="button wk-mp-btn btn btn-sm btn-warning" title="<?php echo __('Save') ?>" type="submit" id="save-btn">
+						<span><span><?php echo __('Save Attribute') ?></span></span>
+					</button>
+				</legend>			
+				<?php echo $block->getBlockHtml('formkey')?>
+
+				<div class="fieldset form-list" id="cust">
+					
+					<div class="field required">
+						<label class="label"><?php echo __('Attribute Code') ?> : </label>
+						<div class="control">
+							<input type="name" class="validate-code validate-length maximum-length-30 input-text required-entry" name="attribute_code" id="" />
+						</div>
+					</div>
+					<div class="field required">
+						<label class="label"><?php echo __('Attribute Label') ?> : </label>
+						<div class="control">
+							<input type="name" class="required-entry widthinput input-text" name="attribute_label" id="" />
+						</div>
+					</div>
+					<div class="field required">
+						<label class="label"><?php echo __('Catalog Input Type') ?> : </label>
+						<div class="control">
+							<select id="frontend_input" class=" select" title="Catalog Input Type for Store Owner" name="frontend_input">
+								<option value=""><?php echo __("Please Select"); ?></option>
+								<!-- <option value="multiselect"><?php echo __("Multiple Select"); ?></option> -->
+								<option value="select"><?php echo __("Dropdown"); ?></option>
+							</select>
+						</div>
+					</div>
+					<div class="field required">
+						<label class="label"><?php echo __('Values Required') ?> : </label>
+						<div class="control">
+							<select id="val_required" class="select val_required" title="Values Required" name="val_required">
+								<option value="1"><?php echo __("Yes"); ?></option>
+								<option selected="selected" value="0"><?php echo __("No"); ?></option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+		</div>
+	</form>
+	<div class="buttons-set">
+		<p class="back-link">
+			<a href="javascript:;" onclick="javascript: window.history.back();" class="left btn btn-sm btn-primary"><i class="fa fa-angle-double-left"></i> <?php echo __('Back') ?></a>
+		</p>
+	</div>
+	<script>
+	    require([
+	        "jquery",
+	        "mage/mage"
+	    ], function($wk_jq){
+	    	$wk_jq.noConflict();
+	        var dataForm = $wk_jq('#form-customer-attr-new');
+	        dataForm.mage('validation', {});
+
+	        var fcop=0;
+			var count=0;
+
+			var nextopcresort=new Array();
+			$wk_jq("button#add_new_defined_option").click( function() { 
+				$wk_jq('#cust').show();
+			});	
+			$wk_jq("button#save").click( function() { 
+				if($wk_jq('#apply_to').is(":visible")){
+					$wk_jq('#protype').attr('disabled', 'disabled');
+				}
+			});
+			var attr_options=0,select=0;
+			$wk_jq("#frontend_input").click( function() {
+				if(attr_options!=0 && select!=1)	{
+					attr_options=$wk_jq(".wk-mp-option-box").clone();
+				}
+			});
+			
+			$wk_jq("#associate-product").delegate('.wk-mp-headcus input','focusout',function(){
+					$wk_jq(this).attr('value',$wk_jq(this).val());
+			});
+			
+			$wk_jq("#associate-product").delegate('.wk-mp-headcus input[type="checkbox"]','focusout',function(){
+				if($wk_jq(this).is(":checked"))
+					$wk_jq(this).attr('checked','checked');
+				else
+					$wk_jq(this).removeAttr("checked");
+			});
+
+			$wk_jq("#frontend_input").change( function() { 
+				$wk_jq('.val_required').show();
+				$wk_jq(".wk-mp-option-box").remove();
+				if($wk_jq("#frontend_input").val()== "multiselect" || $wk_jq("#frontend_input").val() == "select")		{
+					if(attr_options==0){
+						var headone=$wk_jq('<div/>').addClass("wk-mp-option-box")
+									.append($wk_jq('<ul/>').addClass("wk-mp-headcus ul_first")
+										.append($wk_jq('<li/>').text("<?php echo __('Admin') ?>"))
+										.append($wk_jq('<li/>').text("<?php echo __('Default Store View') ?>"))
+										.append($wk_jq('<li/>').text("<?php echo __('Position') ?>"))
+										.append($wk_jq('<li/>').text("<?php echo __('Is Default') ?>"))
+										.append($wk_jq('<li/>')
+										.append($wk_jq('<button/>').attr({type:'button', value:" Add Option",title:"<?php echo __('Add Option')?>",class:"attroptions button"}).append("<span><span><?php echo __('Add Option')?></span></span>"))))
+						$wk_jq('#cust').append(headone);
+						$wk_jq(".attroptions").trigger("click");
+						attr_options++;
+					}else{
+						$wk_jq('#cust').append($wk_jq('<div/>').addClass("wk-mp-option-box").append(attr_options.html()));
+					}			
+				}	
+				else{
+					select=1;
+				}
+			});	
+
+			$wk_jq("#associate-product").delegate(".deletecusopt","click",function(){
+				$wk_jq(this).parents(".wk-mp-headcus").remove();
+			});
+
+			$wk_jq("#associate-product").delegate(".attroptions","click",function(){
+				var addcust = $wk_jq('<ul/>').addClass('wk-mp-headcus')
+								.append($wk_jq('<li/>')
+										.append($wk_jq('<input/>').attr({type:'text',class:"required-entry widthinput",name:'attroptions['+fcop+'][admin]'})))
+								.append($wk_jq('<li/>')
+										.append($wk_jq('<input/>').attr({type:'text',class:"widthinput",name:'attroptions['+fcop+'][store]'})))
+								.append($wk_jq('<li/>')
+										.append($wk_jq('<input/>').attr({type:'text',class:"widthinput",name:'attroptions['+fcop+'][position]'})))
+								.append($wk_jq('<li/>')
+										.append($wk_jq('<input/>').attr({type:'checkbox',class:"widthinput",name:'attroptions['+fcop+'][isdefault]'})))
+								.append($wk_jq('<li/>')
+										.append($wk_jq('<button/>').attr({type:'button', value:" Delete Row",title:"<?php echo __('Delete Row')?>",class:"deletecusopt button"}).append("<span><span><?php echo __('Delete')?></span></span>")));
+				$wk_jq('.wk-mp-option-box').append(addcust);
+				fcop++;
+			});	
+			
+			$wk_jq(document).on('change','.widthinput',function(){
+			    var validt = $wk_jq(this).val();
+			    var regex = /(<([^>]+)>)/ig;
+		        var mainvald = validt .replace(regex, "");
+		        $wk_jq(this).val(mainvald);	
+	        });
+	    });
+    </script>
+	<?php 
+}else{ ?>
+	<h2 class="wk-mp-error_msg">
+		<?php echo __("To Become Seller Please Contact to Admin."); ?>
+	</h2>
+	<?php
+} ?>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.2 (15857) - http://www.bohemiancoding.com/sketch -->
+    <title>buttonBag</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Assets" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="assets-web" sketch:type="MSArtboardGroup" transform="translate(-52.000000, -175.000000)">
+            <g id="buttonBag" sketch:type="MSLayerGroup" transform="translate(52.000000, 175.000000)">
+                <path d="M17,17 L13,17 L13,29 L27,29 L27,17 L23,17 L23,12.9981014 C23,11.8867064 22.1055038,11 21.0020869,11 L18.9979131,11 C17.8982606,11 17,11.8945804 17,12.9981014 L17,17 Z M15,15 L12.9950893,15 C11.8926228,15 11,15.8927712 11,16.9940603 L11,29.0059397 C11,30.1054862 11.8932319,31 12.9950893,31 L27.0049107,31 C28.1073772,31 29,30.1072288 29,29.0059397 L29,16.9940603 C29,15.8945138 28.1067681,15 27.0049107,15 L25,15 L25,13 C25,10.7953562 23.204768,9 20.990237,9 L19.009763,9 C16.7877996,9 15,10.790861 15,13 L15,15 Z" id="Rectangle-23" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+                <rect id="Rectangle-72" fill="#FFFFFF" sketch:type="MSShapeGroup" x="15" y="15" width="10" height="2"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

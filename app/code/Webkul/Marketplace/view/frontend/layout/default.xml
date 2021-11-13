@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <!-- <referenceBlock name="top.links">
+            <block class="Magento\Framework\View\Element\Html\Link" name="marketplace-top-link">
+                <arguments>
+                    <argument name="label" xsi:type="string">Marketplace</argument>
+                    <argument name="path" xsi:type="string">marketplace</argument>
+                </arguments>
+            </block>
+        </referenceBlock> -->
+        <referenceBlock name="top.links">
+            <block class="Magento\Framework\View\Element\Html\Link" name="marketplace-top-link">
+                <arguments>
+                    <argument name="label" xsi:type="string">Profile</argument>
+                    <argument name="path" xsi:type="string">marketplace/seller/profile/shop/me</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Framework\View\Element\Html\Link" name="marketplace-top-link">
+                <arguments>
+                    <argument name="label" xsi:type="string">Messages</argument>
+                    <argument name="class" xsi:type="string">messages</argument>
+                    <argument name="path" xsi:type="string">marketplace/account/chatroom</argument>
+                </arguments>
+            </block>
+        </referenceBlock>        
+        <referenceBlock name="footer_links">
+            <block class="Magento\Framework\View\Element\Html\Link" name="marketplace-link">
+                <arguments>
+                    <argument name="label" xsi:type="string">Marketplace</argument>
+                    <argument name="path" xsi:type="string">marketplace</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

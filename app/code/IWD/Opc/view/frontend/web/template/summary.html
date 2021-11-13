@@ -1,0 +1,39 @@
+<div
+        data-bind="
+        iwdBlockLoader: isLoading
+        "
+        id="iwd_opc_review"
+        class="iwd_opc_column">
+    <div
+            data-bind="hasFocus: reviewFocus"
+            tabindex="-1"
+            class="iwd_opc_alternative_column">
+        <div id="iwd_opc_review_items_totals">
+            <div id="iwd_opc_top_review_items_wrapper" data-bind="afterRender: appendScrollbar">
+                <div id="iwd_opc_review_items">
+                    <!-- ko foreach: getRegion('itemsBefore') -->
+                    <!-- ko template: getTemplate() --><!-- /ko -->
+                    <!--/ko-->
+                    <!-- ko foreach: getRegion('cart_items') -->
+                    <!-- ko template: getTemplate() --><!-- /ko -->
+                    <!--/ko-->
+                    <!-- ko foreach: getRegion('itemsAfter') -->
+                    <!-- ko template: getTemplate() --><!-- /ko -->
+                    <!--/ko-->
+                </div>
+            </div>
+            <div id="iwd_opc_review_totals">
+                <!-- ko foreach: getRegion('totals') -->
+                <!-- ko template: getTemplate() --><!-- /ko -->
+                <!--/ko-->
+            </div>
+			<div class="iwd_opc_universal_wrapper">
+				<button onclick="jQuery('.payment-method._active button[type=submit].checkout').click()" type="button"
+						data-bind="attr :{'title': $t('Place Order')}"
+						class="iwd_opc_button active iwd_opc_place_order_button">
+					<!-- ko i18n: 'Place Order' --><!-- /ko -->
+				</button>
+			</div>
+        </div>
+    </div>
+</div>

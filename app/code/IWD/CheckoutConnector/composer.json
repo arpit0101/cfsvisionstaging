@@ -1,0 +1,18 @@
+{
+  "name": "iwd/CheckoutConnector",
+  "description": "Checkout Connector",
+  "type": "magento2-module",
+  "version": "0.0.1",
+  "license": [
+
+  ],
+  "require": {
+    "php": "~5.5.0|~5.6.0|~7.3.1"
+  },
+  "autoload": {
+    "files": [ "registration.php" ],
+    "psr-4": {
+      "IWD\\CheckoutConnector\\": ""
+    }
+  }
+}

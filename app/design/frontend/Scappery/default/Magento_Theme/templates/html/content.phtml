@@ -1,0 +1,233 @@
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
+$connection = $resource->getConnection();
+$tableName = $resource->getTableName('directory_country_region ');
+
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+
+//print_r($customerSession);die;
+if($customerSession->getData('city_id')){
+	$city_id	= $customerSession->getData('city_id');
+}else{
+	$city_id = '791';
+}
+if($customerSession->getData('area_id')){
+	$area_id	= $customerSession->getData('area_id');
+}else{
+	$area_id = '157';
+}
+$sql = "Select * FROM " . $tableName . " where `country_id`='AE'";
+$result = $connection->fetchAll($sql);
+?>
+<div class="banner-section">
+   <div class="container">
+      <!-- <h1>GET ALL BEST DEALS Online from <br/>
+         local stores you know, love and trust
+      </h1> -->
+      <div id="location">
+      <form action="<?php echo $this->getUrl('region/');?>" method="get" id="form1" name="form1">
+		<input type="hidden" id="area_id_hidden" value="<?php echo $area_id; ?>" />
+         <div class="box-form">
+         <div class="head_msg" id="head_msg" style="display:none"><?php echo __('Please select city & zone.'); ?></div>
+            <!-- <h2>Jordan <img src='<?php echo $this->getViewFileUrl('images/flag-icon.jpg'); ?>' alt="Flag">
+            </h2> -->
+           	
+			<div class="error_msg alert alert-danger" style="display:none;"><a href="javascript:void(0)" class="close" >&times;</a><strong></strong>&nbsp;<?php echo __('Please select the City and Zone.'); ?></div>
+			<div class="error_msg_zone alert alert-danger" style="display:none;"><a href="javascript:void(0)" class="close" >&times;</a><strong></strong>&nbsp;<?php echo __('Please select Zone.'); ?></div>
+			
+
+      <!-- ====   play icon -->
+
+      <div class="playStore_mobile for_mobile">
+         <div class="play_icon">
+            <img src='<?php echo $this->getViewFileUrl('images/play-store.png'); ?>' alt="storeIcon" />
+         </div>
+         <div class="play_icon">
+            <img src='<?php echo $this->getViewFileUrl('images/apple-store.png'); ?>' alt="storeIcon" />
+         </div>
+      </div>
+
+
+
+      <div class="my-select-wrapper">
+        <div class="column-1">
+          <label><?php echo __('Select Shopping Zone'); ?></label>
+        </div>
+        <div class="column-2">
+          <div class="form-group select_rl">
+               <!-- <label>Select City</label> -->
+				<select class="form-control city_dropdown autocomplete" name="city_id" id="city_id">
+                  <option value=""><?php echo __('City'); ?></option>
+                  <?php foreach($result as $res) { 
+                     ?>
+					<option <?php if($city_id){ if($city_id==$res['region_id']){ echo "selected"; }}?> value="<?php echo $res['region_id'] ?>"><?php echo __($res['default_name']); ?></option>
+                  <?php 
+                     }?> 
+				</select>
+               <div id="ds-loader" class="progress_image_inner" style="display:none;">
+					<div class="loader">
+						<div class="flipper">
+							<div class="front color-1-bg">
+								<div class="back"></div>
+							</div>
+						</div>
+					</div>
+				</div>  
+            </div>
+        </div>
+        <div class="column-3">
+          <div class="form-group">
+               <!-- <label>Select Zone</label> -->
+               <select class="form-control area_dropdown autocomplete" name="area_id" id="area_id">
+                  <option value=""><?php echo __('Zone'); ?></option>
+                  <option selected="selected" value="157">Dubai</option>
+               </select>
+            </div>
+        </div>
+		<?php /* <div class="column-4" style="display:none;"><input type="text" name="category_id" /></div> */ ?>
+      </div>
+            <div class="continue-button"> <button class="btn btn-default" id="btnSubmit" type="submit" ><?php echo __('Start Shopping'); ?>  </button></div>
+            <!-- <span class="account-login">Already have an account? <a href="<?php echo $block->getUrl('customer/account/login') ?>">Log in</a></span>
+            <div class="free-delivery"> FREE delivery on your first order * <img src='<?php echo $this->getViewFileUrl('images/delivery-icon.png'); ?>' alt="Free delivery"> </div> -->
+         </div>
+      </form>
+		</div>
+   </div>
+</div>
+
+<?php //echo $block->getLayout()->createBlock("Mageplaza\BannerSlider\Block\Widget::class")->setSliderId(1)->toHtml();?>
+
+<div class="slider-section">
+<?php echo $this->getLayout()->createBlock("Magento\Framework\View\Element\Template")->setTemplate("Magento_Theme::html/slider.phtml")->toHtml();?>
+</div>
+
+
+<?php 
+/* $block 				= 	$block->getLayout()->createBlock('Inchoo\Helloworld\Block\Helloworld');
+$categories 		=	$block->getStoreCategories(true,false,true);
+$categoryHelper 	= 	$block->getCategoryHelper(); */
+
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+$category_model = $objectManager->get('Magento\Catalog\Model\Category');
+
+$category_id = 2;//default category
+
+$category = $category_model->load($category_id);
+$subcategories = $category->getChildrenCategories();
+?>
+
+
+
+<div>
+<h3>&nbsp; &nbsp; <?php echo __('Shop by Category'); ?> &nbsp;</h3>
+</div>
+<ul class="flow-method owl-carousel owl-theme">
+<?php 
+	if(isset($subcategories)){
+		foreach($subcategories as $subcategory){
+			
+		$categoryId = $subcategory->getEntityId();
+		$category1 = $category_model->load($categoryId);
+		//echo "<pre>"; print_r($category1->getImage()); elocalnew.stage04.obdemo.com/region/?city_id=791&area_id=157&category_id=123
+		$cat_imagepath = $category1->getImage();
+?>
+<li class="item">
+<figure><a href="<?php  echo $block->getUrl().'region/?city_id=791&area_id=157&category_id=' . $category1->getId(); ?>"><img src="<?php echo $block->getUrl().$cat_imagepath; ?>" alt="<?php echo $category1->getName(); ?>" width="" height="" /></a></figure>
+<pre><a href="<?php  echo $block->getUrl().'region/?city_id=791&area_id=157&category_id=' . $category1->getId(); ?>"><strong><?php echo $category1->getName(); ?><br></strong></a></pre>
+<!-- p>Select your beauty products from Local stores in your country.</p -->
+</li>
+<?php /* <li>
+<figure><img src="{{media url="wysiwyg/sports.jpg"}}" alt="" width="700" height="373"></figure>
+<pre><strong>Sports &amp; Adventure</strong></pre>
+<p>Choose items for all adventure gear.</p>
+</li>
+<li>
+<figure><img src="{{media url="wysiwyg/home_dec.jpg"}}" alt="" width="700" height="400"></figure>
+<pre><strong>Home &amp; Garden</strong></pre>
+<p>Get all the items delivered to your home.</p>
+</li> */ ?>
+<?php
+	} //exit;
+}
+?>
+</ul>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	   jQuery('.owl-carousel').owlCarousel({
+			loop:true,
+			nav:true,
+			autoplay:false,
+			dot:false,
+			navText : ["<i class='fa fa-chevron-left'></i>","<i class='fa fa-chevron-right'></i>"],
+			items:4,
+			responsive:{
+				0:{
+					items:2
+				},
+				767:{
+					items:3
+				},
+				768:{
+					items:3
+				},
+				1020:{
+					items:4
+				},
+				1025:{
+					items:4
+				}
+			}
+	});
+});
+</script>
+<?php //echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('how_it_works')->toHtml();?>	
+<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('app_block')->toHtml();?>	
+
+
+<!-- <div class="app-section">
+  <div class="container">
+    <div class="left-app">
+      <div class="video-box"><img src="{{media url="wysiwyg/video-image.jpg"}}" alt="" /></div>
+    </div>
+    <div class="right-app">
+      <h2>DOWNLOAD <br /> OUR APP</h2>
+      <ul>
+        <li><a href="#"><img src="{{media url="wysiwyg/app-store-icon.png"}}" alt="" /></a></li>
+        <li><a href="#"><img src="{{media url="wysiwyg/google-store-icon.png"}}" alt="" /></a></li>
+      </ul>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</div> -->
+
+<!-- <div class="container">
+<ul class="flow-method">
+<li><figure><img src="{{media url="wysiwyg/large-cart.png"}}" alt="" /></figure><strong>Find 1,000'sof products </strong>
+<p>Find 1,000's of products <br /> from the stores you already shop at.</p>
+</li>
+<li><figure><img src="{{media url="wysiwyg/large-delivery.png"}}" alt="" /></figure><strong>Same-day delivery </strong>
+<p>Get same day delivery from <br /> many stores.</p>
+</li>
+<li><figure><img src="{{media url="wysiwyg/save-money.png"}}" alt="" /></figure><strong>Save time &amp; money </strong>
+<p>Get same day delivery from <br /> many stores.</p>
+</li>
+</ul>
+</div>
+<div class="app-section">
+<div class="container">
+<div class="left-app">
+<div class="video-box"><img src="{{media url="wysiwyg/video-image.jpg"}}" alt="" /></div>
+</div>
+<div class="right-app">
+<h2>DOWNLOAD <br /> OUR APP</h2>
+<ul>
+<li><a href="#"><img src="{{media url="wysiwyg/app-store-icon.png"}}" alt="" /></a></li>
+<li><a href="#"><img src="{{media url="wysiwyg/google-store-icon.png"}}" alt="" /></a></li>
+</ul>
+</div>
+<div class="clearfix"></div>
+</div>
+</div> -->

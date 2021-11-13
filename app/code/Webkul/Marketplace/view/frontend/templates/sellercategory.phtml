@@ -1,0 +1,80 @@
+<?php 
+    $helper	 			=	 $this->helper('Webkul\Marketplace\Helper\Data');
+    $partner 			=	 $block->getProfileDetail();
+	$category_data 		=	 $block->getSellerCategoryList();
+
+	$objectManager 		= 	\Magento\Framework\App\ObjectManager::getInstance();
+	$customerSession 	= 	$objectManager->get('Magento\Customer\Model\Session');
+?>
+	<div class="wk-mp-design left-listing">
+		<div class="block block-layered-nav shoping-category">	
+		<h2 class="visible-xs"><?php echo __('Categories'); ?></h2>
+		<h2 class="hidden-xs"><?php echo __('Categories'); ?></h2>
+			<div class="block-content">
+				<dl id="narrow-by-list" >
+					<?php
+					/* <div class="filter-options-title" data-role="title" role="tab" aria-selected="true" aria-expanded="true" tabindex="0"><?php echo __("SELLER'S CATEGORY") ?>
+					</div>
+					*/
+					?>
+					 <ul class="taglisting">
+						<?php
+							if($customerSession->getSessionCategory()){
+								$categoryIds = $customerSession->getSessionCategory();
+								foreach ($categoryIds as $categoryId){
+									$category = $objectManager->create('Magento\Catalog\Model\Category')->load($categoryId);
+							?>
+								<li>
+									<?php echo __($category->getName());
+										//$remove_cat_url="";
+										  //$remove_cat_url = $helper->getRewriteUrl('marketplace/seller/collection/shop/'.$partner->getShopurl()."/?remove_cate=".$category_id;
+									?>
+									 <a href="<?php echo $helper->getRewriteUrl('marketplace/seller/collection/shop/'.$partner['shop_url'])."/?remove_cate=".$categoryId;?>">
+									
+									<img src='<?php echo $this->getViewFileUrl('images/tag-close.png'); ?>' alt="Flag">
+									</a>
+								
+								</li>
+							<?php	
+								}
+							}	
+							
+						?>
+						
+						
+					</ul>
+                    
+                    
+					<div class="category-productlist filter-options-content" data-role="content" role="tabpanel" aria-hidden="false" style="display: block;">
+						<h3 class="catry-heading"><?php echo __('Category'); ?></h3>
+						<div id="jquery-accordion-menu" class="jquery-accordion-menu">
+							<?php
+								if($category_data){
+									echo __($category_data);
+								}	
+							?>
+						</div>
+					</div>
+				</dl>
+			</div>
+		</div>	
+	</div>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	   
+	function getParameterByName( name ){
+		var regexS = "[\\?&]"+name+"=([^&#]*)", 
+			regex = new RegExp( regexS ),
+			results = regex.exec( window.location.search );
+		if( results == null ){
+			return "";
+		} else{
+			return decodeURIComponent(results[1].replace(/\+/g, " "));
+		}
+	}
+	var cate_id 	=	getParameterByName('c');
+	if(cate_id==""){
+		jQuery("#categories-list li:eq(0) .submenu-indicator").trigger('click');
+	}
+});
+</script>

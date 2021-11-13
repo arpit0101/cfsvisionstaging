@@ -1,0 +1,32 @@
+
+<form class="form create account form-create-account verify_no" action="<?php /* @escapeNotVerified */ echo $block->getPostActionUrl() ?>" method="post" id="form-validate" enctype="multipart/form-data" autocomplete="off">
+    <fieldset class="fieldset create info">
+        <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Choose Your Membership Plan') ?></span></legend><br>
+        <input type="hidden" name="success_url" value="<?php /* @escapeNotVerified */ echo $block->getSuccessUrl() ?>">
+        <input type="hidden" name="error_url" value="<?php /* @escapeNotVerified */ echo $block->getErrorUrl() ?>">
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-2">
+                <ul id="plans">
+                    <li class="plan">
+                        <ul class="planContainer">
+                            <li class="title"><h2>Plan 1</h2></li>
+                            <li class="price"><p>$<strong>30</strong> for <span>month</span></p></li>
+                            <li class="button"><a href="<?php echo $this->getUrl("marketplace/account/choosemembershippost"); ?>" class="btn btn-primary btn-lg">Choose</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="plan selected">
+                        <ul class="planContainer">
+                            <li class="title"><h2>Plan 2</h2></li>
+                            <li class="price"><p>$<strong>60</strong> for <span>month</span></p></li>
+                            <li class="button"><a href="<?php echo $this->getUrl("marketplace/account/choosemembershippost"); ?>" class="btn btn-primary btn-lg">Choose</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                    <p class="text-center">You have 3 months of trial for Free.</p>
+                    <p class="text-center"><a href="<?php echo $this->getUrl("marketplace/account/choosemembershippost"); ?>" class="btn btn-info">Start With Trial</a></p>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</form>

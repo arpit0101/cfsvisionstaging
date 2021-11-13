@@ -1,0 +1,17 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<!--<small class="copyright">
+    <span><?//= /* @escapeNotVerified */ //$block->getCopyright() ?></span>
+</small>-->
+<div class="left-footer">
+      <p><?php $copyright_array = explode('~',$block->getCopyright());
+			echo $copyright_array[0];
+			echo "<br>";
+			echo $copyright_array[1];
+	  ?>
+      </p>
+   </div>

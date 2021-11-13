@@ -1,0 +1,375 @@
+<?php 
+	$partner=array();
+	$areas 				=	$block->getAreas();
+	$helper				= 	$this->helper('Webkul\Marketplace\Helper\Data');
+	$partner			=	$block->getProfileDetail();
+	
+	$_in_wishlist = false;
+	$objectManager 		= 	\Magento\Framework\App\ObjectManager::getInstance();
+	$isPartner = $helper->isSeller();
+	$customerSession 	= 	$objectManager->get('Magento\Customer\Model\Session');
+	$groupId = $customerSession->getCustomer()->getGroupId();
+	$backgroundcolor 	=	$partner->getBackgroundcolor();
+	if($partner['shop_url']){
+       if($helper->getActiveColorPicker()){ ?> 
+			<style>
+			   .page-main{background-image:none;background-color:<?php echo $partner['background_width'];?>;}
+			</style>
+			<?php
+		} 
+	$_productCollection=$block->_getProductCollection();
+   
+	$bannerpic=$partner->getBannerPic()!=''?$partner->getBannerPic():"banner-image.png";
+	$bannerpic=$helper->getMediaUrl().'avatar/'.$bannerpic; 
+	
+	$discount_percentage	=	0;
+	
+	$current_time			=	strtotime('now');
+	$tomorrow_time			=	strtotime("2019-05-26");
+	if( $current_time <= $tomorrow_time){
+		if(in_array($partner['shop_url'], ['thejoymakers', 'ctownsupermarket', 'leaders', 'beessecret', 'tboneandcheese'])){
+			$discount_percentage	=	2;
+		}else{
+			$discount_percentage	=	10;
+		}
+	}
+	?>
+	<?php 
+	if($backgroundcolor!=""){
+		?>
+		<div class="ad-search-wrapper" id="backGroundColor1" style="background-color: <?php echo $backgroundcolor;?>;" >
+		<?php
+	}else{
+		?>
+		<div class="ad-search-wrapper" id="backGroundColor" >
+		<?php
+	}
+	?>
+	<?php //echo $block::class; ?>
+       <div class="ad-search-inner">
+          <div class="topcategory_box">
+             <div class="storetopview">
+                <div class="ad-image" id="drop">
+                   <img src='/pub/media/avatar/<?php echo $partner["logo_pic"]; ?>' id="backgroundImage" onload="getBackgroundColor()" alt="<?php echo $partner["shop_url"]; ?>" >
+                </div>
+                <div id="storeview" class="storeview" onclick="fontColorChange()">
+                   <span>STORE PRICE GUARANTEE</span>
+                   <span>DELIVERY ON TIME</span>
+                   <span>FREE DELIVERY ON 1ST ORDER</span>
+                </div>
+              
+             </div>
+          </div>
+       </div>
+    
+	  <div class="searchcategry">
+               <div class="search-box">
+					<form id="seller_search_form">
+						<span class="glyphicon glyphicon-search search_glyp"></span>
+						  <div id="ds-loader" class="progress_image_new" style="display:none;">
+							<div class="loader">
+							  <div class="flipper">
+								<div class="front color-1-bg">
+								  <div class="back"></div>
+								</div>
+							  </div>
+							</div>
+						  </div>
+                          <div class="search_input">
+  						<!--<img class="progress_image" src="/pub/media/avatar/process.gif" style="width:24px;height:24px;margin:6px 0px 0px 0px;display:none;" />-->
+						<input rel="<?php echo $partner["seller_id"]; ?>" type="text" id="seller_search" class="form-control" placeholder="<?php echo __('Search this store...'); ?>">
+						</div>
+					</form>	
+					<div id="seller_search_div" class="desktop-only search-wrapper" >
+						 
+					</div>
+               </div>
+            </div>
+            
+</div>
+  
+<?php
+   /* <div class="collection-banner">
+         <img src="<?php echo $bannerpic; ?>" alt="no image"></img>
+</div>*/
+?>
+<div class="wk_mp_design" style="padding-top: 10px;">
+   <div class="block block-account">   
+      <?php
+         /*<div class="block-title">   
+                     <strong><span><h4><?php echo __("SELLER'S COLLECTION") ?></h4></span></strong>
+   </div>
+   */
+   ?>
+</div>
+
+
+
+<div class="page-products page-with-filter fieldset wk-mp-fieldset" <?php if($_productCollection->count()){ echo 'style="padding: 0;"';}?>>
+   <?php
+      $_helper = $this->helper('Magento\Catalog\Helper\Output');
+      ?>
+   <?php if (!$_productCollection->count()): ?>
+   <div class="message info empty">
+      <div><?php /* @escapeNotVerified */ echo __('We can\'t find products matching the selection.') ?></div>
+   </div>
+   <?php else: ?>
+   <?php //echo $block->getToolbarHtml() ?>
+   <?php echo $block->getAdditionalHtml() ?>
+   <?php
+      if ($block->getMode() == 'grid') {
+          $viewMode = 'grid';
+          $image = 'category_page_grid';
+          $showDescription = false;
+          $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+      } else {
+          $viewMode = 'list';
+          $image = 'category_page_list';
+          $showDescription = true;
+          $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::FULL_VIEW;
+      }
+      /**
+       * Position for actions regarding image size changing in vde if needed
+       */
+      $pos = $block->getPositioned();
+      
+      ?>
+   <div class="products wrapper <?php /* @escapeNotVerified */ echo $viewMode; ?> products-<?php /* @escapeNotVerified */ echo $viewMode; ?>">
+      <?php $iterator = 1; ?>
+      <ul class="productlisting_view products list items product-items">
+         <?php /** @var $_product \Magento\Catalog\Model\Product */ ?>
+         <?php foreach ($_productCollection as $_product): ?>
+		 
+         <?php /* @escapeNotVerified */ echo($iterator++ == 1) ? '<li class="item product product-item">' : '</li><li class="item product product-item">' ?>
+         <div class="product-item-info" data-container="product-grid">
+			<?php 
+			if($discount_percentage > 0){
+				?>
+				<div class="discount" style="background: green; color: white; text-align: center;"><?php echo __('Extra'); ?> <?php echo $discount_percentage;?>% <?php echo __('off'); ?></div>
+				<?php 
+			}
+			?>
+            <figure data-quickview-url='<?php echo $this->getBaseUrl();?>weltpixel_quickview/catalog_product/view/id/<?php echo $_product->getId();?>' class="quickview weltpixel-quickview">
+               <?php
+                  $productImage = $block->getImage($_product, $image);
+                  if ($pos != null) {
+                  	$position = ' style="left:' . $productImage->getWidth() . 'px;'
+                  		. 'top:' . $productImage->getHeight() . 'px;"';
+                  }
+                  ?>
+               <?php // Product Image ?>
+				<span>
+					<a href="javascript:void(0);" class="product photo product-item-photo" tabindex="-1">
+				   <?php echo $productImage->toHtml(); ?>
+				   </a>
+				   <?php if($groupId==1){ ?>
+				   <a href="javascript: void(0);" data-quickview-url='<?php echo $this->getBaseUrl();?>weltpixel_quickview/catalog_product/view/id/<?php echo $_product->getId();?>' class="quickview weltpixel-quickview"> <div class="title">
+					<?php echo __('Quick View'); ?></div> </a>
+				   <?php } ?>
+				</span>	
+              
+            </figure>
+			<?php 
+				$_in_wishlist	=	false;
+				if($customerSession->isLoggedIn()): 
+					foreach ($this->helper('Magento\Wishlist\Helper\Data')->getWishlistItemCollection() as $_wishlist_item){
+						if($_product->getId() == $_wishlist_item->getProduct()->getId()){
+						$_in_wishlist = true;
+					}
+				}
+				?>
+				<div class="favorite-icon">
+					  <?php
+						/** @var \Magento\Wishlist\Helper\Data $wishlistHelper */
+						$wishlistHelper = $this->helper('Magento\Wishlist\Helper\Data');
+						$wishlistItem = $wishlistHelper->getWishlistItemCollection()->getItemByColumnValue('product_id', $_product->getId());
+						if($_in_wishlist){ ?>
+						<a href="#" data-post='<?= $wishlistHelper->getRemoveParams($wishlistItem) ?>'>
+							<img src='<?php echo $this->getViewFileUrl('images/fav-active.png'); ?>' alt="wishlist">
+						</a>	
+							
+						<?php	
+						}else{
+							
+						?>
+						
+						<a href="javascript:void(0);"
+						   class="action towishlist add-cart-button"
+						   title="<?php echo $block->escapeHtml(__('Add to Wish List')); ?>"
+						   aria-label="<?php echo $block->escapeHtml(__('Add to Wish List')); ?>"
+						   data-post='<?php /* @escapeNotVerified */ echo $block->getAddToWishlistParams($_product); ?>'
+						   data-action="add-to-wishlist"
+						   role="button">
+							<img src='<?php echo $this->getViewFileUrl('images/fav-blank.png'); ?>' alt="Favorite">
+						</a>
+					<?php	
+						}
+					  ?>
+				</div>
+			<?php endif; ?>
+			<?php
+				$categories =  $_product->getCategoryIds();
+				
+				$categoryId = end($categories);
+				$category = $objectManager->create('Magento\Catalog\Model\Category')->load($categoryId);
+				$product_name 	=	$category->getName();
+			?>
+			<span class="categry-name" title="<?php echo $product_name;?>">
+				<?php
+				if(strlen($product_name)>28){
+					echo substr($product_name, 0, 28)."...";
+				}else{
+					echo $product_name;
+				}	
+				?>
+			</span>
+            <strong class="product-name">
+				<?php if($groupId==1){ ?>
+				<a class="product-item-link quickview weltpixel-quickview" href="javascript: void(0);" data-quickview-url='<?php echo $this->getBaseUrl();?>weltpixel_quickview/catalog_product/view/id/<?php echo $_product->getId();?>' >
+				<?php /* @escapeNotVerified */ echo $_helper->productAttribute($_product, $_product->getName(), 'name'); ?>
+				</a>
+				<?php } else {
+				?>
+				<?php /* @escapeNotVerified */ echo $_helper->productAttribute($_product, $_product->getName(), 'name'); ?>	
+				<?php	
+				}?>
+            </strong>
+			<?php if($_product->getTypeId()=='configurable') { ?>
+			<?php $productPrice = $this->helper('Magento\Framework\Pricing\Helper\Data')->currency(number_format($_product->getProductPrice(),2),true,false); 
+				  $productSpecialPrice = $this->helper('Magento\Framework\Pricing\Helper\Data')->currency(number_format($_product->getProductSpecialPrice(),2),true,false); 
+				  //echo $_product->getProductSpecialPrice();
+				if($_product->getProductSpecialPrice() != ''){ 
+					
+				 //echo "fddf".$productSpecialPrice; 
+			?>
+					
+					<div class="price-box price-final_price" data-role="priceBox">
+						<span class="special-price">
+							<span class="price-container price-final_price tax weee">
+								<span class="price-label">Special Price</span>
+							<span data-price-type="finalPrice" class="price-wrapper "><span class="price"><?php /* @escapeNotVerified */ echo $productSpecialPrice; ?></span></span>
+							</span>
+						</span>
+						<span class="old-price">
+							<span class="price-container price-final_price tax weee">
+								<span class="price-label">Regular Price</span>
+								<span data-price-type="oldPrice" class="price-wrapper "><span class="price"><?php /* @escapeNotVerified */ echo $productPrice; ?></span></span>
+							</span>
+						</span>
+
+					</div>
+				<?php } else { ?>
+					<span class="price"> <?php /* @escapeNotVerified */ echo $productPrice; ?></span>
+			<?php } } else { ?>
+				<span class="price"> <?php /* @escapeNotVerified */ echo $block->getProductPrice($_product) ?></span>
+            
+			<?php } ?>
+			
+			<?php 
+			
+			
+			if($groupId==1){
+			if ($_product->isSaleable()): ?>
+            <?php $postParams = $block->getAddToCartPostParams($_product); ?>
+           <form data-role="tocart-form" action="<?php /* @escapeNotVerified */ echo $postParams['action']; ?>" method="post">
+				<input type="hidden" name="product" value="<?php /* @escapeNotVerified */ echo $postParams['data']['product']; ?>">
+				<input type="hidden" name="uenc" value="<?php /* @escapeNotVerified */ echo $postParams['data']['uenc']; ?>">
+				<?php echo $block->getBlockHtml('formkey')?>
+				<?php if($_product->getTypeId()=='configurable') { ?>
+					<button type="button" class="product-item-link quickview weltpixel-quickview" href="javascript: void(0);" data-quickview-url='<?php echo $this->getBaseUrl();?>weltpixel_quickview/catalog_product/view/id/<?php echo $_product->getId();?>' ><?php /* @escapeNotVerified */ echo __('Add to Cart') ?></button>
+					
+					
+				<?php } else{  ?>
+					<div class="field qty custom-qty">
+						<label class="label" for="qty"><span>Qty</span></label>
+						<div class="control">
+							<input type="number" name="qty" id="qty" placeholder="1" maxlength="12" value="1" title="<?php echo 'Qty'; ?>" class="input-text qty input-quantity" />
+							<div class="quantity-nav"><div class="quantity-button quantity-up">+</div><div class="quantity-button quantity-down">-</div></div>
+						</div>
+					</div>
+				<button type="submit"
+						title="<?php echo $block->escapeHtml(__('Add to Cart')); ?>"
+						class="action tocart">
+					<span><?php /* @escapeNotVerified */ echo __('Add to Cart') ?></span>
+					<div id="ds-loader" class="add_to_cart_loader"  style="position:relative;display:none;" >
+						<div class="loader">
+						  <div class="flipper">
+							<div class="front color-1-bg">
+							  <div class="back"></div>
+							</div>
+						  </div>
+						</div>
+					</div>
+				</button>
+				<?php } ?>
+			</form>
+            <?php endif;  } ?>
+				
+         </div>
+         <?php echo($iterator == count($_productCollection)+1) ? '</li>' : '' ?>
+         <?php endforeach; ?>
+      </ul>
+   </div>
+   
+<?php if (!$block->isRedirectToCartEnabled()) : ?>
+<script type="text/x-magento-init">
+		{
+          "[data-role=tocart-form], .form.map.checkout": {
+              "catalogAddToCart": {
+					"bindSubmit": true
+			  }
+			 
+          }
+		}
+		
+		
+</script>
+<script type="text/javascript"> 
+require(["jquery"], function($) {
+    jQuery(document).on("click",".quantity-up",function(e) {
+        e.preventDefault();
+		//alert(jQuery(this).prev(".qty")); 
+        var qty = jQuery(this).parent(".quantity-nav" ).prev(".qty");
+        var newqty = parseInt(qty.val()) + parseInt(1);
+        qty.val(newqty);
+        return;
+    });
+    jQuery(document).on("click",".quantity-down",function(e) {
+        var qty = jQuery(this).parent(".quantity-nav" ).prev(".qty");
+        var newqty = parseInt(qty.val()) - parseInt(1);
+        if (newqty < 1) {
+            return !1
+        }
+        qty.val(newqty);
+        return !1
+    })
+}); 
+</script>
+ 
+  
+<?php endif; ?>
+<?php endif; ?>
+</div>
+<p class="product-item-count"><span><?php echo $block->getToolbarHtml(); ?></span></p>
+</div>
+<?php }  ?>
+
+<style type="text/css">
+.custom-qty .label{vertical-align:top;padding-top:12px !important;display:inline-block}
+.custom-qty .control .qty{width:45px;height:42px;line-height:1.65;float:left;display:block;padding:0;margin:0;border:1px solid #c2c2c2;text-align:center}
+.custom-qty .quantity-nav{float:left;position:relative}
+.custom-qty .control .quantity-button{position:relative;cursor:pointer;border:1px solid #c2c2c2;width:30px;text-align:center;color:#999;font-size:27px;line-height:1.5;-webkit-transform:translateX(-100%);transform:translateX(-100%);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;-o-user-select:none;user-select:none}
+.custom-qty .control .quantity-button.quantity-up{position:absolute;height:100%;top:-42px;right:-78px}
+.custom-qty .control .quantity-button.quantity-down{height:100%;left:-2px;top:-42px}
+.field.custom-qty .control{width:40px;display:inline-block;margin-bottom:5px;margin-left:42px}
+.product-item .tocart {
+    display: block;
+    margin: 0 auto;
+}
+.product-item .tocart {
+    font-size: 1.3rem;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    white-space: nowrap;
+}
+</style>

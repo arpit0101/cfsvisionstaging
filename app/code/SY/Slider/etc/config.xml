@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Slider
+ * 
+ * @author Slava Yurthev
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+	<default>
+		<sy_developer>
+			<contacts>
+				<skype>darks_v1rus</skype>
+				<telegram>darks_virus</telegram>
+				<github>SlavaYurthev</github>
+				<marketplace>Slava Yurthev</marketplace>
+			</contacts>
+		</sy_developer>
+		<sy_slider>
+			<options>
+				<auto>1</auto>
+				<controls>1</controls>
+				<pager>1</pager>
+				<adaptiveHeight>0</adaptiveHeight>
+				<css><![CDATA[.bx-wrapper .bx-viewport {
+	border: none;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}]]></css>
+			</options>
+		</sy_slider>
+	</default>
+</config>

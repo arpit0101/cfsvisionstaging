@@ -1,0 +1,98 @@
+<?php 
+
+$helper 			= 	$this->helper('Webkul\Marketplace\Helper\Data');
+$sellers 			=	$block->getSellersForHome();
+$objectManager 		=  \Magento\Framework\App\ObjectManager::getInstance();
+
+$customerSession 	= 	$objectManager->get('Magento\Customer\Model\Session');
+
+
+?>
+<div class="partners-section">
+	<div class="container">
+		<?php /* <h2><?php echo __('ELOCAL Vendors'); ?></h2> */ ?>
+		<div class="left-partners">
+			<div >
+				<div>
+					<div class="partner-box owl-carousel owl-theme">
+					<?php 
+					$i 	=	0;
+					foreach($sellers as $seller){
+						
+						$profileurl = $seller->getShopUrl();
+						if($customerSession->getCityId() && $customerSession->getAreaId()){
+						
+							$url		=	$helper->getRewriteUrl('marketplace/seller/collection/shop/'.$profileurl);
+						}else{
+							$url 		=	"#location"; 
+						}
+						$logo		=	"noimage.png";
+						$shoptitle 	= 	$seller->getShoptitle();
+						$logo		=	$seller->getLogoPic()==''?"noimage.png":$seller->getLogoPic();
+						if(!$shoptitle){
+							$shoptitle = $profileurl;
+						}
+						$logo		=	$helper->getMediaUrl().'avatar/'.$logo;
+						/* if($i==2){
+							?>
+							<div>
+							<div class="partner-box">
+							<?php
+							$i	=	0; 
+						} */
+						?> 	
+						<span class="item">
+							<a class="partner_url" href="<?php echo $url ?>">
+								<img src="<?php echo $logo;?>" alt="<?php echo ucfirst($profileurl);?>" title="<?php echo ucfirst($profileurl);?>" />
+							</a>
+						</span>
+							<?php
+						/* if($i==1){
+							?>
+								</div>
+							</div>
+							<?php	
+						}  */
+						$i++;
+					}
+				if($i!=2){
+						?>
+						
+						<?php	
+				}
+				?>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- <div class="right-partners">
+			<div class="delivery-now"><a class="btn btn-default" href="#">get delivery now<img src='<?php echo $this->getViewFileUrl('images/fast-delivery.png'); ?>' alt="Demo"></a></div>
+		</div> -->
+		<div class="clearfix"></div>
+	</div>
+</div>
+
+<script>
+    require(['jquery'], function ($) {
+	    $(document).ready(function(){
+	       $('.owl-carousel').owlCarousel({
+	    		loop:false,
+	    		margin:10,
+	    		nav:true,
+	    		autoplay:true,
+	    		autoplayHoverPause: true,
+	    		responsive:{
+	    			0:{
+	    				items:1
+	    			},
+	    			600:{
+	    				items:3
+	    			},
+	    			1000:{
+	    				items:5
+	    			}
+	    		}
+	        });
+	    });
+   });
+</script>

@@ -1,0 +1,79 @@
+<?php 
+$helper 		= 	$this->helper('Webkul\Marketplace\Helper\Data');
+$search_data 	=	$block->getSearchData();
+
+
+?>
+<div class="wrapper">
+	<div class="desktop-only search-wrapper">
+		<?php 
+		foreach($search_data['data'] as $seller_id=>$sellerdata){
+			?>
+			<div class="search-results">
+				<div class="ember-view search-shop-result search-result">
+					<a href="<?php echo $helper->getRewriteUrl('marketplace/seller/collection/shop/'.$sellerdata['seller']['shop_url']);?>"> <?php echo $sellerdata['seller']['name'];?>  
+						<?php
+						foreach($sellerdata['categories'] as $category_data){
+							foreach($category_data as $category){
+								?><span class="category"><?php echo $category->getName();?></span>
+								<?php	
+							}
+						}
+						?>
+					</a> 
+				</div>
+			</div>
+			<?php
+		}	
+		?>
+		<div class="ember-view search-shop-group search-results">
+		<?php 
+		if(!empty($search_data['data'])){
+			foreach($search_data['data'] as $seller_id=>$sellerdata){
+				?>
+				<div class="ember-view search-shop-group search-results">
+					<div class="search-shop-group-header"> 
+						<a href="/shops/5/search?keyword=full" class="ember-view"> 
+						<?php echo count($sellerdata['products']);?> 
+						<?php echo ((count($sellerdata['products'])>1)?'results':'result');?> 
+						<img src="http://ecommerce.stage02.obdemo.com/static/frontend/United/mytheme/en_US/images/arrow-right.svg" alt="" class="arrow-icon" width="8" height="12"> </a> 
+						<?php echo $sellerdata['seller']['name'];?> 
+					</div>
+					<?php 
+					foreach($sellerdata['products'] as $product){
+						
+						$_product	=	$product['product_data'];
+						$imageUrl 	= 	$this->imageHelperFactory->create()->init($_product, 'product_thumbnail_image')->getUrl();
+						?>
+						<div class="ember-view search-result">
+							<a href="javascript: void(0);" data-quickview-url='<?php echo $this->getBaseUrl();?>weltpixel_quickview/catalog_product/view/id/<?php echo $_product->getId();?>' class="body weltpixel-quickview">
+								<div class="image"> 
+								<span class="ember-view image-container">
+								<img src="<?php echo $imageUrl; ?>" />
+								</span> </div>
+								  <div class="heading"> <span class="title"><?php echo $product['name'];?></span> <span class="subtitle"> <?php echo $product['quantity'];?> Set </span>
+									<?php
+									foreach($product['categories'] as $category_data){
+										?><div class="subtitle"><?php echo $category_data->getName();?></div>
+										<?php	
+									}
+									?>
+								  </div>
+								<div class="price"><?php echo $product['price'];?></div>
+							</a> 
+						</div>
+						<?php 
+					}
+					?>
+				</div>
+				<?php	
+			}
+		}else{
+			?>
+			<div class="ember-view search-shop-group search-results"><div class="ember-view search-result" style="text-align:center;">No products found.</div></div>
+			<?php
+		}
+		?>
+		</div>
+	</div>
+</div>

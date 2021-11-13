@@ -1,0 +1,5 @@
+Array
+(
+    [name] => Amman Mall  Zone
+    [email] => ashraf.anabtawi.o@gmail.com
+)

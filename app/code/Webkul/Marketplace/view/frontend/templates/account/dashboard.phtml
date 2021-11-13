@@ -1,0 +1,410 @@
+<?php 
+$partner=array();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$captchenable = $helper->getCaptchaEnable();
+$orderHelper = $this->helper('Webkul\Marketplace\Helper\Orders');
+$partner = $helper->getSeller();
+$isPartner = $helper->isSeller();
+if($isPartner == 1){
+	$getDateDetail = $block->getDateDetail();
+	$total_sale_coll = $block->getTotalSaleColl();
+	$total_sale = 0;
+	$total_remain_sale = 0;
+	foreach($total_sale_coll as $value) {
+		$total_sale = $value->getAmountReceived();
+		$total_remain_sale = $value->getAmountRemain();
+	}
+	//echo get_class($block); exit;
+	?>
+	<div class="wk-mp-page-title page-title">
+		<h2><?php echo __('My Dashboard') ?></h2>
+		<div class="askque">
+			<button class="btn btn-primary" id="askque"><?php echo __('Ask Question to Admin') ?></button>
+		</div>
+	</div>
+	<div class="wk-mp-design">
+		<fieldset class="fieldset info wk-mp-fieldset">
+			<legend class="legend"><span><?php echo __('Your Income') ?></span></legend>
+			<div class="wk-sales">
+				<div class="wk-todaysale wk-sale-css">
+					<span class="wk-todaysale-bg"></span>
+					<span class="wk-sale-color"><label class="wk-sale-label"><?php echo __(' Today ') ?></label><br/><?php echo  $this->helper('Magento\Framework\Pricing\Helper\Data')->currency($getDateDetail['day'],true,false)
+					
+					//$block->Order->formatPrice($getDateDetail['day'])?></span>
+				</div>
+				<div class="wk-weeksale wk-sale-css">					
+					<span class="wk-weeksale_bg"></span>
+		 			<span class="wk-sale-color"><label class="wk-sale-label"><?php echo __(' Week ') ?></label><br/><?php echo $this->helper('Magento\Framework\Pricing\Helper\Data')->currency($getDateDetail['week'],true,false)
+					//$block->Order->formatPrice($getDateDetail['week']); ?></span>
+				</div>
+				<div class="wk-monthsale wk-sale-css">
+					<span class="wk-monthsale_bg"></span>
+					<span class="wk-sale-color"><label class="wk-sale-label"><?php echo __(' Month ') ?></label></br><?php echo $this->helper('Magento\Framework\Pricing\Helper\Data')->currency($getDateDetail['month'],true,false)
+					//$block->Order->formatPrice($getDateDetail['month']); ?></span>
+				</div>
+			</div>
+			<div class="wk-sales" style="display:none;margin-top: 10px;">
+				<div class="wk-totalsale wk-total-sale-css">
+				 	<span><?php echo __(' Total Payout ') ?> - <?php echo $block->Order->formatPrice($total_sale); ?></span>
+				</div>
+				<div class="wk-remainsale wk-total-sale-css">
+					<span><?php echo __(' Remaining Amount ') ?> - <?php echo $total_remain_sale; ?></span>
+				</div>
+			</div>
+			<div class="grid">
+				<div class="hor-scroll">
+					<div class="wk-dash-chart">
+						<?php echo $block->getChildHtml('diagrams')?>
+					</div>					
+				</div>
+
+			</div>
+		</fieldset>
+	</div>	
+	<div class="wk-mp-design wk-mp-design2">
+		<fieldset class="fieldset info wk-mp-fieldset">
+			<legend class="legend"><span><?php echo __('Latest Order') ?></span></legend>
+			<div class="grid">
+				<div class="hor-scroll">
+					<?php 
+					if(count($block->getCollection())==0){ ?>		
+						<div class="fieldset wk-mp-fieldset">
+							<div class="wk-emptymsg">
+								<?php echo __('No Order Available') ?>
+							</div>
+						</div>
+						<?php 
+					} else{ ?>
+						<?php $i=0;
+						foreach($block->getCollection() as $res){
+							$order = $block->Order->load($res['order_id']);
+							$state=$order->getState();
+							$status=$order->getStatus();
+							$name=$order->getCustomerName();
+							$tracking =	$orderHelper->getOrderinfo($res['order_id']);
+							if(!is_array($tracking) && $tracking->getIsCanceled()){
+								$state='canceled';
+								$status='Canceled';
+							}
+							if($res['order_id']>0 && $i<6){
+								$invoice_data 	=	$block->getInvoiceDetails($order->getId());
+							    $shipment_data 	=	$block->getShipmentsDetails($order->getId());
+							    if($invoice_data){
+							    	foreach($invoice_data as $invoice){
+							    		$invoiceid 		=	$invoice['entity_id'];
+							    	}
+							    }
+							    if($shipment_data){
+							    	foreach($shipment_data as $shipment){
+							    		$shipment_id 	=	$shipment['entity_id'];
+							    	}
+							    }
+								$i++;?>
+								<div class="wk-orderbox <?php if($i==1) echo "wk-first-order"?>">
+									<div style="padding:7px 7px 0px 7px;">
+										<div class="wk-orderbox-content1">
+											<div class="wk-orderbox-details">
+												<div class="color">
+													<span class="wk-ordertitle-label"><?php echo __('Order') ?></span> <strong>#<?php echo $res['magerealorder_id']; ?></strong>
+												</div>
+												<div class="name">
+													<?php $product_id = $res['mageproduct_id'];
+													$product = $objectManager->get('Magento\Catalog\Model\Product')->load($product_id); ?>
+													<p style='float:left;'><a href='javascript:void(0);' target='blank'><?php echo $product->getName(); ?></a> <?php 'X'.intval($res['magequantity'])."&nbsp;" ?></p>
+												</div>
+												<a href="<?php echo $block->getUrl('marketplace/order/view',['id'=>$res['order_id'], '_secure' => $this->getRequest()->isSecure()])?>">
+														<button class="button btn btn-primary btn-sm" title="<?php echo __('View Order') ?>" type="button">
+															<?php echo __('View Order') ?>
+														</button>
+												</a>
+												<?php if($status !=  'canceled'){
+												    if(!$invoice_data){
+											        	?>
+											        	<a href="<?php echo $block->getUrl('marketplace/order/createinvoice', ['order_id'=>$res['order_id'], '_secure' => $this->getRequest()->isSecure()])?>">												
+											        		<button class="button" title="<?php echo __('Create invoice'); ?>" type="button">
+											        			<span><span><span><?php echo __('Create invoice'); ?></span></span></span>
+											        		</button>
+											        	</a>
+											        	<?php 
+											        }else{
+											        	?>
+											        	<a href="<?php echo $block->getUrl('marketplace/order/invoice_pdfprintmanager', ['order_id'=>$res['order_id'],'invoice_id'=>$invoiceid, '_secure' => $this->getRequest()->isSecure()])?>">	
+											        		<button class="button" title="<?php echo __('Print invoice'); ?>" type="button">
+											        			<span><span><span><?php echo __('Print invoice'); ?></span></span></span>
+											        		</button>
+											        	</a>
+											        	<?php 
+												    }
+												}
+												if($status !=  'canceled'){
+											        if(!$shipment_data){ ?>
+											        	<a href="<?php echo $block->getUrl('marketplace/order/createshipment', ['order_id'=>$res['order_id'], '_secure' => $this->getRequest()->isSecure()])?>">												
+											        		<button class="button" title="<?php echo __('Create Shipment'); ?>" type="button">
+											        			<span><span><span><?php echo __('Create Shipment'); ?></span></span></span>
+											        		</button>
+											        	</a>
+											        	<?php 
+											        }else{
+											        	?>
+											        	<a href="<?php echo $block->getUrl('marketplace/order/shipment_pdfprintmanager', ['order_id'=>$res['order_id'],'shipment_id'=>$shipment_id, '_secure' => $this->getRequest()->isSecure()])?>">	
+											        		<button class="button" title="<?php echo __('Print Shipment'); ?>" type="button">
+											        			<span><span><span><?php echo __('Print Shipment'); ?></span></span></span>
+											        		</button>
+											        	</a>
+											        	<?php 
+											        }
+												} ?>
+											</div>
+											<div class="wk-dash-orderstatus">
+												<label for="name" class="wk-dash-label">
+														<div class="status <?php echo strtolower($state); ?>"><?php echo strtoupper($status); ?> </div>
+												</label> 
+											</div>
+										</div>
+										<div class="wk-orderbox-content2">
+											<div class="wk-orderbox-details">
+												<span class="wk-title-label"><?php echo __('Customer: ');?></span>
+												<span class="wk-label"><?php echo $name;?></span>&nbsp;&nbsp;
+												<span class="wk-title-label"><?php echo __('Date: ');?></span>
+												<span class="wk-label"><?php echo $block->formatDate($res['created_at'])?></span>
+												<span class="wk-title-label"><strong><?php echo __('Delivery Date') ?></strong></span>
+												<span class="wk-label"><?php echo $block->getOrderDeliveryDateHistory($res['order_id']); ?></span>
+											</div>
+											<div class="wk-orderbox-total">
+												<span class="wk-title-label"><?php echo __('Order Total- ');?></span>
+												<span class="wk-label"><strong><?php echo $this->helper('Magento\Framework\Pricing\Helper\Data')->currency($block->getPricebyorder($res['order_id']),true,false);
+												
+												//$order->formatPrice($block->getPricebyorder($res['order_id']));?></strong>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="wk-clear"></div>
+							<?php }
+						} 	?>
+						<?php
+					}?>
+				</div>
+			</div>		
+		</fieldset>
+	</div>
+	<div class="wk-mp-design wk-mp-design2">
+		<fieldset class="fieldset info wk-mp-fieldset">
+			<legend class="legend"><span><?php echo __('Latest Comments & Reviews') ?></span></legend>			
+			<div class="grid">
+				<div class="hor-scroll">
+					<?php 
+					$ratings=array();
+					$products=array();
+					$rate=array();					
+					$reviewcollection=$block->getReviewcollection();
+					if(count($reviewcollection)==0){ ?>
+						<div class="wk-emptymsg">
+							<?php echo __('no comment & review available'); ?>
+						</div>
+						<?php
+					} else{ 
+						$i=0;
+						foreach($reviewcollection as $keyed){
+							$i++; ?>
+							<div class="wk-orderbox <?php if($i==1) echo "wk-first-order"?>">
+								<div style="padding:7px 7px 0px 7px;">
+									<div class="wk-orderbox-content1 review_img">
+										<div class="wk-feedback-details ">
+											hello
+										</div>
+										<div class="mpfeedback">
+											<div class="price">
+												<span class="wk-ordertitle-label wk-span"><?php echo __('Price') ?> </span><span class="wk-ordertitle-label">:</span>
+												<div class="ratingslider-box">
+													<div class="rating" style="width:<?php echo ceil($keyed['feed_price']);?>%;"></div>
+												</div>
+												<div class="clear"></div>
+											</div>
+											<div class="value">
+												<span class="wk-ordertitle-label wk-span"><?php echo __('Value') ?> </span><span class="wk-ordertitle-label">:</span>
+												<div class="ratingslider-box" >
+													<div class="rating" style="width:<?php echo ceil($keyed['feed_value']);?>%;"></div>
+												</div>
+												<div class="clear"></div>
+											</div>
+											<div class="quality">
+												<span class="wk-ordertitle-label wk-span"><?php echo __('Quality') ?> </span><span class="wk-ordertitle-label">:</span>
+												<div class="ratingslider-box">
+													<div class="rating" style="width:<?php echo ceil($keyed['feed_quality']);?>%;"></div>
+												</div>
+												<div class="wk-clear"></div>
+											</div>
+											<div class="wk-orderbox-details">
+												<?php 
+													//$feedcustomer = $block->Customer->load($keyed['buyer_id']); 
+													//$name = $feedcustomer['firstname'].' '.$feedcustomer['lastname'];  
+												?>
+												<span class="wk-title-label"><?php echo __('By: ');?> </span>
+												<span class="wk-label"><?php  echo $name;?> </span>
+												<span class="wk-title-label"><?php echo __('Date: ');?> </span>
+												<span class="wk-label"><?php echo $keyed['created_at'] ?> </span>
+											</div>
+											<div class="comment"><?php echo $keyed['feed_review']; ?> </div>
+										</div>
+									</div>
+									<!-- <div class="wk-orderbox-content2">
+										
+									</div> -->
+								</div>
+							</div>
+							<div class="wk-clear"></div>
+							<?php
+						} 	?>
+						<?php
+					} ?>
+				</div>
+			</div>		
+		</fieldset>
+	</div>
+	<div class="ask-que">
+		<div id="wk-mp-ask-data">
+			<div class="modals-wrapper">
+				<aside tabindex="0" data-type="popup" data-role="modal" class="modal-popup modal-slide _inner-scroll wk-mp-model-popup">
+				    <div tabindex="0" data-role="focusable-start"></div>
+				    <div data-role="focusable-scope" class="modal-inner-wrap">
+						<header class="modal-header">
+							<h4 class="modal-title"><?php echo __('Ask Question to Admin') ?></h4>
+							<button type="button" data-role="closeBtn" class="action-close wk-close">
+				                <span>Close</span>
+				            </button>
+							<span  class="wk-clear" ></span>
+						</header>
+						<form id="ask-form" method="post" action="#" class="fieldset">
+							<div class="modal-body form-list field required">
+								<label class="label"><?php echo __('Subject') ?> :</label>
+								<input type="text" name="subject" class="wk-contact_input_fields required-entry"/>
+								<label class="label"><?php echo __('Your Query') ?> :</label>
+								<textarea  name="ask" class="queryquestion wk-contact_input_fields required-entry" style="width:100%;"></textarea>
+								<input type="hidden" name="seller-id" value="<?php echo $block->getCustomerId();?>"/>
+								<?php 
+								if($captchenable){?>
+									<div>
+										<span>
+											<label for="wk-mp-captcha"><span id="wk-mp-captchalable1"><?php echo rand(1,20)?></span> + <span id="wk-mp-captchalable2"><?php echo rand(1,20)?></span> =</label>
+										</span>
+										<input type="text" class="required-entry wk-contact_input_fields" name="wk-mp-captcha" id="wk-mp-captcha" />
+									</div>
+								<?php
+								}?>
+							</div>
+							<div class="modal-footer">
+								<span class="error"></span>
+								<span class="errormail"></span>
+								<input type="reset" value="<?php echo __('Reset') ?>" id="resetbtn" class="wk-btn wk-btn_default"/>
+								<input type="submit" value="<?php echo __('Submit') ?>" id="askbtn" class="wk-btn wk-btn-primary clickask"/>
+								<span class="wk-clear"></span>
+							</div>
+						</form>        
+				    </div>
+				    <div tabindex="0" data-role="focusable-end"></div>
+				</aside>
+			</div>
+		</div>
+	</div>
+
+	<div class="buttons-set">
+		<p class="back-link">
+			<a href="javascript:;" onclick="javascript: window.history.back();" class="left btn btn-sm btn-primary"><i class="fa fa-angle-double-left"></i> <?php echo __('Back') ?></a>
+		</p>
+	</div>
+
+	<script>
+	    require([
+	        "jquery",
+	        "mage/mage",
+	        'prototype',
+	        'domReady!'
+	    ], function($){
+	        
+	        var askDataForm = $('#ask-form');
+	        askDataForm.mage('validation', {});
+
+			$('body').append($('#wk-mp-ask-data'));
+
+			$('#askque').click(function(){
+				$('#ask-form input,#ask-form textarea').removeClass('mage-error');
+				$('.page-wrapper').css('opacity','0.4');
+				$('.wk-mp-model-popup').addClass('_show');
+				$('#wk-mp-ask-data').show();
+			});
+			$('.wk-close').click(function(){
+				$('.page-wrapper').css('opacity','1');
+				$('#resetbtn').trigger('click');
+				$('#wk-mp-ask-data').hide();
+				$('#ask-form .validation-failed').each(function(){
+					$(this).removeClass('validation-failed');
+				});
+				$('#ask-form .validation-advice').each(function(){
+					$(this).remove();
+				});
+			});
+			$('#askbtn').click(function(){
+				if(askDataForm.valid()!=false){
+					var thisthis = $(this);
+					if(thisthis.hasClass("clickask")){	
+						<?php 
+						if($captchenable){?>
+							var total = parseInt($('#wk-mp-captchalable1').text()) + parseInt($('#wk-mp-captchalable2').text());
+							var wk_mp_captcha = $('#wk-mp-captcha').val();
+							if(total != wk_mp_captcha){
+								$('#wk-mp-captchalable1').text(Math.floor((Math.random()*10)+1));
+								$('#wk-mp-captchalable2').text(Math.floor((Math.random()*100)+1));
+								$('#wk-mp-captcha').val('');
+								$('#wk-mp-captcha').addClass('mage-error');
+								$(this).addClass('mage-error');
+								$('#ask_form .errormail').text("<?php echo __(' Wrong varification number. ') ?>").slideDown('slow').delay(2000).slideUp('slow');
+							}else{
+								thisthis.removeClass('clickask');
+								$('#wk-mp-ask-data').addClass('mail-procss');
+								$.ajax({
+									url:'<?php echo $block->getUrl("marketplace/account/askquestion", ["_secure" => $this->getRequest()->isSecure()]) ?>',
+									data:$('#ask-form').serialize(),
+									type:'post',
+									dataType:'json',
+									success:function(d){
+										thisthis.addClass('clickask');
+										$('#wk-mp-ask-data').removeClass('mail-procss')
+										alert("<?php echo __(' Mail Send ') ?>..");
+										$('.wk-close,#resetbtn').trigger('click');
+									}
+								});
+							}
+						<?php 
+						}else{?>
+							thisthis.removeClass('clickask');
+								$('#wk-mp-ask-data').addClass('mail-procss');
+								$.ajax({
+									url:'<?php echo $block->getUrl("marketplace/account/askquestion", ["_secure" => $this->getRequest()->isSecure()]) ?>',
+									data:$('#ask-form').serialize(),
+									type:'post',
+									dataType:'json',
+									success:function(d){
+										thisthis.addClass('clickask');
+										$('#wk-mp-ask-data').removeClass('mail-procss')
+										alert("<?php echo __(' Mail Send ') ?>..");
+										$('.wk-close,#resetbtn').trigger('click');
+									}
+								});
+							<?php 
+						}?>
+					}
+					return false;
+				}
+			});	
+		});    
+	</script>
+	<?php 
+}else{ ?>
+	<h2 class="wk-mp-error_msg">
+		<?php echo __("To Become Seller Please Contact to Admin."); ?>
+	</h2>
+	<?php
+} ?>

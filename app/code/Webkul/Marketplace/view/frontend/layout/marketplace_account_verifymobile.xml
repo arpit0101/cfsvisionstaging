@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+  
+    <body>
+
+        
+ 
+        <referenceContainer name="content">
+            <block class="Webkul\Marketplace\Block\Account\Verifymobile" name="marketplace_account_verifymobile" template="account/verifymobile.phtml" cacheable="false"/>
+        </referenceContainer>
+        <referenceContainer name="main.content" htmlTag="main"  htmlClass="page-main verifymobile"/>
+
+        <referenceContainer name="sidebar.main" remove="true" />
+        <referenceContainer name="sidebar.additional" remove="true" />
+    </body>
+</page>

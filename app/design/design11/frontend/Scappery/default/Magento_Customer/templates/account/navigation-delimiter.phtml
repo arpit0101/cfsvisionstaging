@@ -1,0 +1,20 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+$_helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$isPartner= $_helper->isSellerPresent();
+$objectManager 	=	\Magento\Framework\App\ObjectManager::getInstance();
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+$groupId = $customerSession->getCustomer()->getGroupId();
+//echo $groupId;
+?>
+<li class="nav item test">
+    <span class="delimiter"></span>
+</li>
+<?php if($isPartner || $groupId==4){ ?>
+		<script>
+			jQuery('.content.block-collapsible-nav.custom-content').hide();
+		</script>
+	<?php } ?>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Magento/Backend/etc/menu.xsd">
+    <menu>
+        <add id="PHPCuong_Region::region" title="Manage Location" module="PHPCuong_Region" sortOrder="65"   resource="PHPCuong_Region::region"/>
+		
+		<add id="PHPCuong_Region::city" title="Manage Region" module="PHPCuong_Region" sortOrder="65" parent="PHPCuong_Region::region"  action="phpcuong/region" resource="PHPCuong_Region::city"/>
+		
+		<add id="PHPCuong_Region::area" title="Manage Area" module="PHPCuong_Region" sortOrder="65" parent="PHPCuong_Region::region"  action="phpcuong/area" resource="PHPCuong_Region::area"/>
+		
+    </menu>
+</config>

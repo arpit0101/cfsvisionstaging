@@ -1,0 +1,64 @@
+<?php
+
+
+
+
+$adminUrl='https://www.scappery.com/rest/V1/integration/admin/token';
+$ch = curl_init();
+$data = array("username" => "owebestadmin", "password" => "champ123");
+$data_string = json_encode($data);
+$ch = curl_init($adminUrl);
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+'Content-Type: application/json',
+'Content-Length: ' . strlen($data_string))
+);
+$token = curl_exec($ch);
+$token= json_decode($token);
+echo $token.'==============';
+$ch = curl_init("https://www.scappery.com/rest/V1/carts/585");
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json", "Authorization:Bearer " . $token));
+
+$result = curl_exec($ch);
+echo '<pre>';
+json_decode($result);
+print_r(json_decode($result));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$cart = $objectManager->get('\Magento\Checkout\Model\Cart'); 
+$quoteId = $cart->getQuote()->getId();
+//$qoute = $objectManager->create('\Magento\Quote\Model\QuoteFactory')->loadByIdWithoutStor‌​e($quoteId);
+$qoute = $objectManager->get('Magento\Quote\Model\QuoteFactory')->create()->loadByIdWithoutStore($quoteId);
+
+echo '<pre>'; print_r($qoute->getData());
+die("tesssssst"); 
+$itemsCollection = $cart->getQuote()->getItemsCollection();
+$itemsVisible = $cart->getQuote()->getAllVisibleItems();
+$items = $cart->getQuote()->getAllItems();
+foreach($items as $item) {
+     echo 'ID: '.$item->getProductId().'<br />';
+      echo 'Name: '.$item->getName().'<br />';
+       echo 'Sku: '.$item->getSku().'<br />';
+       echo 'Quantity: '.$item->getQty().'<br />';
+      echo 'Price: '.$item->getPrice().'<br />';
+    echo "<br />";            
+  }
+  
+?>

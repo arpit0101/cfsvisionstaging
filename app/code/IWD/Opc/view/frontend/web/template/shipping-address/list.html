@@ -1,0 +1,90 @@
+<script src="http://formvalidation.io/vendor/formvalidation/js/formValidation.min.js"></script>
+<script src="http://formvalidation.io/vendor/formvalidation/js/framework/bootstrap.min.js"></script>
+
+<div class="fieldset">
+    <div class="field field-select-shipping">
+        <div class="control">
+			<div class="address-wraper" data-bind="foreach: { data: addressOptions, as: 'address' }">
+				<!-- ko if: ($index() === ($parent.addressOptions.length - 2)) -->
+				<div data-bind="attr: {rel: address.customerAddressId}" class='customer-address active' if="address.customerAddressId!=null"> <span class="address-data" data-bind="html: address.street+', '+address.city+', '+address.region+' <br>'+address.telephone"></span>
+				</div>
+				<!-- /ko -->
+				<!-- ko ifnot: ($index() === ($parent.addressOptions.length - 2)) -->
+				<div data-bind="attr: {rel: address.customerAddressId}" class='customer-address' if="address.customerAddressId!=null"> <span class="address-data" data-bind="html: address.street+', '+address.city+', '+address.region+'<br>'+address.telephone"></span>
+				</div>
+				<!-- /ko -->
+			</div>
+			<div class='customer-new-address'><a href="#"  class="add_new_address" data-toggle="modal" data-target="#myModal"><span data-bind="i18n: 'Add New Address'"></span></p></a></div>
+			
+            <select class="select" name="shipping_address_id" id="shipping_address_id" data-bind="
+                options: addressOptions,
+                optionsText: addressOptionsText,
+                optionsAfterRender:
+                    function(option, item) {
+                        decorateSelect('shipping_address_id', true);
+                    },
+                value: selectedAddress,
+                optionsValue: function(address){
+                    return address.customerAddressId;
+                },
+            "></select>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="myModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+
+    <!-- Modal content-->
+		<div class="modal-content">
+			<form id="addAddressForm" action="/region/saveAddress"  method="post"> 
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 data-bind="i18n: 'Add New Address'"></h4>
+				</div>
+				<div class="modal-body">
+					<div class="form_section">
+						<div class="error_msg alert alert-danger" style="display:none;"><a href="#" class="close" >&times;</a><strong></strong>&nbsp;<span data-bind="i18n: 'Please fill all required(*) feilds'">Please fill all required(*) feilds</span></div>
+
+						<div class="form-group">
+							<label class="label_require" data-bind="i18n: 'Building Number'">Building Number*</label>
+							<input required type="text" class="form-control" name="street[]" id="street1">
+						</div>
+						<div class="form-group">
+							<label class="label_require" data-bind="i18n: 'Street address'">Street address*</label>
+							<input type="text" required class="form-control" name="street[]" id="street2">
+						</div>
+						
+						<div class="form-group">
+							<label class="label_require" data-bind="i18n: 'City'">City*</label>
+							<select required class="form-control" name="state" id="state">
+			                  <option value="">Select City</option>
+			                  <option selected="selected" data-id="791" value="Abu Dhabi">Abu Dhabi</option>
+			               </select>
+						</div>
+						<div class="form-group">
+							<label class="label_require" data-bind="i18n: 'Zone'">Zone*</label>
+							<select required class="form-control" name="city" id="area">
+								<option value="">Select Zone</option>
+								<option selected="selected" value="Dubai">Dubai</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label class="label_require" data-bind="i18n: 'Phone number'">Phone number*</label>
+							<input required type="text" class="form-control" name="phone">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="form_section">
+						<div class="form-group">
+							<button type="submit" class="btn btn-default new_add_btn" data-bind="i18n: 'Add Address'" >Add Address</button>
+						</div>
+					</div>
+				</div>
+			</form>	
+		</div>
+	</div>
+</div>

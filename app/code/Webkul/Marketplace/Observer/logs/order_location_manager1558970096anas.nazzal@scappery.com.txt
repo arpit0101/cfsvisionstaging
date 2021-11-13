@@ -1,0 +1,5 @@
+Array
+(
+    [name] => Anas Nazzal
+    [email] => anas.nazzal@scappery.com
+)

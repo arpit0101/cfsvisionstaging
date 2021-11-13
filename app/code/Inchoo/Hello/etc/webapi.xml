@@ -1,0 +1,227 @@
+<?xml version="1.0"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+	<route url="/V1/scappery/getCity/" method="GET">
+        <service class="Inchoo\Hello\Model\City" method="getCity"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/getArea" method="GET">
+        <service class="Inchoo\Hello\Model\Area" method="getArea"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/getSubArea/:region_id" method="GET">
+        <service class="Inchoo\Hello\Model\SubArea" method="getSubArea"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/getSeller/:region_id/:area_id/:cat_id" method="GET">
+        <service class="Inchoo\Hello\Model\Seller" method="getSeller"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/getProducts/:seller_id/:cat_id" method="GET">
+        <service class="Inchoo\Hello\Model\SellerProduct" method="getProduct"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>	
+	<route url="/V1/scappery/getStoreCategories/:seller_id" method="GET">
+        <service class="Inchoo\Hello\Model\SellerCategory" method="getStoreCategories"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>	
+	<route url="/V1/scappery/ContactUs/" method="POST">
+        <service class="Inchoo\Hello\Model\ContactUs" method="ContactUs"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/contactus" method="POST">
+        <service class="Inchoo\Hello\Api\ContactusManagementInterface" method="submitForm"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/ProductSearch/" method="POST">
+        <service class="Inchoo\Hello\Model\ProductSearch" method="ProductSearch"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/getsearchdata/" method="POST">
+        <service class="Inchoo\Hello\Model\ProductSearch" method="getSearchData"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/AddressDelete/:address_id" method="DELETE">
+        <service class="Inchoo\Hello\Model\CustomerAddress" method="AddressDelete"/>
+        <resources>
+			<resource ref="self"/>
+		</resources>
+	</route>
+	<route url="/V1/scappery/carts/mine/DeleteAllItems" method="DELETE">
+        <service class="Inchoo\Hello\Model\DeleteCart" method="DeleteAllItems"/>
+        <resources>
+			<resource ref="self"/>
+		</resources>
+	</route>
+	<route url="/V1/scappery/getSchedule" method="GET">
+        <service class="Inchoo\Hello\Model\Schedule" method="getSchedule"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+	</route>
+	<route url="/V1/scappery/social/login" method="POST">
+        <service class="Inchoo\Hello\Model\SocialLogin" method="login"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/social/register" method="POST">
+        <service class="Inchoo\Hello\Model\SocialLogin" method="register"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	
+	<route url="/V1/scappery/AddCustomerAddress" method="POST">
+        <service class="Inchoo\Hello\Model\AddAddress" method="AddCustomerAddress"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/myorders" method="GET">
+        <service class="Inchoo\Hello\Model\Orders" method="MyOrders"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/order/:order_id" method="GET">
+        <service class="Inchoo\Hello\Model\Orders" method="OrderDetails"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/wishlist" method="GET">
+        <service class="Inchoo\Hello\Model\Wishlist" method="getWishlistForCustomer"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/wishlist/add/:product_id" method="GET">
+        <service class="Inchoo\Hello\Model\Wishlist" method="addWishlistForCustomer"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/wishlist/remove/:product_id" method="GET">
+        <service class="Inchoo\Hello\Model\Wishlist" method="removeWishlistForCustomer"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/cmspages/:page_url" method="GET">
+        <service class="Inchoo\Hello\Model\CMSPage" method="getPageData"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/products/:barcode" method="GET">
+        <service class="Inchoo\Hello\Model\Product" method="getProductByBarcode"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	
+	<route url="/V1/scappery/categories" method="GET">
+        <service class="Inchoo\Hello\Model\Category" method="getCategories"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+	<route url="/V1/scappery/carts/mine" method="GET">
+        <service class="Inchoo\Hello\Model\Cart" method="getCart"/>
+        <resources>
+			<resource ref="self"/>
+		</resources>
+	</route>
+	<route url="/V1/scappery/guest-carts/:cartId" method="GET">
+        <service class="Inchoo\Hello\Model\Cart" method="getCartForGuest"/>
+        <resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route url="/V1/scappery/merge-carts/:guestQuoteId" method="POST">
+        <service class="Inchoo\Hello\Model\Cart" method="mergeGuestToCustomerCart"/>
+        <resources>
+			<resource ref="self"/>
+		</resources>
+	</route>
+	<route url="/V1/scappery/carts/mine/" method="POST">
+        <service class="Inchoo\Hello\Model\Cart" method="cartsid"/>
+        <resources>
+			<resource ref="self"/>
+		</resources>
+	</route>
+	<route url="/V1/scappery/reorder/:order_id" method="POST">
+        <service class="Inchoo\Hello\Model\Orders" method="reOrder"/>
+        <resources>
+			<resource ref="self"/>
+		</resources>
+	</route>
+	<route url="/V1/scappery/cancelorder/:order_id" method="POST">
+        <service class="Inchoo\Hello\Model\Orders" method="cancelOrder"/>
+        <resources>
+			<resource ref="self"/>
+		</resources>
+	</route>
+	<route url="/V1/scappery/hyperpay/checkouts" method="POST">
+        <service class="Inchoo\Hello\Model\HyperPay" method="checkouts"/>
+        <resources>
+			<resource ref="self"/>
+		</resources>
+	</route>
+	<route url="/V1/scappery/store/slider" method="GET">
+        <service class="Inchoo\Hello\Model\Slider" method="getStoreSlider"/>
+        <resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route url="V1/scappery/configurable-products/:sku/:attribute_id" method="GET">
+        <service class="Inchoo\Hello\Model\Product" method="getConfigurableProductChilds"/>
+        <resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route url="V1/scappery/products/attributes/:attribute_id/:product_id" method="GET">
+        <service class="Inchoo\Hello\Model\Product" method="getAttributeInfo"/>
+        <resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route url="V1/scappery/product-by-sku/:sku" method="GET">
+        <service class="Inchoo\Hello\Model\Product" method="getProductInfo"/>
+        <resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route url="V1/scappery/app-version" method="GET">
+        <service class="Inchoo\Hello\Model\Settings" method="getInfo"/>
+        <resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route url="V1/scappery/carts/mine/shipping-information" method="POST">
+        <service class="Inchoo\Hello\Model\Cart" method="setShippingInformation"/>
+        <resources>
+			<resource ref="self"/>
+		</resources>
+	</route>
+</routes>

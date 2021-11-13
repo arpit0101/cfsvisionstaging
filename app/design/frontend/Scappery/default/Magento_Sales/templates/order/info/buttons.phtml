@@ -1,0 +1,35 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+$blockObj= $block->getLayout()->createBlock('Inchoo\Helloworld\Block\Order\Info\Buttons');
+?>
+<div class="actions">
+    <?php  $_order = $block->getOrder() ?>
+    <?php if ($this->helper('Magento\Sales\Helper\Reorder')->canReorder($_order->getEntityId())) : ?>
+        <a href="#" data-post='<?php /* @escapeNotVerified */ echo
+        $this->helper(\Magento\Framework\Data\Helper\PostHelper::class)
+            ->getPostData($block->getReorderUrl($_order))
+        ?>' class="action order">
+            <span><?= /* @escapeNotVerified */ __('Reorder') ?></span>
+        </a>
+		<?php $orderid = $_order->getId();
+		$status = $blockObj->getOrderStatus($orderid);
+        if($status == 'pending'): ?>
+		    <a href="#" data-post='<?php /* @escapeNotVerified */ echo
+            $this->helper(\Magento\Framework\Data\Helper\PostHelper::class)
+                ->getPostData($blockObj->getCancelUrl($_order))
+            ?>' class="action order">
+                <span><?= /* @escapeNotVerified */ __('Cancel Order') ?></span>
+            </a>
+    <?php endif; endif; ?>
+    <a class="action print"
+       href="<?= /* @escapeNotVerified */ $block->getPrintUrl($_order) ?>"
+       onclick="this.target='_blank';">
+        <span><?= /* @escapeNotVerified */ __('Print Order') ?></span>
+    </a>
+    <?= $block->getChildHtml() ?>
+</div>

@@ -1,0 +1,296 @@
+<?php
+	$objectManager 		= 	\Magento\Framework\App\ObjectManager::getInstance();
+
+	$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+
+	if(!$customerSession->getData('city_id')){
+		$city_id = '791';
+		$customerSession->setData('city_id', $city_id);
+	}
+	if(!$customerSession->getData('area_id')){
+		$area_id = '157';
+		$customerSession->setData('area_id', $area_id);
+	}
+	
+	$resource 			= 	$objectManager->get('Magento\Framework\App\ResourceConnection');
+	$connection 		= 	$resource->getConnection();
+	
+	$tableName 			= 	$resource->getTableName('directory_country_region ');
+	$customerSession 	= 	$objectManager->create('Magento\Customer\Model\Session');
+	$block 				= 	$block->getLayout()->createBlock('Inchoo\Helloworld\Block\Helloworld');
+	$categories 		=	$block->getStoreCategories(true,false,true);
+	$helper 			= 	$this->helper('Webkul\Marketplace\Helper\Data');
+	$categoryHelper 	= 	$block->getCategoryHelper();
+	
+	if(isset($customerSession->getdata()['city_id'])){
+	$city_id			= $customerSession->getdata()['city_id'];
+	}else{
+		$city_id 		= "";
+	}
+	if(isset($customerSession->getdata()['area_id'])){
+		$area_id		= $customerSession->getdata()['area_id'];
+	}else{
+		$area_id = "";
+	}
+	
+	$sql = "Select * FROM " . $tableName . " where `country_id`='AE'";
+	$result = $connection->fetchAll($sql);
+	$areas 				=	$block->getAreas();
+?>
+
+
+<!-- Facebook Pixel Code -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1685341041705007');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1685341041705007&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Facebook Pixel Code -->
+<style>
+.jrd_flag img {
+	max-width: 29px;
+}
+</style>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-12">
+				<ul class="button-listing">
+                	<li class="jrd_flag"><img src="<?php echo $this->getViewFileUrl('images/ae_flag.png'); ?>" alt="" /></li>
+				<?php
+					if($customerSession->isLoggedIn()) {
+				?>
+					<li> <a href="<?php echo $block->getUrl('customer/account') ?>" class="btn my-account-btn"> 
+						<!-- <img src='<?php echo $this->getViewFileUrl('images/sign-up.png'); ?>' alt="" /> -->
+						<span><?php echo __('my account'); ?>
+						</b>
+						</span>
+
+						</a>
+					</li>
+					<li> <a href="<?php echo $block->getUrl('customer/account/logout') ?>" class="btn log-out-btn">
+					<!-- <img src='<?php echo $this->getViewFileUrl('images/login-icon.png'); ?>' alt="" /> -->
+					 <span>
+					
+					<b><?php echo __('LOGOUT'); ?></b>
+					</span></a></li>
+				<?php		
+					} else {
+				?>
+				<li> <a href="<?php echo $block->getUrl('customer/account/create') ?>" class="btn signup-button"> 
+				<!-- <img src='<?php echo $this->getViewFileUrl('images/sign-up.png'); ?>' alt="" /> -->
+				<span><?php echo __('Register'); ?></span>
+
+				</a></li>
+				<li> <a href="<?php echo $block->getUrl('customer/account/login') ?>" class="btn login-button">
+				<!-- <img src='<?php echo $this->getViewFileUrl('images/login-icon.png'); ?>' alt="" /> -->
+				<span><?php echo __('Login'); ?></span>
+				</a></li>
+
+					<?php } ?>
+			 <?php echo $this->getChildHtml('minicart'); ?>
+			<?php echo $this->getChildHtml('store_language') ?>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div class="head-logowrapper">
+	<div class="container-fluid">
+		<div class="row">
+
+			<div class="col-sm-6 col-md-6">
+				<figure class="logo">
+					<?php echo $this->getChildHtml("logo"); ?>
+				</figure>
+				<?php /* <p class="head-tagline"><?php echo __('Your Favorite Stores, Delivered To Your Doors');?></p> */ ?>
+			</div>
+			<div class="col-md-6 col-sm-6">
+				<?php if (($this->getRequest()->getFullActionName() == 'cms_index_index' && $area_id!="" && $city_id!="") || $this->getRequest()->getFullActionName() == 'region_index_index') { ?>
+					<div class="header-search-panel-wrapper">
+						<div class="header-search-panel">
+							<div class="search-box">
+								<form id="search_form">
+									<span class="glyphicon glyphicon-search"></span>
+									<div id="ds-loader" class="progress_image_outer" style="display:none;">
+										<div class="loader">
+											<div class="flipper">
+												<div class="front color-1-bg">
+													<div class="back"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<input type="text" id="header_search" class="form-control" placeholder="<?php echo __('Search for stores or products'); ?>">
+									<div class="search-suggestions narrow hide"></div>
+								</form>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
+			</div>
+		</div>
+	</div>
+</div>
+<?php //if (($this->getRequest()->getFullActionName() == 'cms_index_index' && $area_id!="" && $city_id!="") || $this->getRequest()->getFullActionName() == 'region_index_index' || $this->getRequest()->getFullActionName() == 'marketplace_seller_collection') {
+	
+if ($this->getRequest()->getFullActionName() == 'region_index_index' || $this->getRequest()->getFullActionName() == 'marketplace_seller_collection') {
+	
+$cat_count = $categories->count(); ?>
+<div class="subsub-navigation">
+	<div class="container">
+	  <ul class="owl-carousel owl-theme" <?php if($cat_count < 20): ?> style="display:block; text-align:center;" <?php endif; ?>>
+			<?php 
+			if(isset($categories)){
+				foreach($categories as $category){
+			?>
+				
+			<li class="item" >
+				<?php 
+				if($this->getRequest()->getFullActionName() == 'marketplace_seller_collection'){
+					?>
+					<a href="/region/?cat_id=<?php echo $category->getData()['entity_id'];?>" id="list_category_<?php echo $category->getData()['entity_id']; ?>"><?php echo __($category->getName());?></a>
+					<?php 	
+				}else{
+					?>
+					<a href="javascript:void(0)" id="list_category_<?php echo $category->getData()['entity_id']; ?>"><?php echo __($category->getName());?></a>
+					<?php 
+				}
+				?>
+			</li>
+		
+			<?php
+				}
+			}
+			?>
+	  </ul>
+	  <div class="meghamenu">
+	  		<img src="../../web/" alt="" />
+	  </div>
+
+	</div>
+</div>
+<?php if($cat_count > 14): ?>
+	<script type="text/javascript">
+jQuery(document).ready(function(){
+	   jQuery('.owl-carousel').owlCarousel({
+			loop:true,
+			nav:true,
+			autoplay:false,
+			dot:false,
+			navText : ["<i class='fa fa-chevron-left'></i>","<i class='fa fa-chevron-right'></i>"],
+			items:8,
+			responsive:{
+				0:{
+					items:2
+				},
+				767:{
+					items:5
+				},
+				768:{
+					items:5
+				},
+				1020:{
+					items:6
+				},
+				1025:{
+					items:8
+				}
+			}
+	});
+});
+</script>
+<?php endif; ?>
+<?php 
+
+} ?>
+<?php
+	if($this->getRequest()->getFullActionName()=="marketplace_seller_collection"){
+		$sellerBlock 		= 	$objectManager->get('Webkul\Marketplace\Block\Sellercategory');
+		$partner			=	$sellerBlock->getProfileDetail();
+		$shoptitle 			= 	$partner->getShopTitle();  
+		if($shoptitle==""){
+			$shoptitle 			= 	$partner->getShopUrl();  
+		}
+?>
+	<div class="sub-navigation" style="min-height: 0;">
+	<div class="sub-navigation-container" style="display: none;">
+		<div class="row">
+			<div class="col-md-6">
+				<ul class="new-breadcrumbs">
+					<li>
+						<a href="<?php echo $this->getUrl('/');?>"><?php echo __('Home'); ?></a>
+					</li>
+					<li>
+						<a href="<?php echo $this->getUrl('region/');?>"><?php echo __('Categories'); ?></a>
+						
+					</li>
+					<li>
+						<a href="<?php echo $this->getUrl('region/');?>"><?php echo __('Stores'); ?></a>
+						
+					</li>
+					<li>
+						<a href="#!"><?php echo __($shoptitle); ?></a>
+					</li>
+				</ul>
+			</div>
+			<div class="col-md-6">
+				<div class="subnav-select">
+					<form action="<?php echo $this->getUrl('region/');?>" method="post" id="area_form">
+					<div class="slect-col-1">
+						<label><?php echo __('You are Shopping in'); ?> </label>
+					</div>
+					<div class="slect-col-2">
+						<select class="form-control city_dropdown" id="select_region_again1" name="city_id">
+				
+							<?php foreach($result as $res) { 
+								 ?>
+								<option <?php if($city_id){ if($city_id==$res['region_id']){ echo "selected"; }}?> value="<?php echo __($res['region_id']); ?>"><?php echo __($res['default_name']); ?></option>
+							  <?php	
+								 }?> 
+						</select>
+						<input type="hidden" value="<?php echo $area_id ?>" id="area_id_hidden" >
+					</div>
+					<div class="slect-col-3" >
+						<select class="other-custom-select form-control area_dropdown" id="select_area_again1" name="area_id" >
+						   <?php 
+							  if(isset($areas['area']) && !empty($areas['area'])){
+								foreach($areas['area'] as $area){	
+										$selected = (isset($areas['current_area_id']) && $area['area_id']==$areas['current_area_id'])?'selected':'';
+										if($area_id){
+											if($area_id==$area['area_id']){
+												$selected = 'selected';
+											}
+										}
+										
+									?>
+						   <option value="<?php echo $area['area_id'];?>" <?php echo $selected;  ?> ><?php echo __($area['default_name']); ?></option>
+						   <?php						
+							  }
+							  }else{
+							  ?>
+						   <option value=""></option>
+						   <?php
+							  }
+							  ?>
+						</select>
+					</div>
+					
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php
+	}
+?>

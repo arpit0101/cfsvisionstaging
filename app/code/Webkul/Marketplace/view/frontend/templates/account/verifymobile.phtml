@@ -1,0 +1,32 @@
+
+
+<form class="form create account form-create-account verify_no" action="<?php echo $this->getUrl("marketplace/account/verifymobilepost"); ?>" method="post" id="form-validate" enctype="multipart/form-data" autocomplete="off">
+    <fieldset class="fieldset create info">
+        <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Verify Your Mobile Number') ?></span></legend><br>
+        <input type="hidden" name="success_url" value="<?php /* @escapeNotVerified */ echo $block->getSuccessUrl() ?>">
+        <input type="hidden" name="error_url" value="<?php /* @escapeNotVerified */ echo $block->getErrorUrl() ?>">
+        
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="field required form-group">
+                    <label for="otp" class="label"><span>Enter OTP</span></label>
+                    <div class="control">
+                        <input type="text" name="otp" id="otp" value="" required="required" title="" class="input-text" data-validate="{required:true}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <div class="actions-toolbar">
+        <div class="text-center primary">
+            <button type="submit" class="action submit btn btn-primary" title="<?php /* @escapeNotVerified */ echo __('Confirm') ?>"><span><?php /* @escapeNotVerified */ echo __('Confirm') ?></span></button>
+        </div>
+        <br/>
+         <div class="text-center">
+            <a href="<?php echo $this->getUrl("marketplace/account/resendotp"); ?>">Resend OTP?</a>
+        </div>
+        <div class="secondary">
+            <a class="action back" href="<?php echo $block->escapeUrl($block->getBackUrl()) ?>"><span><?php /* @escapeNotVerified */ echo __('Back') ?></span></a>
+        </div>
+    </div>
+</form>

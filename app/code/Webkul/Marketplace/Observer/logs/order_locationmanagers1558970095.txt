@@ -1,0 +1,39 @@
+Array
+(
+    [0] => Array
+        (
+            [firstname] => zonemanager1
+            [lastname] => zonemanager1
+            [name] => zonemanager1 zonemanager1
+            [email] => abdfhammad@gmail.com
+            [id] => 71
+        )
+
+    [1] => Array
+        (
+            [firstname] => Amman Mall 
+            [lastname] => Zone
+            [name] => Amman Mall  Zone
+            [email] => ashraf.anabtawi.o@gmail.com
+            [id] => 211
+        )
+
+    [2] => Array
+        (
+            [firstname] => Anas
+            [lastname] => Nazzal
+            [name] => Anas Nazzal
+            [email] => anas.nazzal@scappery.com
+            [id] => 261
+        )
+
+    [3] => Array
+        (
+            [firstname] => Zonemanager
+            [lastname] => ZoneManager
+            [name] => Zonemanager ZoneManager
+            [email] => zonemanager@mailinator.com
+            [id] => 368
+        )
+
+)

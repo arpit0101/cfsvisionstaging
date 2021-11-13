@@ -1,0 +1,19 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd" layout="1column">
+   <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+      <css src="css/bootstrap.min.css" />
+      <css src="css/owl.carousel.min.css" />
+      <css src="css/font-awesome.min.css" />
+      <link src="js/jquery.min.js" />
+      <link src="js/bootstrap.min.js" />
+      <link src="js/owl.carousel.min.js" />
+      <link src="js/dom.selectizing.js" />
+      <css src="css/custom.css" />
+   </head>
+   <body>
+	<referenceBlock name="page.main.title" display="false"/>
+      <referenceContainer name="content">
+         <block class="Inchoo\Helloworld\Block\Helloworld" name="helloworld" template="helloworld.phtml" />
+      </referenceContainer>
+   </body>
+</page>

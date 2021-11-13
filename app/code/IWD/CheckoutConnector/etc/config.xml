@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <iwd_checkout_connector>
+            <general>
+                <enable>0</enable>
+            </general>
+        </iwd_checkout_connector>
+        <payment>
+            <iwd_checkout_paypal>
+                <model>IWDCheckoutPayPalFacade</model>
+                <active>1</active>
+                <title>IWD Checkout PayPal</title>
+                <order_status>pending</order_status>
+                <can_use_internal>0</can_use_internal>
+                <can_use_checkout>0</can_use_checkout>
+                <can_order>1</can_order>
+            </iwd_checkout_paypal>
+        </payment>
+    </default>
+</config>

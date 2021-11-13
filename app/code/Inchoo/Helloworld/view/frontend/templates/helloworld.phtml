@@ -1,0 +1,304 @@
+<?php $categories =	$this->getStoreCategories(true,false,true);
+$objectManager = 	\Magento\Framework\App\ObjectManager::getInstance();
+$customerSession = 	$objectManager->create('Magento\Customer\Model\Session');
+$sellers =	$block->getSellerCollection();
+$resource =	$objectManager->get('Magento\Framework\App\ResourceConnection');
+$connection = 	$resource->getConnection();
+$tableName = 	$resource->getTableName('directory_country_region ');
+$sql = "Select * FROM " . $tableName . " where `country_id`='AE'";
+$result = $connection->fetchAll($sql);
+$city_id = '';
+if(isset($customerSession->getdata()['city_id'])){
+	$city_id	= $customerSession->getdata()['city_id'];
+}
+if($city_id != ''){
+	$areas 				=	$block->getAreas($city_id);
+}else{
+	$areas 				=	$block->getAreas();
+}	
+if(isset($customerSession->getdata()['area_id'])){
+	$area_id	= $customerSession->getdata()['area_id'];
+}
+$selected = "";
+$helper 			= 	$this->helper('Webkul\Marketplace\Helper\Data');
+$categoryHelper 	= 	$this->getCategoryHelper();
+?>
+<div class="container" >
+	<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('advertise-top')->toHtml();?>	
+	<div class="select-locator text-center">
+		<h1 class="shopper-name">
+			<span class="select-main-heading"><?php echo __('You are Shopping in'); ?> </span>		
+		    <span class="bold" style="margin-top:-5px;">
+		    	<div class="selectizing-wrapper form-group select_rl">
+		    	    <form action="<?php echo $this->getUrl('region/');?>" method="post" id="area_form">
+                        <input type="hidden" name="city_id" value="<?php echo (isset($areas['region']['region_id'])?$areas['region']['region_id']:'');?>">
+		    	        <select class="other-custom-select form-control" id="select_region_again1" name="city_id">
+		    	        	<?php foreach($result as $res) { 
+                                 ?>
+		    	        		<option <?php if($city_id){ if($city_id==$res['region_id']){ echo "selected"; }}?> value="<?php echo $res['region_id'] ?>"><?php echo __($res['default_name']); ?></option>
+                              <?php	
+                                 }?> 
+                        </select>
+                        <select class="other-custom-select form-control" id="select_area_again1" name="area_id" >
+                           <?php 
+                            if(isset($areas['area']) && !empty($areas['area'])){
+                              	foreach($areas['area'] as $area){	
+		    	        			$selected = (isset($areas['current_area_id']) && $area['area_id']==$areas['current_area_id'])?'selected':'';
+		    	        			if($area_id){
+		    	        				if($area_id==$area['area_id']){
+		    	        					$selected = 'selected';
+		    	        				}
+		    	        			}
+		    	        		?>
+                                <option value="<?php echo $area['area_id'];?>" <?php echo $selected;  ?> ><?php echo __($area['default_name']); ?></option>
+                           <?php }
+                            }else{ ?>
+                                <option value=""></option>
+                           <?php } ?>
+                        </select>
+                    </form>
+                </div>
+	        </span> 
+	    </h1>	
+    <script>
+         jQuery(document).ready(function($) {
+         	jQuery('#select_area_again1').change(function(){
+				$.confirm({
+					title: 'Change Location',
+					content: 'Change Location May Affect Your Cart!',
+					buttons: {
+						confirm: function () {
+							jQuery("#area_form").submit();
+						},
+						cancel: function () {							
+						},
+					}
+				});
+         	});
+			jQuery('#select_region_again1').change(function(){
+         			var url="";
+					var html="";
+					var city_id = jQuery(this).val();
+					try {
+						jQuery.ajax({
+							url : "/location/ajax/index",
+							dataType : 'json',
+							type : 'POST',
+							data: { city_id: city_id},
+							success : function(data){
+								if(data.length>0){
+									html+="<option value=''>--No zone selected--</option>";
+									jQuery.each(data, function(idx, obj) {
+										html+="<option value="+ obj.area_id +">"+obj.default_name+"</option>";
+									});
+									
+								}else{
+									html+="<option value=''>--No zone found--</option>";
+								}
+								
+								jQuery('#select_area_again1').html(html);
+								//jQuery('.progress_image_inner').hide();
+							}
+						});
+					}
+					catch(e) {}
+			});
+         });
+            
+		</script>
+    </div>
+	<div class="my-row" style="justify-content:center">
+		<div class="">
+			<div class="slect-text">
+				<p><?php echo __('Select store to start shopping'); ?></p>
+			</div>
+		</div>
+		<?php /* <div id="popup-modal">
+			<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('popup_text')->toHtml(); ?>
+           <?php  /* <p><?php echo __('Click store to begin shopping'); ?></p> 
+        </div> */ ?>
+		<div class="sellAllBtn_parent">
+			<div class="seeall-drop">
+				<div class="my-select-wrapper">
+					<div class="form-group">
+						<button class="form-control see_all_category hide"><?php echo __('View All Stores');?></button>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    <div class="storlist-wrapper">
+		<?php if(count($sellers)>0):  ?>
+            <ul>
+                <?php
+                    foreach($sellers as $seller):
+					//echo "<pre>"; print_r($seller->getData()); exit;
+                        $shoptitle 			= 	$seller->getShoptitle();
+                        $profileurl 			= 	$seller->getShopUrl();
+                        $companydescription 	= 	$seller->getCompanyDescription();
+                        $backgroundcolor 	= 	$seller->getBackgroundcolor();
+                        if(!$shoptitle){
+                           $shoptitle = $profileurl;
+                        }
+                        $logo		=	$seller->getLogoPic()==''?"noimage.png":$seller->getLogoPic();
+                        $logo		=	$helper->getMediaUrl().'avatar/'.$logo;
+                        $seller_id 	=	$seller->getSellerId();
+						
+                ?>
+				    <li id="category_store_<?php echo $seller_id; ?>" >
+					    <a href="<?php echo $helper->getRewriteUrl('marketplace/seller/collection/shop/'.$profileurl);?>" title="<?php echo __("View Seller's Shop") ?>">
+						    <?php  if($backgroundcolor!=""){ ?>
+						    	<div style="background: url(<?php echo $logo ?>); background-color: <?php echo $backgroundcolor;?>  !important;" ></div>
+						    <?php  }else{ ?>
+						    	<div style="background: url(<?php echo $logo ?>);" id="backGroundColor" ></div>
+						    <?php } ?>	
+							<span class="vendor_title"><?php echo $shoptitle; ?></span>
+					    </a>
+				    </li>
+				<?php
+				endforeach; ?>
+            </ul>
+            <?php
+                 else:
+            ?>
+            <div class="page-products page-with-filter fieldset wk-mp-fieldset">
+                <div class="message info empty">
+                    <div style="text-align:left;">We can't find stores matching the selection.</div>
+                </div>
+            </div>
+            <?php	endif;             ?>
+    </div>
+	<div class="ads-block-box"><?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('advertise-bottom')->toHtml();?></div>
+</div>
+<script type="text/javascript">
+/* require([
+    'jquery',
+    'Magento_Ui/js/modal/modal'
+],
+function(
+    $,
+    modal
+) {
+    var options = {
+        type: 'popup',
+        responsive: true,
+        innerScroll: true,
+        buttons: [{
+            text: $.mage.__('Continue'),
+            class: 'mymodal1',
+            click: function () {
+                this.closeModal();
+            }
+        }]
+    };
+
+    var popup = modal(options, $('#popup-modal'));
+    $(document).ready(function(){
+		setTimeout(function(){ $('#popup-modal').modal('openModal'); }, 1500);
+    });
+}); */
+</script>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	   
+	function getParameterByName( name ){
+		var regexS = "[\\?&]"+name+"=([^&#]*)", 
+			regex = new RegExp( regexS ),
+			results = regex.exec( window.location.search );
+		if( results == null ){
+			return "";
+		} else{
+			return decodeURIComponent(results[1].replace(/\+/g, " "));
+		}
+	}
+	
+   jQuery('.all_stores').click(function(){
+   	jQuery("[id^='category_store_']").show();
+   	jQuery('.category-listing').hide();
+	jQuery('.no_seller_by_category').hide();
+   	jQuery('.store-listing').show();
+   	jQuery(this).addClass('active');
+   	jQuery('.all_cat').removeClass('active');
+   });
+   jQuery('.all_cat').click(function(){
+   	jQuery('.category-listing').show();
+   	jQuery('.store-listing').hide();
+	jQuery('.no_seller_by_category').hide();
+   	jQuery(this).addClass('active');
+   	jQuery('.all_stores').removeClass('active');
+   });
+   
+	jQuery(document).on("click","[id*='list_category_']", function(e){
+		
+		e.preventDefault();
+		jQuery("html, body").animate({ scrollTop: 0 }, "slow");
+		$category_slug 	=	jQuery(this).attr('id').replace('list_category_','');
+		
+		jQuery.ajax({
+			url : "/region/ajax/seller",
+			dataType : 'json',
+			type : 'POST',
+			data:{'category':$category_slug},
+			success : function(data){
+				var html ="";
+				var count=0;
+				jQuery("[id^='category_store_']").hide();
+				jQuery(".see_all_category").removeClass('hide');
+				jQuery.each(data, function(index, seller){
+					++count;
+					jQuery("#category_store_"+seller.seller_id).show();
+				});
+				if(count==0){
+		 			
+					jQuery('.no_seller_by_category').show();
+					
+				}
+				jQuery('.category-listing').hide();
+				jQuery('.store-listing').show();
+				jQuery('.all_stores').addClass('active');
+				jQuery('.all_cat').removeClass('active');
+			}
+		});
+	});
+	
+	
+	var cat_id 	=	getParameterByName('cat_id');
+	if(cat_id!=""){
+		jQuery("#list_category_"+cat_id).trigger('click');
+	}
+   
+	jQuery('.see_all_category').click(function(e){
+		e.preventDefault();
+		jQuery(".see_all_category").addClass('hide');
+		
+		jQuery("html, body").animate({ scrollTop: 0 }, "slow");	
+		$category_slug	=	"";
+		jQuery("[id*='category_store_']").show();
+		return false;
+		jQuery.ajax({
+			url : "/region/ajax/seller",
+			dataType : 'json',
+			type : 'POST',
+			data:{'category':$category_slug},
+			success : function(data){
+				
+				var html ="";
+				var count=0;
+				jQuery("[id^='category_store_']").hide();
+				jQuery.each(data, function(index, seller){
+					++count;
+					jQuery("#category_store_"+seller.seller_id).show();
+				});
+				if(count==0){
+					jQuery('.no_seller_by_category').show();
+				}
+				jQuery('.category-listing').hide();
+				jQuery('.store-listing').show();
+				jQuery('.all_stores').addClass('active');
+				jQuery('.all_cat').removeClass('active');
+			}
+		});
+	});
+}) ;
+</script>

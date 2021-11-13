@@ -1,0 +1,198 @@
+<?php 
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$chatrooms = $this->getChatrooms();
+$current_room_id = $this->getCurrentRoomId();
+
+if(!$current_room_id){
+	foreach ($chatrooms as $key => $room) { 
+		$current_room_id	=	$room->getId(); 
+		break;
+	}
+}
+$my_id = $this->getCustomerId();
+if($current_room_id)
+$room_messages 	=	$this->getRoomMessages($current_room_id);
+?>
+<div>
+	
+	<div class="fieldset">
+		<h4 class="legend"><?php echo  __('Chat Room') ?></h4>
+	</div>
+
+	<div class="messages_wraper">
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="main_pro_sec men_pro_sec">
+                <!-- <h3>Private Chats</h3> -->
+                <ul class="main_pro_sec_ul nav nav-tabs">
+
+                <?php foreach ($chatrooms as $key => $room) { 
+                	$data = $room->getData();
+                	//print_r($data); die;
+                	?>
+                    <li <?php echo ($current_room_id==$room->getId() || $key==0)?"class='active'":""; ?> ><a href="<?php echo $this->getUrl("marketplace/account/chatroom/")."room/".$room->getId(); ?>"><?php echo ucfirst($data["customer_firstname"])." ".ucfirst($data["customer_lastname"]); ?><span id="unread_count_<?php echo $room->getId(); ?>" ></span></a></li>
+                <?php } ?>
+                </ul>
+            </div> <!-- main_pro_sec women_pro_sec -->
+		</div>
+		<?php if(isset($room_messages) && !empty($room_messages)){ ?>
+			<div class="col-sm-8">
+				<div class="message_chat" id="message_chat" >
+				
+					<?php foreach ($room_messages as $key => $room_message) { ?>
+						
+						<div class="chat_row <?php echo ($my_id==$room_message->getSenderId())?"mybox":""; ?>" >
+							<div class="chat_cont"><p><?php echo nl2br($room_message->getMessage()); ?></p></div>
+								<span><?php echo date("D, M Y H:iA", strtotime($room_message->getCreatedAt())); ?></span>
+						</div>
+
+					<?php 	} 	?>
+						
+				</div>
+				<div class="input-group field">
+			      <input type="text" id="msg_box" class="form-control input-text" placeholder="Type Here...">
+			      <span class="input-group-btn">
+			        <button class="btn btn-primary" id="send_now" type="button"><i class="fa fa-send"></i></button>
+			      </span>
+			    </div><!-- /input-group -->
+			</div>
+		<?php }else{ ?>
+		<div>NO Chat History</div>
+		<?php } ?>
+		
+	</div>
+</div>
+	
+</div>
+<?php
+
+$formData = [
+    'ajaxSaveUrl' => $block->getUrl("marketplace/seller/usernameverify", ["_secure" => $this->getRequest()->isSecure()]),
+    'successMessage' => __("available"),
+    'errorMessage' => __("unavailable")
+];
+
+$serializedFormData = $this->helper('Magento\Framework\Json\Helper\Data')->jsonEncode($formData);
+
+?>
+
+<script type="text/x-magento-init">
+    {
+        "#form-become-seller": {
+            "validation": {},
+            "verifySellerShop": <?php /* @noEscape */ echo $serializedFormData; ?>
+        }
+    }
+</script>
+
+<script>
+	 	
+			
+        require([
+            "jquery",
+            "mage/mage"
+        ], function($){
+
+
+        	$("#send_now").on("click", function(){
+
+        		var msg = $("#msg_box").val();
+	 			console.log(msg);
+
+	 			var time = new Date();
+
+	 			$("#message_chat").append('<div class="chat_row mybox"><div class="chat_cont"><p>'+msg+'</p></div><span>'+time.getHours() + ":" + time.getMinutes()+'</span></div>');
+	 			$("#msg_box").val("");
+	 			var request = $.ajax({
+										url: "<?php echo $this->getUrl('marketplace/account/sentmessage'); ?>",
+										method: "POST",
+										data: { message : msg, room_id : <?php echo $current_room_id; ?> },
+										dataType: "json"
+									});
+				request.done(function( msg ) {
+					//$( "#log" ).html( msg );
+				});
+				request.fail(function( jqXHR, textStatus ) {
+					console.log( "Request failed: " + textStatus );
+				});
+
+        	});
+
+        		var request = $.ajax({
+												url: "<?php echo $this->getUrl('marketplace/account/setRead/').'room/'.$current_room_id; ?>",
+												method: "GET",
+												dataType: "json"
+											});
+						request.done(function( response ) {
+							console.log( response );
+						});
+						request.fail(function( jqXHR, textStatus ) {
+							console.log( "Request failed: " + textStatus );
+						});
+
+
+        	var getUnread = function() {
+			  	var request = $.ajax({
+										url: "<?php echo $this->getUrl('marketplace/account/getUnreadMessage/').'room/'.$current_room_id; ?>",
+										method: "GET",
+										dataType: "json"
+									});
+				request.done(function( response ) {
+
+					$.each(response.message, function( index, value ) {
+						$("#message_chat").append('<div class="chat_row"><div class="chat_cont"><p>'+value["message"]+'</p></div><span>'+value["created_at"]+'</span></div>');
+					});
+
+					
+					  	var request = $.ajax({
+												url: "<?php echo $this->getUrl('marketplace/account/setRead/').'room/'.$current_room_id; ?>",
+												method: "GET",
+												dataType: "json"
+											});
+						request.done(function( response ) {
+							console.log( response );
+						});
+						request.fail(function( jqXHR, textStatus ) {
+							console.log( "Request failed: " + textStatus );
+						});
+					
+				});
+				request.fail(function( jqXHR, textStatus ) {
+					console.log( "Request failed: " + textStatus );
+				});
+			};
+
+			var interval = 1000 * 10; // where X is your every X minutes
+
+			setInterval(getUnread, interval);
+
+
+        	var getUnread = function() {
+			  	var request = $.ajax({
+										url: "<?php echo $this->getUrl('marketplace/account/getUnreadCounts'); ?>",
+										method: "GET",
+										dataType: "json"
+									});
+				request.done(function( response ) {
+
+					$.each(response.message, function( index, value ) {
+						$("#unread_count_"+value.entity_id).text(value.unread);
+					});
+
+				});
+				request.fail(function( jqXHR, textStatus ) {
+					console.log( "Request failed: " + textStatus );
+				});
+			};
+
+			var interval = 1000 * 30; // where X is your every X minutes
+
+			setInterval(getUnread, interval);
+
+
+
+
+
+        });    
+        
+    </script>

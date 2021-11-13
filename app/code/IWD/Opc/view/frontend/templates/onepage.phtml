@@ -1,0 +1,223 @@
+<?php
+/**
+ * @var $block IWD\Opc\Block\Onepage
+ */
+?>
+<?php //$isVirtual = $block->getQuote()->isVirtual() ?>
+<?php //$block->saveCustomerAddress(); ?>
+
+<?php
+/**
+ * @var $checkoutSession \Magento\Checkout\Model\Session\Proxy
+ */
+ 
+$location = $block->findLocation();
+
+//print_r($location);die;	
+
+$checkoutSession = \Magento\Framework\App\ObjectManager::getInstance()
+    ->get(\Magento\Checkout\Model\Session\Proxy::class);
+// $isVirtual = $checkoutSession->getQuote()->isVirtual() ;
+$isVirtual = 0;
+
+?>
+
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
+$connection = $resource->getConnection();
+$tableName = $resource->getTableName('directory_country_region ');
+
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+
+//print_r($customerSession);die;
+if(isset($customerSession->getdata()['city_id'])){
+    $city_id    = $customerSession->getdata()['city_id'];
+}else{
+    $city_id = 791;
+}
+if(isset($customerSession->getdata()['area_id'])){
+    $area_id    = $customerSession->getdata()['area_id'];
+}else{
+    $area_id = "";
+    
+}
+$sql = "Select * FROM " . $tableName . " where `country_id`='AE'";
+$result = $connection->fetchAll($sql);
+
+$cityOptions = '<option value="">Select City</option>';
+if(!empty($result)){
+    foreach($result as $res) {
+
+        if($city_id == $res['region_id']){ 
+            $cityOptions .= '<option data-id="'.$res['region_id'].'" value="'.$res['default_name'].'" selected="selected"> '.$res['default_name'].' </option>';
+        }else{
+            $cityOptions .= '<option data-id="'.$res['region_id'].'" value="'.$res['default_name'].'" > '.$res['default_name'].' </option>';
+        }
+    }
+}
+
+?>
+
+<div class="checkout-header">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-3">
+				<figure class="logo"><a href='<?php echo $this->getUrl('region/') ?>'><img src='<?php echo $this->getViewFileUrl('images/logo.png'); ?>' alt="Scappery"></a></figure>
+			</div>
+			<div class="col-sm-6">
+					<ol class="checkout-steps">
+					  <li class="step step1 complete"><a href="#">
+						<div class="txt"><?php echo __('Cart'); ?></div></a> </li>
+					  <li class="divider"></li>
+					  <li class="step step2 active"><a href="#">
+						<div class="txt"><?php echo __('Delivery'); ?></div></a> </li>
+					  <li class="divider"></li>
+					  <li class="step step3">
+						<div class="txt"><?php echo __('Payment'); ?></div></li>
+					</ol>
+			</div>
+				<div class="col-sm-3">
+				<div class="seccure-text"><img src='<?php echo $this->getViewFileUrl('images/secure-icon.png'); ?>' alt=""> <?php echo __('100% Secure'); ?></div>
+				</div>
+		</div>
+	</div>
+</div>
+<div class="iwd_opc_clear"></div>
+	<div id="checkout-loader" data-role="checkout-loader" class="loading-mask" data-mage-init='{"checkoutLoader": {}}'>
+		<div class="loader"></div>
+	</div>
+
+<div id="iwd_opc_iframe_container" class="iwd_main_wrapper iwd_opc_wrapper " style="display: none;">
+    <div class="iwd_opc_alternative_wrapper">
+	
+        <div class="iwd_opc_column iwd_opc_iframe_payment_column">
+            <div class="iwd_opc_alternative_column">
+                <div class="iwd_opc_universal_wrapper iwd_opc_column_name">
+                    <?php echo __('Choose a Different Payment Method'); ?>
+                </div>
+                
+                <div class="iwd_opc_column_content">
+					 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+	<div class="container">
+		<div class="row">
+<div id="checkout" data-bind="scope:'checkout'" class="iwd_opc_wrapper iwd_main_wrapper">
+    <div class="iwd_opc_alternative_wrapper">
+        <?php if ($isVirtual) { ?>
+        <div class="iwd_opc_two_column_wrapper">
+        
+
+            <?php } ?>
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <?php if ($isVirtual) { ?>
+        </div>
+    <?php } ?>
+        <script type="text/x-magento-init">
+        {
+            "#checkout": {
+                "Magento_Ui/js/core/app": <?php /* @escapeNotVerified */
+                echo $block->getJsLayout(); ?>
+            }
+        }
+        </script>
+        <script>
+            window.checkoutConfig = <?php /* @escapeNotVerified */
+            echo \Zend_Json::encode($block->getCheckoutConfig()); ?>;
+            // Create aliases for customer.js model from customer module
+            window.isCustomerLoggedIn = window.checkoutConfig.isCustomerLoggedIn;
+            window.customerData = window.checkoutConfig.customerData;
+        </script>
+        <?php if (!$isVirtual) { ?>
+            <?php echo $block->getChildHtml('checkout.gift_options', false) ?>
+        <?php } ?>
+        <script>
+            require([
+                'mage/url',
+                'IWD_Opc/js/block-loader'
+            ], function (url, iwdBlockLoader) {
+                iwdBlockLoader();
+                return url.setBaseUrl('<?php /* @escapeNotVerified */ echo $block->getBaseUrl();?>');
+            })
+        </script>
+        <script type="text/javascript">
+            require(['jquery'], function($) {
+                setTimeout(function(){
+                    $("#state").html('<?php echo($cityOptions) ?>');
+                    console.log($("#state"));
+                    
+                    var url="";
+                    var html="";
+
+                    var city_id = '<?php echo($city_id); ?>';
+                    var area_id = '<?php echo($area_id); ?>';
+                    
+                    $.ajax({
+                        url : "/location/ajax/index",
+                        dataType : 'json',
+                        type : 'POST',
+                        data: { city_id: city_id },
+                        success : function(data){
+                            if(data.length>0){
+                                html+="<option value=''>Select Zone</option>";
+                                $.each(data, function(idx, obj) {
+                                    if(obj.area_id == area_id){
+                                        html+="<option value="+ obj.default_name +" selected='selected'>"+obj.default_name+"</option>";
+                                    }else{
+                                        html+="<option value="+ obj.default_name +">"+obj.default_name+"</option>";
+                                    }
+                                });
+                                
+                            }else{
+                                html+="<option value=''>No zone found</option>";
+                            }
+                            $('#area').html(html);
+                        }
+                    });
+
+                    $('#state').on("change", function(){
+                        console.log($(this).find(':selected').attr('data-id'));
+                        
+                        var url="";
+                        var html="";
+                        var city_id = jQuery("#state option:selected").attr('data-id');
+                        
+                        $.ajax({
+                            url : "/location/ajax/index",
+                            dataType : 'json',
+                            type : 'POST',
+                            data: { city_id: city_id },
+                            showLoader: true,
+                            success : function(data){
+                                if(data.length>0){
+                                    html+="<option value=''>Select Zone</option>";
+                                    $.each(data, function(idx, obj) {
+                                        html+="<option value="+ obj.default_name +">"+obj.default_name+"</option>";
+                                    });
+                                }else{
+                                    html+="<option value=''>No zone found</option>";
+                                }
+                                $('#area').html(html);
+                            }
+                        });
+                    });
+
+                }, 20000);
+
+            });
+        </script>
+    </div>
+</div>
+</div>
+</div>
+<div class="iwd_opc_clear"></div>
+<input type="hidden" id="city_name" value="<?php echo $location['city']; ?>" />
+<input type="hidden" id="area_name" value="<?php echo $location['area']; ?>" />
+
+<style>
+.choice.checkout-agreement { display:block; }
+</style>

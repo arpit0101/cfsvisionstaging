@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="catalog_product_import_bunch_save_after">
+        <observer name="inchoo_helloworld_adminhtml_catalog_product_import_bunch_save_after" instance="Inchoo\Helloworld\Observer\CatalogProductImportBunchSaveAfter" />
+    </event>
+	<event name="customer_login">
+        <observer name="customer_login_observer" instance="Inchoo\Helloworld\Observer\CustomerLogin" />
+    </event>
+	<event name="admin_system_config_changed_section_customerno">
+        <observer name="custom_admin_system_config_changed_section_customerno" instance="Inchoo\Helloworld\Observer\ConfigObserver"/>
+    </event>
+</config>

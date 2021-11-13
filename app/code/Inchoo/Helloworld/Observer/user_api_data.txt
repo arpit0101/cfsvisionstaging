@@ -1,0 +1,7 @@
+stdClass Object
+(
+    [username] => ggg@mailinator.com
+    [password] => System@123
+    [device_type] => android
+    [device_token] => f4Ng8uY1SHqb7QVS7XUxfw:APA91bEt7iZjk-stIGUPGI1WMVH53BEFeuSrMDhsxljtPpn97s566zlFeyAbJBp4PYaSA4PbNApXlPxUNPfbA0qzLOri2c7tb956IE5p2ABgSsVJ0IVu0TG0k1bDV0F-MTnLMNSgOfDC
+)

@@ -1,0 +1,29 @@
+<label class="label hide">Delivery Date</label>
+
+<div class="control hide">
+    <input class="input-text" type="text" data-bind="datetimepicker: true"  name="delivery_date" id="delivery_date" readonly="true"/>
+</div>
+
+<label class="label hide" data-bind="i18n: 'Comment'"></label>
+<div class="control hide">
+    <textarea name="delivery_comment" id="delivery_comment"></textarea>
+</div>
+<div class="schedule-wrapper">
+	<div class="body">
+		<div class="iwd_opc_universal_wrapper iwd_opc_column_name"><span>2</span><p data-bind="i18n: 'Delivery Date'"></p> </div>
+		<p class="color-red warning hide" data-bind="i18n: 'No more runners are available today. The next available delivery day has been selected.'"></p>
+		<div class="inline input-group ember-view selection-list">
+			<div class="label" data-bind="i18n: 'Date'"></div>
+			<ul id="first_ul">
+			</ul>
+		</div>
+		<div class="inline nomargin compact input-group ember-view selection-list"> 
+			<ul id="second_ul">
+			</ul>
+		</div>
+		<div class="input-group ember-view selection-list">
+			<div class="label" data-bind="i18n: 'Time'">  </div>
+			<ul id="third_ul"></ul>
+		</div>
+	</div>
+</div>

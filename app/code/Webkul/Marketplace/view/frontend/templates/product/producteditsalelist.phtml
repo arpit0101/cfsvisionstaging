@@ -1,0 +1,100 @@
+<?php 
+$_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$isPartner= $helper->isSeller();
+if($isPartner==1){
+?>  
+    <div class="wk-mp-design">
+        <fieldset class="fieldset info wk-mp-fieldset product_list_table">
+            <legend class="legend">
+                <span><?php echo __('Create Sale Product List') ?></span>
+            </legend>
+            <div class="grid">
+                <div class="hor-scroll">
+                    <form action="<?php echo $block->getUrl('marketplace/product/savesalesproduct', ['_secure' => $this->getRequest()->isSecure()])?>" method="post" id="form-productlist-sales"  name="formProductlistSales">
+                    <?php echo $block->getBlockHtml('formkey')?>
+                        <div class="table-responsive">
+                            <table cellspacing="0" class="border wk-mp-list-table">
+                                <tbody class="wk-mp-body">
+                                    <tr>
+                                        <td>
+                                            <span class="wk-mp-td-span"><?php echo __('Product Name') ?></span>
+                                            <select name="product_id">
+                                                <?php 
+                                                    $i = 0;
+                                                    foreach($block->getAllProducts() as $products) {
+                                                    $i++;
+                                                    $product = $_objectManager->get('\Magento\Catalog\Model\Product')->load($products->getId());
+                                                ?>
+                                                <?php if($product->getTypeID() !== "virtual" && $product->getTypeID() !== "configurable") { ?>
+                                                <option value="<?php echo $products->getid() ;?>"><?php echo $product->getName(); ?></option>
+                                                <?php } ?>
+                                                <?php } ?>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="wk-mp-td-span"><?php echo __('Price:') ?></span>
+                                            <input name="price" id="price" class="input-text" value="" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="wk-mp-td-span"><?php echo __('Special Price:') ?></span>
+                                            <input name="special_price" id="special-price" class="input-text" value="" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="wk-mp-td-span"><?php echo __('Special Price From:') ?></span>
+                                            <input name="from_date" id="special-from-date" class="input-text" value="" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>                             
+                                            <span class="wk-mp-td-span"><?php echo __('Special Price To:') ?></span>  
+                                            <input name="to_date" id="special-to-date" class="input-text" value="" />
+                                            
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <button class="button btn btn-lg btn-primary" title="Save" type="submit">
+                                                <span><?php echo __('Submit') ?></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                                   
+                </div>
+            </div> 
+        </fieldset> 
+    </div>  
+    <script>
+        require([
+            "jquery",
+            "mage/mage",
+            'mage/calendar',
+            'prototype',
+            'domReady!'
+        ], function($){
+            var productListDataForm = $('#form-productlist-sales');
+            productListDataForm.mage('validation', {});
+            $("#special-from-date").calendar({'dateFormat':'mm/dd/yy'});
+            $("#special-to-date").calendar({'dateFormat':'mm/dd/yy'});
+        });    
+    </script>
+    <?php
+}
+else
+{
+?>
+    <h2 class="wk-mp-error_msg">
+        <?php echo __("To Become Seller Please Contact Admin"); ?>
+    </h2>
+    <?php
+} ?>

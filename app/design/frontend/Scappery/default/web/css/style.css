@@ -1,0 +1,111 @@
+.logo{
+     float: left; 
+   /*-- margin: 0 0 10px 40px;---*/	
+     max-width: 100%; 
+    position: relative;
+    z-index: 5;
+    margin: 4px auto 6px 0 !important;
+}
+
+figure.logo{
+margin: 0px 0 0px 0;
+}
+header .logo{
+padding-left: 7px;
+}
+
+/*--.page-header{
+    padding: 5px 0 5px;
+}--*/
+
+.header-search-panel {
+    position: absolute;
+    width: 500px;
+    left: 0 !important;
+}
+
+.header.content{
+padding: 0 !important;
+}
+
+
+.header-search-panel .search-box {
+    max-width: none;
+    margin: 22px auto 0px 31px;
+}
+
+.button-listing {
+    margin: 0px;
+    padding: 22px 0px 0px;
+    text-align: right;
+}
+
+
+.page-footer{
+ background-color: #0526a8 !important;
+padding-bottom: 0px;
+}
+.minicart-wrapper .action.showcart:before {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 22px;
+    line-height: 28px;
+    color: #757575;
+    content: '\e611';
+    font-family: 'luma-icons';
+    margin: 0;
+    vertical-align: top;
+    display: inline-block;
+    font-weight: normal;
+    overflow: hidden;
+    speak: none;
+    text-align: center;
+}
+footer {
+    background-color: #0526a8;
+    padding: 27px 0px;
+}
+
+
+.middle-footer ul {
+    margin: 0px auto !important;
+    padding-right: 0 !important;
+    font-size: 0;
+    max-width: 380px;
+}
+.mfp-content iframe .rectangle{
+	display:none !important;
+}
+.page_new_button_content .add_button {
+    float: right;
+    text-align: center;
+    border: 1px solid #FFF;
+    padding: 10px 4px;
+    background: #c43c4b !important;
+    color: #fff;
+}
+.page_new_button_content .add_button:hover {
+    border: 1px solid #c43c4b;
+    background: #fff !important;
+}
+.page_new_button_content .add_button a {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px;
+}
+.page_new_button_content {
+    border-bottom: 1px solid #c6c6c6;
+    width: 100%;
+    float: left;
+    margin-bottom: 10px;
+    padding: 0 0 10px 0;
+}
+.page_new_button_content .pagetitle {
+    float: left;
+}
+.page_new_button_content .pagetitle span {
+    font-size: 20px;
+ }
+ 
+
+

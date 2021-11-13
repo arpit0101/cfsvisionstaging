@@ -1,0 +1,19 @@
+<?php 
+$replacements 			=	$block->getReplacements();
+$replacements_array 	=	array(
+								''=>"",
+								'contact-customer'=>__("Call me - If we can not reach you, we will leave out the unavailable item/s"),
+								'we-decide'=>__('Let the personal shopper select the best available replacement.'),
+								'ignore'=>__('Let the personal shopper select the best available replacement.'),
+							);
+
+if(isset($replacements_array[$replacements])){
+	?>
+	<div id="delivery-replacements">
+		<strong><?php echo __('Replacements') ?>:</strong>
+		<br/>
+		<span class="price"><?=$replacements_array[$replacements];?></span>
+	</div>
+	<?php 
+}
+?>

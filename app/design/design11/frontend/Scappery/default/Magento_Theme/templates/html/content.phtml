@@ -1,0 +1,141 @@
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
+$connection = $resource->getConnection();
+$tableName = $resource->getTableName('directory_country_region ');
+
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+
+//print_r($customerSession);die;
+if(isset($customerSession->getdata()['city_id'])){
+	$city_id	= $customerSession->getdata()['city_id'];
+}else{
+	$city_id = 613;
+}
+
+if(isset($customerSession->getdata()['area_id'])){
+	$area_id	= $customerSession->getdata()['area_id'];
+}else{
+	$area_id = "";
+	
+}
+ 
+$sql = "Select * FROM " . $tableName . " where `country_id`='AE'";
+$result = $connection->fetchAll($sql);
+?>
+<div class="banner-section">
+   <div class="container">
+      <!-- <h1>GET ALL BEST DEALS Online from <br/>
+         local stores you know, love and trust
+      </h1> -->
+      <div id="location">
+      <form action="<?php echo $this->getUrl('region/');?>" method="get" id="form1" name="form1">
+		<input type="hidden" id="area_id_hidden" value="<?php echo $area_id; ?>" />
+         <div class="box-form">
+         <div class="head_msg" id="head_msg" style="display:none"><?php echo __('Please select city & zone.'); ?></div>
+            <!-- <h2>Jordan <img src='<?php echo $this->getViewFileUrl('images/flag-icon.jpg'); ?>' alt="Flag">
+            </h2> -->
+           	
+			<div class="error_msg alert alert-danger" style="display:none;"><a href="javascript:void(0)" class="close" >&times;</a><strong></strong>&nbsp;<?php echo __('Please select the City and Zone.'); ?></div>
+			<div class="error_msg_zone alert alert-danger" style="display:none;"><a href="javascript:void(0)" class="close" >&times;</a><strong></strong>&nbsp;<?php echo __('Please select Zone.'); ?></div>
+			
+      <div class="my-select-wrapper">
+        <div class="column-1">
+          <label><?php echo __('Select Delivery Zone'); ?></label>
+        </div>
+        <div class="column-2">
+          <div class="form-group select_rl">
+               <!-- <label>Select City</label> -->
+               <select class="form-control city_dropdown autocomplete" name="city_id" id="city_id">
+                  <option value=""><?php echo __('City'); ?></option>
+                  <?php foreach($result as $res) { 
+                     ?>
+          <option <?php if($city_id){ if($city_id==$res['region_id']){ echo "selected"; }}?> value="<?php echo $res['region_id'] ?>"><?php echo __($res['default_name']); ?></option>
+                  <?php 
+                     }?> 
+               </select>
+               <div id="ds-loader" class="progress_image_inner" style="display:none;">
+                            <div class="loader">
+                              <div class="flipper">
+                                <div class="front color-1-bg">
+                                  <div class="back"></div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>  
+            </div>
+        </div>
+        <div class="column-3">
+          <div class="form-group">
+               <!-- <label>Select Zone</label> -->
+               <select class="form-control area_dropdown autocomplete" name="area_id" id="area_id">
+                  <option value=""><?php echo __('Zone'); ?></option>
+               </select>
+            </div>
+        </div>
+      </div>
+            <div class="continue-button"> <button class="btn btn-default" id="btnSubmit" type="submit" ><?php echo __('Start Shopping'); ?>  </button></div>
+            <!-- <span class="account-login">Already have an account? <a href="<?php echo $block->getUrl('customer/account/login') ?>">Log in</a></span>
+            <div class="free-delivery"> FREE delivery on your first order * <img src='<?php echo $this->getViewFileUrl('images/delivery-icon.png'); ?>' alt="Free delivery"> </div> -->
+         </div>
+      </form>
+		</div>
+   </div>
+</div>
+
+<?php //echo $block->getLayout()->createBlock("Mageplaza\BannerSlider\Block\Widget::class")->setSliderId(1)->toHtml();?>
+
+<div class="slider-section">
+<?php echo $this->getLayout()->createBlock("Magento\Framework\View\Element\Template")->setTemplate("Magento_Theme::html/slider.phtml")->toHtml();?>
+
+  
+</div>
+
+<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('how_it_works')->toHtml();?>	
+<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('app_block')->toHtml();?>	
+
+
+<!-- <div class="app-section">
+  <div class="container">
+    <div class="left-app">
+      <div class="video-box"><img src="{{media url="wysiwyg/video-image.jpg"}}" alt="" /></div>
+    </div>
+    <div class="right-app">
+      <h2>DOWNLOAD <br /> OUR APP</h2>
+      <ul>
+        <li><a href="#"><img src="{{media url="wysiwyg/app-store-icon.png"}}" alt="" /></a></li>
+        <li><a href="#"><img src="{{media url="wysiwyg/google-store-icon.png"}}" alt="" /></a></li>
+      </ul>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</div> -->
+
+<!-- <div class="container">
+<ul class="flow-method">
+<li><figure><img src="{{media url="wysiwyg/large-cart.png"}}" alt="" /></figure><strong>Find 1,000'sof products </strong>
+<p>Find 1,000's of products <br /> from the stores you already shop at.</p>
+</li>
+<li><figure><img src="{{media url="wysiwyg/large-delivery.png"}}" alt="" /></figure><strong>Same-day delivery </strong>
+<p>Get same day delivery from <br /> many stores.</p>
+</li>
+<li><figure><img src="{{media url="wysiwyg/save-money.png"}}" alt="" /></figure><strong>Save time &amp; money </strong>
+<p>Get same day delivery from <br /> many stores.</p>
+</li>
+</ul>
+</div>
+<div class="app-section">
+<div class="container">
+<div class="left-app">
+<div class="video-box"><img src="{{media url="wysiwyg/video-image.jpg"}}" alt="" /></div>
+</div>
+<div class="right-app">
+<h2>DOWNLOAD <br /> OUR APP</h2>
+<ul>
+<li><a href="#"><img src="{{media url="wysiwyg/app-store-icon.png"}}" alt="" /></a></li>
+<li><a href="#"><img src="{{media url="wysiwyg/google-store-icon.png"}}" alt="" /></a></li>
+</ul>
+</div>
+<div class="clearfix"></div>
+</div>
+</div> -->

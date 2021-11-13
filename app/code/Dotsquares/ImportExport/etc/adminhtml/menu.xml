@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Magento/Backend/etc/menu.xsd">
+    <menu>
+        <add id="Dotsquares_ImportExport::parent" title="Category Import Export" module="Dotsquares_ImportExport" sortOrder="100" resource="Dotsquares_ImportExport::parent"/>
+        <add id="Dotsquares_ImportExport::index" title="Category Import Export Manager" module="Dotsquares_ImportExport" sortOrder="10" action="importexport/index" resource="Dotsquares_ImportExport::index" parent="Dotsquares_ImportExport::parent"/>
+		
+    </menu>
+</config>

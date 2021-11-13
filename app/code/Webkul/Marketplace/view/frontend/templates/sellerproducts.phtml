@@ -1,0 +1,254 @@
+<?php
+$partner=array();
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$partner=$block->getProfileDetail();
+$seller_id=$partner['seller_id'];
+$shoptitle = $partner->getShopTitle();
+
+//print_r($block->getFollowCollection());
+
+$logo=$partner->getLogoPic()!=''?$partner->getLogoPic():"noimage.png";
+$logo=$helper->getMediaUrl().'avatar/'.$logo;
+
+$seller_product_count = $helper->getSellerProCount($seller_id);
+
+$feeds=$helper->getFeedTotal($seller_id);
+$review_percentage = (($helper->getSelleRating($seller_id)*100)/5);
+//print_r($partner->getData());
+if(!$shoptitle){
+    $shoptitle = $partner->getShopUrl();
+}
+
+
+
+function time_elapsed_string($ptime)
+{
+    $etime = time() - $ptime;
+
+    if ($etime < 1)
+    {
+        return '0 seconds';
+    }
+
+    $a = array( 365 * 24 * 60 * 60  =>  'year',
+                 30 * 24 * 60 * 60  =>  'month',
+                      24 * 60 * 60  =>  'day',
+                           60 * 60  =>  'hour',
+                                60  =>  'minute',
+                                 1  =>  'second'
+                );
+    $a_plural = array( 'year'   => 'years',
+                       'month'  => 'months',
+                       'day'    => 'days',
+                       'hour'   => 'hours',
+                       'minute' => 'minutes',
+                       'second' => 'seconds'
+                );
+
+    foreach ($a as $secs => $str)
+    {
+        $d = $etime / $secs;
+        if ($d >= 1)
+        {
+            $r = round($d);
+            return $r . ' ' . ($r > 1 ? $a_plural[$str] : $str) . ' ago';
+        }
+    }
+}
+
+
+
+if($helper->getActiveColorPicker()){?> 
+    <style>
+    .page-main{background-image:none;background-color:<?php echo $partner['background_width'];?>;}
+    </style>
+<?php
+} ?>
+
+
+<div class="store_name">
+    <div class="top-container">
+        <div class="storetitle">
+            <?php echo __("<span>Store :</span> %1",$shoptitle) ?>
+        </div>
+        <div class="sns pull-right">
+            <?php 
+            if($partner->getFbActive()){ ?>
+                <a class="fa fa-facebook" title="<?php echo __('Check in Facebook')?>" href="//facebook.com/<?php echo $partner->getFacebookId();?>" target="blank">
+                </a>
+            <?php 
+            } ?>
+            <?php 
+            if($partner->getTwActive()){ ?>
+                <a class="fa fa-twitter" title="<?php echo __('Check in Twitter')?>" href="//twitter.com/<?php echo $partner->getTwitterId();?>" target="blank">
+                </a>
+            <?php 
+            } ?>
+            <?php 
+            if($partner->getGplusActive()){ ?>
+                <a class="fa fa-google-plus" title="<?php echo __('Check in Google+')?>" href="//plus.google.com/<?php echo $partner->getGplusId();?>" target="blank">
+                </a>
+            <?php 
+            } ?>
+            <?php 
+            if($partner->getPinterestActive()){ ?>
+                <a class="fa fa-pinterest" title="<?php echo __('Check in Pinterest')?>" href="//www.pinterest.com/jokestuffs/<?php echo $partner->getPinterestId();?>" target="blank">
+                </a>
+            <?php 
+            } ?>
+            <?php 
+            if($partner->getYoutubeActive()){ ?>
+                <a class="fa fa-youtube" title="<?php echo __('Check in Youtube')?>" href="//www.youtube.com/user/<?php echo $partner->getYoutubeId();?>" target="blank">
+                </a>
+            <?php 
+            } ?>
+            <?php 
+            if($partner->getInstagramActive()){ ?>          
+                <a class="fa fa-instagram" title="<?php echo __('Check in Instagram')?>" href="//instagram.com/<?php echo $partner->getInstagramId();?>" target="blank">
+                </a>
+            <?php 
+            } ?>
+            <?php 
+            if($partner->getVimeoActive()){ ?>
+                <a class="fa fa-vimeo" title="<?php echo __('Check in Vimeo')?>" href="//vimeo.com/<?php echo $partner->getVimeoId();?>" target="blank">
+                </a>
+            <?php 
+            } ?>
+            <?php //
+            if($partner->getMoleskineActive()){ ?>
+            <!-- <a href="//moleskine.com/<?php echo $partner->getMoleskineId();?>" target="blank">
+                <span class="wk-social-icon wk-icon wk-social-icon-moleskin" title="<?php echo __('Check in Moleskine')?>"></span>
+            </a> -->
+            <?php 
+            } ?>
+        </div>
+    </div>
+</div>
+<div class="store_logo">
+    <div class="top-container">
+        <div class="wk-logo-block">
+            <a href="<?php echo $helper->getRewriteUrl('marketplace/seller/profile/shop/'.$partner['shop_url']);?>" >
+                <img class="bannerpicrs" src="<?php echo $logo;?>" />
+            </a>
+        </div>
+        <div class="store_feedbacks">
+
+        <div class="rating-summary fdback_icons">
+                <!-- <span><?php echo number_format($feeds['feedcount']) ?></span> --> 
+                <div title="<?php echo $review_percentage ?>%" class="rating-result">
+                    <span style="width:<?php echo $review_percentage ?>%"><span><span itemprop="ratingValue"><?php echo $review_percentage ?></span>% of <span itemprop="bestRating">100</span></span></span>
+                </div>
+            </div>
+<!-- 
+            <div class="fdback_icons">
+                <i class="fa fa-heart"></i>
+                <i class="fa fa-heart"></i>
+                <i class="fa fa-heart"></i>
+                <i class="fa fa-heart-o"></i>
+                <i class="fa fa-heart-o"></i>
+            </div> -->
+            <p><?php echo __("Open"); ?> <span><?php echo time_elapsed_string(strtotime($partner['created_at'])); ?></span> / <span><?php echo $seller_product_count ?></span> <?php echo __("Products"); ?> / <span class="fa fa-comment"></span> <a href="<?php echo $this->getUrl().'marketplace/seller/feedback/shop/'.$partner['shop_url'];?>" >
+                    <?php echo __("Feedback"); ?>
+                </a></p>
+            <p><span id="followers_count" ><?php echo $block->getFollowCounts(); ?></span> <?php echo __("followers"); ?> 
+            <?php if(!count($block->getFollowCollection())){ ?>
+            
+                <a class="btn btn-info btn-sm follow" href="javascript:void(0);" data-url="<?php echo $helper->getRewriteUrl('marketplace/seller/follow/shop/'.$partner['shop_url']);?>" ><?php echo __("Follow"); ?></a>
+            
+            <?php }else{ ?>
+                <a class="btn btn-primary btn-sm follow" href="javascript:void(0);" data-url="<?php echo $helper->getRewriteUrl('marketplace/seller/follow/shop/'.$partner['shop_url']);?>" ><?php echo __("Unfollow"); ?></a>
+
+            <?php } ?> 
+
+            <a href="#" class="btn btn-warning btn-sm"><i class="fa fa-comment"></i> <?php echo __("Chat"); ?></a></p>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+<div class="store_profile_list">
+    <nav class="navigation">
+        <ul>
+            <li class ="level0" >
+                <a class="level-top" href="<?php echo $helper->getRewriteUrl('marketplace/seller/profile/shop/'.$partner['shop_url']);?>">
+                    <?php echo __("Store Home"); ?>
+                </a>
+            </li>
+            <li class ="level0 has-active" >
+                <a class="level-top" href="<?php echo $helper->getRewriteUrl('marketplace/seller/sellerproducts/shop/'.$partner['shop_url']);?>">
+                    <?php echo __("Products"); ?>
+                </a>
+            </li>
+            <li class ="level0" >
+                <a class="level-top" href="<?php echo $helper->getRewriteUrl('marketplace/seller/sellersaleitems/shop/'.$partner['shop_url']);?>">
+                    <?php echo __("Sale Items"); ?>
+                </a>
+            </li>
+            <li class ="level0" >
+                <a class="level-top" href="<?php echo $helper->getRewriteUrl('marketplace/seller/sellertopselling/shop/'.$partner['shop_url']);?>">
+                    <?php echo __("Top Selling"); ?>
+                </a>
+            </li>
+            <li class ="level0" >
+                <a class="level-top" href="<?php echo $helper->getRewriteUrl('marketplace/seller/sellernewarrivals/shop/'.$partner['shop_url']);?>">
+                    <?php echo __("New Arrivals"); ?>
+                </a>
+            </li>
+            <li class ="level0" >
+                <a class="level-top" href="<?php echo $this->getUrl().'marketplace/seller/feedback/shop/'.$partner['shop_url'];?>" >
+                    <?php echo __("Feedback"); ?>
+                </a>
+            </li>
+            <li class ="level0" >
+                <a class="level-top" href="<?php echo $helper->getRewriteUrl('marketplace/seller/sellercontact/shop/'.$partner['shop_url']);?>">
+                    <?php echo __("Contact Details"); ?>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<script type="text/javascript">
+
+require([
+            'jquery',
+            'carouFredSel',
+            'bootstrap'
+        ], function(jQuery, carouFredSel, bootstrap){
+            jQuery("a.follow").on("click", function(){
+                if(jQuery(this).text()=="Follow"){
+                    jQuery(this).text("Unfollow");
+                    jQuery("#followers_count").text(parseInt(jQuery("#followers_count").text())+1);
+                    jQuery(this).removeClass("btn-info");
+                    jQuery(this).addClass("btn-primary");
+                }else{
+                    jQuery(this).text("Follow");
+                    jQuery("#followers_count").text(parseInt(jQuery("#followers_count").text())-1);
+                    jQuery(this).removeClass("btn-primary");
+                    jQuery(this).addClass("btn-info");
+                }
+                el = this;
+                jQuery.ajax( {
+                        url: jQuery(this).data("url"),
+                        //data: {form_key: window.FORM_KEY},
+                        type: 'GET'
+                    }).done(function(a) { 
+                        if(!a.success){
+                            alert(a.message);
+                            if(jQuery(el).text()=="Follow"){
+                                jQuery(el).text("Unfollow");
+                                jQuery("#followers_count").text(parseInt(jQuery("#followers_count").text())+1);
+                                jQuery(el).removeClass("btn-info");
+                                jQuery(el).addClass("btn-primary");
+                            }else{
+                                jQuery(el).text("Follow");
+                                jQuery("#followers_count").text(parseInt(jQuery("#followers_count").text())-1);
+                                jQuery(el).removeClass("btn-primary");
+                                jQuery(el).addClass("btn-info");
+                            }
+                        }
+                        console.log(a); // log: {a: "b"}
+                    });
+            });
+
+        });
+    </script>

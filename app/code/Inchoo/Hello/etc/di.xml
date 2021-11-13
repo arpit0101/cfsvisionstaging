@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Inchoo\Hello\Api\HelloInterface" type="Inchoo\Hello\Model\Hello" />
+    <preference for="Inchoo\Hello\Api\SellerInterface" type="Inchoo\Hello\Model\Seller" />
+	<preference for="Inchoo\Hello\Api\ContactusManagementInterface" type="Inchoo\Hello\Model\ContactusManagement"/>
+	<!-- <type name="Magento\Quote\Api\CartRepositoryInterface">
+        <plugin name="cart_more_info" type="Inchoo\Hello\Plugin\QuotePlugin" sortOrder="10" />
+    </type> -->
+    <type name="Magento\Checkout\Block\Checkout\AttributeMerger">
+        <plugin name="checkout_attribute_merger_plugin" type="Inchoo\Hello\Plugin\AttributeMerger" />
+    </type>
+</config>
